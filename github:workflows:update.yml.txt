@@ -1,0 +1,119 @@
+name: Mise a jour quotidienne des articles
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generer les articles du jour
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: |
+          cat > update.mjs <<'SCRIPT_EOF'
+          import fs from 'fs';
+          const KEY = process.env.MISTRAL_API_KEY || '';
+          const FEEDS = [
+            'https://www.goodnewsnetwork.org/feed/',
+            'https://www.positive.news/feed/',
+            'https://www.upworthy.com/rss'
+          ];
+          const CATS = ['france','regions','sport','innovation','ecologie','sante','education','culture'];
+          function pick(re, s){
+          const m = s.match(re);
+          return m ? m[1] : '';
+          }
+          async function getHeadlines(){
+          let titles = [];
+          for (const url of FEEDS){
+          try {
+          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' } });
+          if (!r.ok) continue;
+          const xml = await r.text();
+          const items = xml.split('<item').slice(1, 13);
+          for (const it of items){
+          const t = pick(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/is, it).trim();
+          if (t) titles.push(t.replace(/<[^>]+>/g, ''));
+          }
+          if (titles.length >= 10) break;
+          } catch (e) {}
+          }
+          return [...new Set(titles)].slice(0, 14);
+          }
+          const headlines = await getHeadlines();
+          let articles = [];
+          if (headlines.length >= 3 && KEY){
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse internationale recus aujourd'hui :\n" + headlines.map(h => '- ' + h).join('\n') + "\n\nRedige 8 articles courts EN FRANCAIS, inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine en francais). Choisis la categorie la plus adaptee parmi : france, regions, sport, innovation, ecologie, sante, education, culture. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"readTime\":\"3 min\"}]}.";
+          try {
+          const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: 'Bearer ' + KEY },
+          body: JSON.stringify({
+          model: 'mistral-small-latest',
+          temperature: 0.4,
+          response_format: { type: 'json_object' },
+          messages: [{ role: 'user', content: prompt }]
+          })
+          });
+          const j = await r.json();
+          const parsed = JSON.parse(j.choices && j.choices[0] && j.choices[0].message.content || '{}');
+          articles = parsed.articles || [];
+          } catch (e) {
+          console.log('Erreur IA : ' + e.message);
+          }
+          }
+          if (!articles.length){
+          console.log('Pas de nouvelles aujourd hui : on garde les articles existants.');
+          process.exit(0);
+          }
+          const dateFr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
+          const entries = articles.slice(0, 10).map((a, i) => {
+          const cat = CATS.includes(a.cat) ? a.cat : 'france';
+          const obj = {
+          id: i + 1,
+          cat: cat,
+          title: String(a.title || '').slice(0, 140),
+          excerpt: String(a.excerpt || '').slice(0, 300),
+          body: String(a.body || '').slice(0, 1200),
+          source: String(a.source || 'Presse internationale').slice(0, 80),
+          verified: true,
+          date: dateFr,
+          readTime: a.readTime || '3 min'
+          };
+          if (i === 0) obj.hero = true;
+          return '  ' + JSON.stringify(obj) + ',';
+          }).join('\n');
+          let html = fs.readFileSync('index.html', 'utf8');
+          const startTag = '// AUTO-ARTICLES:START';
+          const endTag = '// AUTO-ARTICLES:END';
+          const start = html.indexOf(startTag);
+          const end = html.indexOf(endTag);
+          if (start === -1 || end === -1){
+          console.log('Marqueurs introuvables dans index.html');
+          process.exit(1);
+          }
+          const block = startTag + '\nconst ARTICLES = [\n' + entries + '\n];\n' + endTag;
+          html = html.slice(0, start) + block + html.slice(end + endTag.length);
+          fs.writeFileSync('index.html', html);
+          console.log('Articles generes : ' + articles.length + ' — ' + dateFr);
+          SCRIPT_EOF
+          node update.mjs
+
+      - name: Publier sur GitHub
+        run: |
+          git config user.name "robot-unbienfou"
+          git config user.email "action@github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Aucun changement aujourd'hui"
+          else
+            git commit -m "Articles du $(date +%d/%m/%Y)"
+            git push
+          fi
