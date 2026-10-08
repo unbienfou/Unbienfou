@@ -20,37 +20,45 @@ jobs:
           cat > update.mjs <<'SCRIPT_EOF'
           import fs from 'fs';
           const KEY = process.env.MISTRAL_API_KEY || '';
-          const FEEDS = [
-            'https://www.goodnewsnetwork.org/feed/',
-            'https://www.positive.news/feed/',
-            'https://www.upworthy.com/rss'
-          ];
+          const FEEDS = {
+          france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml'],
+          regions: ['https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml'],
+          sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss'],
+          innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.sciencesetavenir.com/rss.xml'],
+          ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/'],
+          sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml'],
+          education: ['https://www.lemonde.fr/education/rss_full.xml'],
+          culture: ['https://www.francetvinfo.fr/culture.rss', 'https://www.lefigaro.fr/rss/figaro_culture.xml']
+          };
           const CATS = ['france','regions','sport','innovation','ecologie','sante','education','culture'];
           function pick(re, s){
           const m = s.match(re);
           return m ? m[1] : '';
           }
           async function getHeadlines(){
-          let titles = [];
-          for (const url of FEEDS){
+          let news = [];
+          for (const cat of Object.keys(FEEDS)){
+          for (const url of FEEDS[cat]){
           try {
           const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' } });
           if (!r.ok) continue;
           const xml = await r.text();
-          const items = xml.split('<item').slice(1, 13);
+          const items = xml.split('<item').slice(1, 9);
           for (const it of items){
           const t = pick(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/is, it).trim();
-          if (t) titles.push(t.replace(/<[^>]+>/g, ''));
+          const l = pick(/<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/is, it).trim();
+          if (t) news.push({ title: t.replace(/<[^>]+>/g, ''), url: l || url, cat: cat });
           }
-          if (titles.length >= 10) break;
           } catch (e) {}
           }
-          return [...new Set(titles)].slice(0, 14);
+          }
+          const vus = new Set();
+          return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 60);
           }
           const headlines = await getHeadlines();
           let articles = [];
           if (headlines.length >= 3 && KEY){
-          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse internationale recus aujourd'hui :\n" + headlines.map(h => '- ' + h).join('\n') + "\n\nRedige 8 articles courts EN FRANCAIS, inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine en francais). Choisis la categorie la plus adaptee parmi : france, regions, sport, innovation, ecologie, sante, education, culture. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"readTime\":\"3 min\"}]}.";
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 8 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. Redige 8 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, education, culture. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}.";
           try {
           const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
           method: 'POST',
@@ -83,6 +91,7 @@ jobs:
           excerpt: String(a.excerpt || '').slice(0, 300),
           body: String(a.body || '').slice(0, 1200),
           source: String(a.source || 'Presse internationale').slice(0, 80),
+          sourceUrl: /^https?:\/\//.test(a.sourceUrl || '') ? a.sourceUrl : '',
           verified: true,
           date: dateFr,
           readTime: a.readTime || '3 min'
