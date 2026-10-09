@@ -90,7 +90,7 @@ jobs:
           title: String(a.title || '').slice(0, 140),
           excerpt: String(a.excerpt || '').slice(0, 300),
           body: String(a.body || '').slice(0, 1200),
-          source: String(a.source || 'Presse française').slice(0, 80),
+          source: String(a.source || 'Presse francaise').slice(0, 80),
           sourceUrl: /^https?:\/\//.test(a.sourceUrl || '') ? a.sourceUrl : '',
           verified: true,
           date: dateFr,
@@ -100,23 +100,28 @@ jobs:
           return '  ' + JSON.stringify(obj) + ',';
           }).join('\n');
           let html = fs.readFileSync('index.html', 'utf8');
-          const re = /(\/\/ AUTO-ARTICLES:START)([\s\S]*?)(\/\/ AUTO-ARTICLES:END)/;
-          if (!re.test(html)){
-          console.log('Marqueurs introuvables : abandon.');
-          process.exit(0);
+          const startTag = '// AUTO-ARTICLES:START';
+          const endTag = '// AUTO-ARTICLES:END';
+          const start = html.indexOf(startTag);
+          const end = html.indexOf(endTag);
+          if (start === -1 || end === -1){
+          console.log('Marqueurs introuvables dans index.html');
+          process.exit(1);
           }
-          html = html.replace(re, '$1\n' + entries.slice(0, -1) + '\n$3');
+          const block = startTag + '\nconst ARTICLES = [\n' + entries + '\n];\n' + endTag;
+          html = html.slice(0, start) + block + html.slice(end + endTag.length);
           fs.writeFileSync('index.html', html);
+          console.log('Articles generes : ' + articles.length + ' — ' + dateFr);
           SCRIPT_EOF
           node update.mjs
 
-      - name: Publier les articles
+      - name: Publier sur GitHub
         run: |
           git config user.name "robot-unbienfou"
           git config user.email "action@github.com"
           git add index.html
           if git diff --cached --quiet; then
-            echo "Aucun changement"
+            echo "Aucun changement aujourd'hui"
           else
             git commit -m "Articles du $(date +%d/%m/%Y)"
             git push
