@@ -35,19 +35,13 @@ jobs:
             status = 'ERREUR';
           }
           const ligne = today + ',' + status + ',' + articles + ',' + taille + ' Ko';
-          let fichier = 'date,statut,articles,taille\n';
-          if (fs.existsSync('stats.csv')) {
-            fichier = fs.readFileSync('stats.csv', 'utf8').trimEnd();
-            const lignes = fichier.split('\n');
-            if (lignes[0] && lignes[0].startsWith('date,')) {
-              const reste = lignes.filter(l => l && !l.startsWith(today + ','));
-              fichier = lignes[0] + '\n' + reste.join('\n') + '\n' + ligne;
-            } else {
-              fichier = 'date,statut,articles,taille\n' + lignes.filter(Boolean).join('\n') + '\n' + ligne;
-            }
-          } else {
-            fichier += ligne + '\n';
-          }
+          // Reconstruction propre du fichier : une seule ligne d'en-tete,
+          // suppression des doublons d'en-tete eventuels, remplacement du jour.
+          const brut = fs.existsSync('stats.csv') ? fs.readFileSync('stats.csv', 'utf8') : '';
+          const lignes = brut.split('\n').map(l => l.trim()).filter(Boolean);
+          const data = lignes.filter(l => !l.startsWith('date,'));
+          const historique = data.filter(l => !l.startsWith(today + ','));
+          const fichier = ['date,statut,articles,taille'].concat(historique, [ligne]).join('\n') + '\n';
           fs.writeFileSync('stats.csv', fichier);
           console.log('Mesure du jour : ' + ligne);
           SCRIPT_EOF
