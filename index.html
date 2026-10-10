@@ -233,9 +233,9 @@ function renderMain() {
         '<span style="font-size:.78rem;color:#94a3b8">\u2713 V\u00E9rifi\u00E9 \u00B7 ' + esc(hero.date) + " \u00B7 " + esc(hero.readTime) + " de lecture</span>" +
       "</div>" +
       '<div class="hero-side">' +
-        '<div class="mission"><h3>Notre mission</h3><p>Chaque jour, nos 14 agents IA collectent, r\u00E9digent et v\u00E9rifient les nouvelles qui font du bien en France. 100 % sourc\u00E9, 100 % gratuit.</p></div>' +
+        '<div class="mission"><h3>Notre mission</h3><p>Chaque jour, nos 4 agents IA collectent, r\u00E9digent et v\u00E9rifient les nouvelles qui font du bien en France. 100 % sourc\u00E9, 100 % gratuit.</p></div>' +
         '<div class="stats">' +
-          '<div class="stat"><b>14</b><span>agents IA</span></div>' +
+          '<div class="stat"><b>4</b><span>agents IA</span></div>' +
           '<div class="stat"><b>8</b><span>rubriques</span></div>' +
           '<div class="stat"><b>' + ARTICLES.length + "</b><span>articles</span></div>" +
         "</div>" +
@@ -279,7 +279,6 @@ function go(v) { view = v; renderNav(); renderMain(); window.scrollTo(0, 0); }
 document.getElementById("frub").textContent = CATEGORIES.map(function(c) { return c.name; }).join(" \u00B7 ");
 go("home");
 </script>
+<script data-goatcounter="https://unbienfou.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
-<script data-goatcounter="https://unbienfou.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
