@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generer les articles du jour
+      - name: Generer et verifier les articles du jour
         env:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: |
@@ -27,10 +27,10 @@ jobs:
           innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.sciencesetavenir.com/rss.xml'],
           ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/'],
           sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml'],
-          education: ['https://www.lemonde.fr/education/rss_full.xml'],
+          solidarite: ['https://www.positivr.fr/feed/', 'https://www.20minutes.fr/feeds/rss-societe.xml'],
           culture: ['https://www.francetvinfo.fr/culture.rss', 'https://www.lefigaro.fr/rss/figaro_culture.xml']
           };
-          const CATS = ['france','regions','sport','innovation','ecologie','sante','education','culture'];
+          const CATS = ['france','regions','sport','innovation','ecologie','sante','solidarite','culture'];
           function pick(re, s){
           const m = s.match(re);
           return m ? m[1] : '';
@@ -55,31 +55,51 @@ jobs:
           const vus = new Set();
           return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 60);
           }
-          const headlines = await getHeadlines();
-          let articles = [];
-          if (headlines.length >= 3 && KEY){
-          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 12 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. Redige 12 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, education, culture. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
-          try {
+          async function mistral(prompt){
           const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
           method: 'POST',
           headers: { 'content-type': 'application/json', authorization: 'Bearer ' + KEY },
           body: JSON.stringify({
           model: 'mistral-small-latest',
-          temperature: 0.4,
+          temperature: 0.3,
           response_format: { type: 'json_object' },
           messages: [{ role: 'user', content: prompt }]
           })
           });
           const j = await r.json();
-          const parsed = JSON.parse(j.choices && j.choices[0] && j.choices[0].message.content || '{}');
+          return JSON.parse(j.choices && j.choices[0] && j.choices[0].message.content || '{}');
+          }
+          const headlines = await getHeadlines();
+          let articles = [];
+          if (headlines.length >= 3 && KEY){
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 12 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. Redige 12 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, solidarite, culture. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
+          try {
+          const parsed = await mistral(prompt);
           articles = parsed.articles || [];
           } catch (e) {
-          console.log('Erreur IA : ' + e.message);
+          console.log('Erreur IA redaction : ' + e.message);
           }
           }
           if (!articles.length){
           console.log('Pas de nouvelles aujourd hui : on garde les articles existants.');
           process.exit(0);
+          }
+          // === AGENT VERIFICATEUR : 2e passe IA ===
+          if (articles.length && KEY){
+          try {
+          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente. Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
+          const v = await mistral(vPrompt);
+          const valides = (v.valid || []).map(Number).filter(n => n >= 1 && n <= articles.length);
+          if (valides.length >= 6){
+          const rejetes = articles.length - valides.length;
+          articles = valides.map(n => articles[n - 1]);
+          console.log('Verificateur : ' + valides.length + ' valides, ' + rejetes + ' rejetes.');
+          } else {
+          console.log('Verificateur : reponse trop restrictive, on publie sans filtre ce jour.');
+          }
+          } catch (e) {
+          console.log('Erreur IA verification : ' + e.message);
+          }
           }
           const dateFr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
           const entries = articles.slice(0, 12).map((a, i) => {
@@ -111,7 +131,7 @@ jobs:
           const block = startTag + '\nconst ARTICLES = [\n' + entries + '\n];\n' + endTag;
           html = html.slice(0, start) + block + html.slice(end + endTag.length);
           fs.writeFileSync('index.html', html);
-          console.log('Articles generes : ' + articles.length + ' — ' + dateFr);
+          console.log('Articles publies : ' + articles.length + ' — ' + dateFr);
           SCRIPT_EOF
           node update.mjs
 
