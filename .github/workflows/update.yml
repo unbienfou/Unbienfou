@@ -1,7 +1,7 @@
 name: Mise a jour quotidienne des articles
 on:
   schedule:
-    - cron: "0 5 * * *"
+    - cron: "0 5,15 * * *"
   workflow_dispatch:
 
 permissions:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generer et verifier les articles du jour
+      - name: Generer et verifier les articles de l edition
         env:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: |
@@ -81,7 +81,7 @@ jobs:
           }
           }
           if (!articles.length){
-          console.log('Pas de nouvelles aujourd hui : on garde les articles existants.');
+          console.log('Pas de nouvelles pour cette edition : on garde les articles existants.');
           process.exit(0);
           }
           // === AGENT VERIFICATEUR : 2e passe IA ===
@@ -102,7 +102,31 @@ jobs:
           }
           }
           const dateFr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
-          const entries = articles.slice(0, 12).map((a, i) => {
+          const heure = new Date().getUTCHours() + 2; // heure de Paris
+          const edition = heure >= 14 ? '17 h' : '7 h';
+          // === FUSION : nouvelles articles de l edition + anciens (max 16 au total) ===
+          let anciens = [];
+          let html = fs.readFileSync('index.html', 'utf8');
+          const startTag = '// AUTO-ARTICLES:START';
+          const endTag = '// AUTO-ARTICLES:END';
+          const start = html.indexOf(startTag);
+          const end = html.indexOf(endTag);
+          if (start === -1 || end === -1){
+          console.log('Marqueurs introuvables dans index.html');
+          process.exit(1);
+          }
+          const ancienBloc = html.slice(start + startTag.length, end);
+          try {
+          const m = ancienBloc.match(/const ARTICLES = (\[[\s\S]*?\]);/);
+          if (m) anciens = JSON.parse(m[1]);
+          } catch (e) {
+          console.log('Lecture des anciens articles impossible : nouvelle edition seule.');
+          }
+          const normaliser = t => String(t || '').toLowerCase().replace(/[^\wÀ-ÿ]/g, '');
+          const dejaLa = new Set(anciens.map(a => normaliser(a.title)));
+          const nouveaux = articles.filter(a => !dejaLa.has(normaliser(a.title)));
+          const tous = nouveaux.concat(anciens).slice(0, 24);
+          const entries = tous.slice(0, 24).map((a, i) => {
           const cat = CATS.includes(a.cat) ? a.cat : 'france';
           const obj = {
           id: i + 1,
@@ -113,25 +137,16 @@ jobs:
           source: String(a.source || 'Presse internationale').slice(0, 80),
           sourceUrl: /^https?:\/\//.test(a.sourceUrl || '') ? a.sourceUrl : '',
           verified: true,
-          date: dateFr,
+          date: a.date || dateFr,
           readTime: a.readTime || '3 min'
           };
           if (i === 0) obj.hero = true;
           return '  ' + JSON.stringify(obj) + ',';
           }).join('\n');
-          let html = fs.readFileSync('index.html', 'utf8');
-          const startTag = '// AUTO-ARTICLES:START';
-          const endTag = '// AUTO-ARTICLES:END';
-          const start = html.indexOf(startTag);
-          const end = html.indexOf(endTag);
-          if (start === -1 || end === -1){
-          console.log('Marqueurs introuvables dans index.html');
-          process.exit(1);
-          }
           const block = startTag + '\nconst ARTICLES = [\n' + entries + '\n];\n' + endTag;
           html = html.slice(0, start) + block + html.slice(end + endTag.length);
           fs.writeFileSync('index.html', html);
-          console.log('Articles publies : ' + articles.length + ' — ' + dateFr);
+          console.log('Edition ' + edition + ' publiee : ' + nouveaux.length + ' nouveaux, ' + tous.length + ' articles au total.');
           SCRIPT_EOF
           node update.mjs
 
@@ -141,8 +156,8 @@ jobs:
           git config user.email "action@github.com"
           git add index.html
           if git diff --cached --quiet; then
-            echo "Aucun changement aujourd'hui"
+            echo "Aucun changement"
           else
-            git commit -m "Articles du $(date +%d/%m/%Y)"
+            git commit -m "Edition $(date +%H)h du $(date +%d/%m/%Y)"
             git push
           fi
