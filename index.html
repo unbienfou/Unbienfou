@@ -79,6 +79,8 @@
   .nl input { flex:1; border:1px solid #3f3a35; background:#262220; color:#f5f1e8; border-radius:3px; padding:13px 16px; font-size:.92rem; font-family:var(--sans); }
   .nl button { border:none; background:var(--gold-bg); color:#fff; font-weight:700; border-radius:3px; padding:13px 24px; cursor:pointer; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; }
   .nl button:hover { background:var(--gold); }
+  .nlbtn { border:none; background:var(--gold-bg); color:#fff; font-weight:700; border-radius:3px; padding:14px 30px; cursor:pointer; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; }
+  .nlbtn:hover { background:var(--gold); }
   .nl-ok { flex:1; min-width:270px; font-size:.95rem; line-height:1.6; color:#f5f1e8; background:#2f2a26; border:1px solid #3f3a35; border-radius:6px; padding:18px 22px; }
 
   /* ——— Article (modale) ——— */
@@ -230,19 +232,12 @@ function cardHTML(a) {
   "</div>";
 }
 
+var BREVO_URL = "https://9ff52e8c.sibforms.com/serve/MUIFAEmreW3M7r1ekLheX77a7iok_xettJ1ak-01-A0Gip_ROjzNOwW7T1tJVL88isa8BpbNMx2GlChov3v_ks3zQ43PmQBi2egAyMewEdRGy8pTLnKgS9bNUOzHt_fFDfLWzPrqTs2gHRsXSw2E_Nc5czTmLMG6zifGSFpCJw07Wtv9dBR4mjaQcLGU_1_X0CgN7MdZyGRKHTKxgg==";
+
 function newsletterHTML() {
   return '<div class="nl">' +
     '<div><h3>La bonne humeur dans votre boîte mail ☀️</h3><p>Chaque matin, une sélection des actualités qui font du bien — issues de nos éditions de 7h et 17h. Gratuit, sans spam.</p></div>' +
-    '<form class="nlform" onsubmit="return nlOk(this);">' +
-    '<input type="email" required placeholder="votre@email.fr">' +
-    '<button type="submit">S’abonner</button></form></div>';
-}
-
-function nlOk(form) {
-  var mail = form.querySelector("input").value;
-  var parent = form.parentNode;
-  parent.innerHTML = '<div class="nl-ok">✓ <strong>Merci, c’est noté !</strong> Votre première sélection arrive demain à 7h, puis chaque jour avec le meilleur de nos éditions de 7h et 17h ☀️</div>';
-  return false;
+    '<button class="nlbtn" onclick="window.open(BREVO_URL, \'_blank\')">S’abonner</button></div>';
 }
 
 function pageHTML() {
