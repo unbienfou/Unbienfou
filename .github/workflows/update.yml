@@ -16,6 +16,8 @@ jobs:
       - name: Generer et verifier les articles de l edition
         env:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_LIST_ID: ${{ secrets.BREVO_LIST_ID }}
         run: |
           cat > update.mjs <<'SCRIPT_EOF'
           import fs from 'fs';
@@ -149,6 +151,54 @@ jobs:
           html = html.slice(0, start) + block + html.slice(end + endTag.length);
           fs.writeFileSync('index.html', html);
           console.log('Edition ' + edition + ' publiee : ' + nouveaux.length + ' nouveaux, ' + tous.length + ' articles au total.');
+
+          // === NEWSLETTER : envoi du meilleur de l edition a 7h ===
+          const BREVO = process.env.BREVO_API_KEY || '';
+          const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
+          if (BREVO && LIST_ID && edition === '7 h'){
+          try {
+          const contactsRes = await fetch('https://api.brevo.com/v3/contacts/lists/' + LIST_ID + '/contacts?limit=50&offset=0', {
+          headers: { 'api-key': BREVO }
+          });
+          const cj = await contactsRes.json();
+          const emails = (cj.contacts || []).map(c => c.email).filter(Boolean);
+          if (emails.length){
+          const top3 = tous.slice(0, 3);
+          const objet = '☀️ Votre dose de bonnes nouvelles du ' + dateFr;
+          const htmlMail = '<div style="font-family:Georgia,serif;background:#faf8f3;padding:32px;text-align:center;">' +
+          '<h2 style="color:#1c1917;letter-spacing:.06em;text-transform:uppercase;font-size:.8rem;margin-bottom:6px;">Un bien fou</h2>' +
+          '<h1 style="color:#b45309;margin:0 0 24px;font-size:1.5em;">Les bonnes nouvelles du jour ☀️</h1>' +
+          top3.map((a, i) => '<div style="background:#fffdf9;border:1px solid #e9e2d4;border-radius:8px;padding:20px 24px;margin:0 auto 16px;max-width:520px;text-align:left;">' +
+          '<p style="font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#059669;font-weight:700;margin:0 0 8px;">✓ Vérifié · ' + (a.cat || '') + '</p>' +
+          '<p style="font-size:1.05em;font-weight:700;color:#1c1917;margin:0 0 10px;">' + String(a.title || '').slice(0, 140) + '</p>' +
+          '<p style="font-size:.9em;color:#44403c;margin:0 0 14px;">' + String(a.excerpt || '').slice(0, 180) + '</p>' +
+          '<a href="https://www.unbienfou.fr" style="background:#1c1917;color:#faf8f3;text-decoration:none;padding:10px 18px;border-radius:4px;font-size:.8rem;font-family:Arial,sans-serif;">Lire sur Un bien fou →</a>' +
+          '</div>').join('') +
+          '<p style="color:#8a8177;font-size:.75rem;margin-top:28px;font-family:Arial,sans-serif;">Chaque jour à 7h · <a href="https://www.unbienfou.fr" style="color:#b45309;">unbienfou.fr</a></p>' +
+          '<p style="color:#b8b0a4;font-size:.68rem;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>' +
+          '</div>';
+          for (const email of emails){
+          await fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: { 'api-key': BREVO, 'content-type': 'application/json' },
+          body: JSON.stringify({
+          sender: { name: 'Un bien fou', email: 'unbienfou.media@gmail.com' },
+          to: [{ email: email }],
+          subject: objet,
+          htmlContent: htmlMail
+          })
+          });
+          }
+          console.log('Newsletter envoyee a ' + emails.length + ' abonne(s).');
+          } else {
+          console.log('Aucun abonne pour le moment : newsletter non envoyee.');
+          }
+          } catch (e) {
+          console.log('Erreur newsletter Brevo : ' + e.message);
+          }
+          } else if (edition === '17 h') {
+          console.log('Edition du soir : pas de newsletter (envoi uniquement a 7h).');
+          }
           SCRIPT_EOF
           node update.mjs
 
