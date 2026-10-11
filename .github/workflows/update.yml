@@ -21,17 +21,18 @@ jobs:
           import fs from 'fs';
           const KEY = process.env.MISTRAL_API_KEY || '';
           const FEEDS = {
-          france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml'],
-          regions: ['https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml'],
-          sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss'],
-          badminton: ['https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr'],
-          innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.sciencesetavenir.com/rss.xml'],
-          ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/'],
-          sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml'],
-          solidarite: ['https://www.positivr.fr/feed/', 'https://www.20minutes.fr/feeds/rss-societe.xml'],
-          culture: ['https://www.francetvinfo.fr/culture.rss', 'https://www.lefigaro.fr/rss/figaro_culture.xml']
+          france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml', 'https://www.lafranceagricole.fr/rss/flux.xml', 'https://www.francetvinfo.fr/societe.rss', 'https://www.leparisien.fr/services/rss//rss-une.xml'],
+          regions: ['https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml', 'https://www.ledauphine.com/rss.xml', 'https://www.ladepeche.fr/rss/actualites.xml', 'https://www.ouest-france.fr/feeds/rss/une-toute', 'https://www.maville.com/rss.xml'],
+          sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss', 'https://rmcsport.bfmtv.com/rss/football/', 'https://www.francebleu.fr/feeds/rss/sports.rss', 'https://rmcsport.bfmtv.com/rss/tennis/', 'https://www.eurosport.fr/rss.xml'],
+          badminton: ['https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+victoire+OR+championnat+OR+tournoi&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+badminton&hl=fr&gl=FR&ceid=FR:fr'],
+          innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.sciencesetavenir.com/rss.xml', 'https://www.cnrs.fr/rss/lesoresdufutur.xml', 'https://www.usine-digitale.com/rss.xml', 'https://www.pourlascience.fr/rss.xml'],
+          ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/', 'https://www.goodplanet.org/feed/', 'https://www.notre-planete.info/rss.xml', 'https://www.chasseurimages.com/rss.xml'],
+          sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml', 'https://www.passeportsante.net/rss/rss.xml', 'https://www.francetvinfo.fr/sante.rss', 'https://sante.lefigaro.fr/rss/figaro_sante.xml'],
+          solidarite: ['https://www.positivr.fr/feed/', 'https://www.20minutes.fr/feeds/rss-societe.xml', 'https://www.goodinfonews.com/rss.xml', 'https://www.huffingtonpost.fr/feeds/index.xml', 'https://reporterre.net/feed/'],
+          culture: ['https://www.francetvinfo.fr/culture.rss', 'https://www.lefigaro.fr/rss/figaro_culture.xml', 'https://www.franceinter.fr/rss.xml', 'https://www.telerama.fr/rss/television.xml', 'https://www.lesinrocks.com/feed/'],
+          insolite: ['https://www.francetvinfo.fr/insolite.rss', 'https://www.20minutes.fr/feeds/rss-insolite.xml', 'https://www.maxisciences.com/rss.xml']
           };
-          const CATS = ['france','regions','sport','badminton','innovation','ecologie','sante','solidarite','culture'];
+          const CATS = ['france','regions','sport','badminton','innovation','ecologie','sante','solidarite','culture','insolite'];
           function pick(re, s){
           const m = s.match(re);
           return m ? m[1] : '';
@@ -54,7 +55,7 @@ jobs:
           }
           }
           const vus = new Set();
-          return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 60);
+          return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 80);
           }
           async function mistral(prompt){
           const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
@@ -73,7 +74,7 @@ jobs:
           const headlines = await getHeadlines();
           let articles = [];
           if (headlines.length >= 3 && KEY){
-          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 12 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. S'il y a une bonne nouvelle de BADMINTON, garde-la absolument et mets-la dans la categorie badminton. Redige 12 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, badminton, innovation, ecologie, sante, solidarite, culture. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 16 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. S'il y a une bonne nouvelle de BADMINTON, garde-la absolument et mets-la dans la categorie badminton. Redige 16 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, badminton, innovation, ecologie, sante, solidarite, culture, insolite. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
           try {
           const parsed = await mistral(prompt);
           articles = parsed.articles || [];
@@ -105,7 +106,7 @@ jobs:
           const dateFr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
           const heure = new Date().getUTCHours() + 2; // heure de Paris
           const edition = heure >= 14 ? '17 h' : '7 h';
-          // === FUSION : nouvelles articles de l edition + anciens (max 24 au total) ===
+          // === FUSION : nouvelles articles de l edition + anciens (max 40 au total) ===
           let anciens = [];
           let html = fs.readFileSync('index.html', 'utf8');
           const startTag = '// AUTO-ARTICLES:START';
@@ -126,8 +127,8 @@ jobs:
           const normaliser = t => String(t || '').toLowerCase().replace(/[^\wÀ-ÿ]/g, '');
           const dejaLa = new Set(anciens.map(a => normaliser(a.title)));
           const nouveaux = articles.filter(a => !dejaLa.has(normaliser(a.title)));
-          const tous = nouveaux.concat(anciens).slice(0, 24);
-          const entries = tous.slice(0, 24).map((a, i) => {
+          const tous = nouveaux.concat(anciens).slice(0, 40);
+          const entries = tous.slice(0, 40).map((a, i) => {
           const cat = CATS.includes(a.cat) ? a.cat : 'france';
           const obj = {
           id: i + 1,
