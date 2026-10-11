@@ -24,13 +24,14 @@ jobs:
           france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml'],
           regions: ['https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml'],
           sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss'],
+          badminton: ['https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr'],
           innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.sciencesetavenir.com/rss.xml'],
           ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/'],
           sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml'],
           solidarite: ['https://www.positivr.fr/feed/', 'https://www.20minutes.fr/feeds/rss-societe.xml'],
           culture: ['https://www.francetvinfo.fr/culture.rss', 'https://www.lefigaro.fr/rss/figaro_culture.xml']
           };
-          const CATS = ['france','regions','sport','innovation','ecologie','sante','solidarite','culture'];
+          const CATS = ['france','regions','sport','badminton','innovation','ecologie','sante','solidarite','culture'];
           function pick(re, s){
           const m = s.match(re);
           return m ? m[1] : '';
@@ -40,7 +41,7 @@ jobs:
           for (const cat of Object.keys(FEEDS)){
           for (const url of FEEDS[cat]){
           try {
-          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' } });
+          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' } });
           if (!r.ok) continue;
           const xml = await r.text();
           const items = xml.split('<item').slice(1, 9);
@@ -72,7 +73,7 @@ jobs:
           const headlines = await getHeadlines();
           let articles = [];
           if (headlines.length >= 3 && KEY){
-          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 12 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. Redige 12 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, solidarite, culture. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 12 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. S'il y a une bonne nouvelle de BADMINTON, garde-la absolument et mets-la dans la categorie badminton. Redige 12 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, badminton, innovation, ecologie, sante, solidarite, culture. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
           try {
           const parsed = await mistral(prompt);
           articles = parsed.articles || [];
@@ -87,7 +88,7 @@ jobs:
           // === AGENT VERIFICATEUR : 2e passe IA ===
           if (articles.length && KEY){
           try {
-          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente. Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
+          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente (une histoire de badminton doit rester en categorie badminton). Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
           const v = await mistral(vPrompt);
           const valides = (v.valid || []).map(Number).filter(n => n >= 1 && n <= articles.length);
           if (valides.length >= 6){
@@ -104,7 +105,7 @@ jobs:
           const dateFr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
           const heure = new Date().getUTCHours() + 2; // heure de Paris
           const edition = heure >= 14 ? '17 h' : '7 h';
-          // === FUSION : nouvelles articles de l edition + anciens (max 16 au total) ===
+          // === FUSION : nouvelles articles de l edition + anciens (max 24 au total) ===
           let anciens = [];
           let html = fs.readFileSync('index.html', 'utf8');
           const startTag = '// AUTO-ARTICLES:START';
