@@ -122,7 +122,7 @@ jobs:
           const ancienBloc = html.slice(start + startTag.length, end);
           try {
           const m = ancienBloc.match(/const ARTICLES = (\[[\s\S]*?\]);/);
-          if (m) anciens = JSON.parse(m[1]);
+          if (m) anciens = JSON.parse(m[1].replace(/,\s*\]/g, ']'));
           } catch (e) {
           console.log('Lecture des anciens articles impossible : nouvelle edition seule.');
           }
