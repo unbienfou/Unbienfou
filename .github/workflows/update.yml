@@ -26,13 +26,13 @@ jobs:
           france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml', 'https://www.lafranceagricole.fr/rss/flux.xml', 'https://www.francetvinfo.fr/societe.rss', 'https://www.leparisien.fr/services/rss//rss-une.xml'],
           regions: ['https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml', 'https://www.ledauphine.com/rss.xml', 'https://www.ladepeche.fr/rss/actualites.xml', 'https://www.ouest-france.fr/feeds/rss/une-toute', 'https://www.maville.com/rss.xml'],
           sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss', 'https://rmcsport.bfmtv.com/rss/football/', 'https://www.francebleu.fr/feeds/rss/sports.rss', 'https://rmcsport.bfmtv.com/rss/tennis/', 'https://www.eurosport.fr/rss.xml'],
-          badminton: ['https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+victoire+OR+championnat+OR+tournoi&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+badminton&hl=fr&gl=FR&ceid=FR:fr'],
+          badminton: ['https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+victoire+OR+championnat+OR+tournoi&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+badminton&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+fran%C3%A7ais+OR+fran%C3%A7aise+r%C3%A9sultat&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+club+OR+jeunes+OR+espoirs&hl=fr&gl=FR&ceid=FR:fr'],
           innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.sciencesetavenir.com/rss.xml', 'https://www.cnrs.fr/rss/lesoresdufutur.xml', 'https://www.usine-digitale.com/rss.xml', 'https://www.pourlascience.fr/rss.xml'],
           ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/', 'https://www.goodplanet.org/feed/', 'https://www.notre-planete.info/rss.xml', 'https://www.chasseurimages.com/rss.xml'],
           sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml', 'https://www.passeportsante.net/rss/rss.xml', 'https://www.francetvinfo.fr/sante.rss', 'https://sante.lefigaro.fr/rss/figaro_sante.xml'],
           solidarite: ['https://www.positivr.fr/feed/', 'https://www.20minutes.fr/feeds/rss-societe.xml', 'https://www.goodinfonews.com/rss.xml', 'https://www.huffingtonpost.fr/feeds/index.xml', 'https://reporterre.net/feed/'],
           culture: ['https://www.francetvinfo.fr/culture.rss', 'https://www.lefigaro.fr/rss/figaro_culture.xml', 'https://www.franceinter.fr/rss.xml', 'https://www.telerama.fr/rss/television.xml', 'https://www.lesinrocks.com/feed/'],
-          insolite: ['https://www.francetvinfo.fr/insolite.rss', 'https://www.20minutes.fr/feeds/rss-insolite.xml', 'https://www.maxisciences.com/rss.xml']
+          insolite: ['https://www.francetvinfo.fr/insolite.rss', 'https://www.20minutes.fr/feeds/rss-insolite.xml', 'https://www.maxisciences.com/rss.xml', 'https://news.google.com/rss/search?q=insolite+France+%22bonne+nouvelle%22+OR+cocasse+OR+%C3%A9mouvant&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=histoire+insolite+positive+OR+touchante+OR+d%C3%A9couverte&hl=fr&gl=FR&ceid=FR:fr']
           };
           const CATS = ['france','regions','sport','badminton','innovation','ecologie','sante','solidarite','culture','insolite'];
           function pick(re, s){
@@ -47,7 +47,7 @@ jobs:
           const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' } });
           if (!r.ok) continue;
           const xml = await r.text();
-          const items = xml.split('<item').slice(1, 9);
+          const items = xml.split('<item').slice(1, 14);
           for (const it of items){
           const t = pick(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/is, it).trim();
           const l = pick(/<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/is, it).trim();
@@ -57,7 +57,7 @@ jobs:
           }
           }
           const vus = new Set();
-          return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 80);
+          return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 140);
           }
           async function mistral(prompt){
           const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
@@ -76,7 +76,7 @@ jobs:
           const headlines = await getHeadlines();
           let articles = [];
           if (headlines.length >= 3 && KEY){
-          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 16 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. S'il y a une bonne nouvelle de BADMINTON, garde-la absolument et mets-la dans la categorie badminton. Redige 16 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, badminton, innovation, ecologie, sante, solidarite, culture, insolite. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 16 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. S'il y a une bonne nouvelle de BADMINTON, garde-la absolument et mets-la dans la categorie badminton. Redige 16 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, source = nom du media d'origine). COUVERTURE OBLIGATOIRE : veille a proposer au moins 1 article pour chaque rubrique presente dans les titres ci-dessus ; si une rubrique n'a aucun titre exploitable ce jour, ne la force pas (n'invente rien). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, badminton, innovation, ecologie, sante, solidarite, culture, insolite. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
           try {
           const parsed = await mistral(prompt);
           articles = parsed.articles || [];
@@ -151,6 +151,14 @@ jobs:
           html = html.slice(0, start) + block + html.slice(end + endTag.length);
           fs.writeFileSync('index.html', html);
           console.log('Edition ' + edition + ' publiee : ' + nouveaux.length + ' nouveaux, ' + tous.length + ' articles au total.');
+          // === CONTROLE DE COUVERTURE : signaler les rubriques sans article ===
+          const catsPresentes = new Set(tous.map(a => a.cat));
+          const manquantes = CATS.filter(c => !catsPresentes.has(c));
+          if (manquantes.length){
+          console.log('Rubriques sans article apres fusion : ' + manquantes.join(', ') + ' (elargissement des sources prevu).');
+          } else {
+          console.log('Couverture complete : les ' + CATS.length + ' rubriques ont au moins un article.');
+          }
 
           // === NEWSLETTER : envoi du meilleur de l edition a 7h ===
           const BREVO = process.env.BREVO_API_KEY || '';
