@@ -183,7 +183,7 @@ jobs:
           const vivants = feedHealth.filter(f => f.items > 0);
           console.log('BILAN FLUX : ' + vivants.length + ' flux actifs, ' + morts.length + ' flux muets/erreurs sur ' + feedHealth.length + '.');
           if (morts.length) console.log('Flux a remplacer : ' + morts.join(' | '));
-          const parCat: any = {};
+          const parCat = {};
           vivants.forEach(f => { parCat[f.cat] = (parCat[f.cat] || 0); });
           const catsSansFluxActif = ['france','regions','sport','badminton','innovation','ecologie','sante','solidarite','culture','insolite'].filter(c => !parCat[c]);
           if (catsSansFluxActif.length) console.log('ATTENTION : aucune source active pour : ' + catsSansFluxActif.join(', '));
