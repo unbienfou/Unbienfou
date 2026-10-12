@@ -35,13 +35,13 @@ jobs:
           insolite: ['https://www.francetvinfo.fr/insolite.rss', 'https://www.20minutes.fr/feeds/rss-insolite.xml', 'https://www.maxisciences.com/rss.xml', 'https://news.google.com/rss/search?q=insolite+France+%22bonne+nouvelle%22+OR+cocasse+OR+%C3%A9mouvant&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=histoire+insolite+positive+OR+touchante+OR+d%C3%A9couverte&hl=fr&gl=FR&ceid=FR:fr']
           };
           const CATS = ['france','regions','sport','badminton','innovation','ecologie','sante','solidarite','culture','insolite'];
+          const feedHealth = [];
           function pick(re, s){
           const m = s.match(re);
           return m ? m[1] : '';
           }
           async function getHeadlines(){
           let news = [];
-          const feedHealth = [];
           for (const cat of Object.keys(FEEDS)){
           for (const url of FEEDS[cat]){
           try {
