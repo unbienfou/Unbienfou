@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Un bien fou — Le journal des nouvelles qui font du bien</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23faf8f3'/%3E%3Ccircle cx='32' cy='38' r='11' fill='%23d97706'/%3E%3Cpath d='M10 46 Q32 24 54 46' stroke='%2310b981' stroke-width='4' fill='none'/%3E%3Crect x='14' y='50' width='36' height='5' rx='2.5' fill='%2310b981'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Crect width='240' height='240' rx='70' fill='%23f4b37e'/%3E%3Crect x='106' y='56' width='24' height='102' rx='12' fill='%23527055'/%3E%3Cpath d='M 130 106 q 28 -2 28 -26 q 0 -10 10 -10 q 9 0 9 10 q 0 40 -47 40 z' fill='%23527055'/%3E%3C/svg%3E">
 <meta name="description" content="Un bien fou : le média de journalisme de solutions. Des nouvelles qui font du bien, vérifiées, 100 % gratuites.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,8 +25,8 @@
 
   .masthead { background:var(--paper); border-bottom:1px solid var(--hair2); }
   .mh-top { display:flex; justify-content:space-between; font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); max-width:1120px; margin:0 auto; padding:10px 20px 0; }
-  .mh-brand { display:flex; flex-direction:column; align-items:center; gap:6px; padding:18px 16px 14px; cursor:pointer; }
-  .mh-brand svg { width:52px; height:26px; }
+  .mh-brand { display:flex; flex-direction:column; align-items:center; gap:10px; padding:18px 16px 14px; cursor:pointer; }
+  .mh-brand svg { width:58px; height:58px; }
   .mh-title { font-family:var(--serif); font-weight:800; font-size:2.6rem; letter-spacing:.01em; line-height:1; }
   .mh-tag { font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); text-align:center; padding:0 16px 16px; }
   .sections { position:sticky; top:0; z-index:50; background:var(--card); border-top:1px solid var(--hair2); border-bottom:3px double var(--ink); box-shadow:0 4px 14px rgba(28,25,23,.05); }
@@ -106,7 +106,7 @@
   .fgrid { max-width:1120px; margin:0 auto; padding:44px 20px; display:grid; grid-template-columns:repeat(3,1fr); gap:36px; font-size:.86rem; color:var(--muted); line-height:1.7; }
   @media (max-width:800px){ .fgrid { grid-template-columns:1fr; } }
   .fgrid .fb { display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:800; font-size:1.15rem; color:var(--ink); }
-  .fgrid .fb svg { width:44px; height:22px; }
+  .fgrid .fb svg { width:32px; height:32px; }
   .fgrid h4 { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); margin-bottom:12px; }
   .fbottom { border-top:1px solid var(--hair); text-align:center; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:18px; }
   .factions button { display:inline-block; border:none; background:none; color:var(--gold); cursor:pointer; font-size:.86rem; padding:0; margin-right:16px; text-decoration:underline; }
@@ -120,22 +120,30 @@
       <span id="today"></span>
     </div>
     <div class="mh-brand" onclick="go('home')">
-      <svg viewBox="0 0 260 130">
+      <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Un bien fou">
         <defs>
-          <linearGradient id="sunG" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#0d9488"/><stop offset="45%" stop-color="#34d399"/>
-            <stop offset="80%" stop-color="#fcd34d"/><stop offset="100%" stop-color="#d97706"/>
-          </linearGradient>
-          <linearGradient id="lineG" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#d97706"/><stop offset="100%" stop-color="#10b981"/>
+          <radialGradient id="solBrand" cx="50%" cy="100%" r="92%">
+            <stop offset="0%" stop-color="#f0a56a"/><stop offset="55%" stop-color="#f8c491"/><stop offset="100%" stop-color="#ffe8cd"/>
+          </radialGradient>
+          <radialGradient id="haloBrand" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f8c491" stop-opacity="0.55"/><stop offset="100%" stop-color="#f8c491" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="cacBrand" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#8aa882"/><stop offset="50%" stop-color="#6d8f68"/><stop offset="100%" stop-color="#527055"/>
           </linearGradient>
         </defs>
-        <rect x="20" y="78" width="220" height="10" rx="5" fill="url(#lineG)"/>
-        <path d="M70,78 A60,60 0 0 1 190,78 L190,78 Q130,94 70,78 Z" fill="url(#sunG)"/>
-        <g stroke="url(#sunG)" stroke-width="9" stroke-linecap="round">
-          <line x1="45" y1="52" x2="58" y2="42"/><line x1="130" y1="30" x2="130" y2="16"/><line x1="215" y1="52" x2="202" y2="42"/>
+        <rect width="240" height="240" rx="60" fill="#fdf3e4" stroke="#f0dfc2" stroke-width="2"/>
+        <circle cx="120" cy="160" r="80" fill="url(#haloBrand)"/>
+        <path d="M 60 160 A 58 58 0 0 1 176 160 Z" fill="url(#solBrand)"/>
+        <path d="M 84 160 A 34 34 0 0 1 152 160" fill="none" stroke="#fff3de" stroke-width="5" stroke-linecap="round" opacity="0.75"/>
+        <path d="M 52 161 Q 118 154 184 161" fill="none" stroke="#8a6547" stroke-width="2.6" stroke-linecap="round"/>
+        <g fill="url(#cacBrand)">
+          <rect x="106" y="74" width="24" height="84" rx="12"/>
+          <path d="M 106 118 q -28 -2 -28 -21 q 0 -10 10 -10 q 9 0 9 10 q 0 6 9 8 z"/>
+          <path d="M 130 106 q 28 -2 28 -26 q 0 -10 10 -10 q 9 0 9 10 q 0 40 -47 40 z"/>
         </g>
-        <path d="M97,78 A33,33 0 0 1 163,78" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="118" cy="66" r="6" fill="#e88a6a"/>
+        <circle cx="118" cy="66" r="2.4" fill="#fff3de"/>
       </svg>
       <span class="mh-title">Un&nbsp;bien&nbsp;fou</span>
     </div>
@@ -150,7 +158,7 @@
   <div class="fgrid">
     <div>
       <div class="fb">
-        <svg viewBox="0 0 260 130"><rect x="20" y="78" width="220" height="10" rx="5" fill="#d97706"/><path d="M70,78 A60,60 0 0 1 190,78 L190,78 Q130,94 70,78 Z" fill="#10b981"/></svg>
+        <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"><rect width="240" height="240" rx="60" fill="#fdf3e4"/><path d="M 60 160 A 58 58 0 0 1 176 160 Z" fill="#f4b37e"/><g fill="#6d8f68"><rect x="106" y="74" width="24" height="84" rx="12"/><path d="M 106 118 q -28 -2 -28 -21 q 0 -10 10 -10 q 9 0 9 10 q 0 6 9 8 z"/><path d="M 130 106 q 28 -2 28 -26 q 0 -10 10 -10 q 9 0 9 10 q 0 40 -47 40 z"/></g></svg>
         Un bien fou
       </div>
       <p style="margin-top:12px;">Le média qui fait du bien : journalisme de solutions, 100 % gratuit, financé par la publicité.</p>
@@ -213,7 +221,7 @@ const ARTICLES = [
   {"id":14,"cat":"france","title":"Les tickets-restaurant désormais utilisables en supermarché : une avancée pour les salariés","excerpt":"L'Assemblée nationale a adopté un texte pérennisant l'utilisation des tickets-restaurant en supermarché. Cette mesure simplifie le quotidien des travailleurs et s'inscrit dans une logique de flexibilité économique.","body":"Depuis ce lundi, les salariés français peuvent utiliser leurs tickets-restaurant pour faire leurs courses en supermarché, une mesure longtemps attendue. Cette décision, saluée par les syndicats, répond à une demande croissante de praticité. Les enseignes concernées se réjouissent de cette évolution qui devrait fluidifier les achats du quotidien. Une belle avancée pour l'équilibre entre vie professionnelle et personnelle.","source":"Franceinfo","sourceUrl":"https://www.franceinfo.fr/economie/l-assemblee-nationale-a-adopte-un-texte-perennisant-l-utilisation-des-tickets-resto-en-supermarche_8234434.html","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":15,"cat":"solidarite","title":"Des motards redonnent confiance aux femmes victimes de violences en Seine-et-Marne","excerpt":"Une initiative originale en Seine-et-Marne permet à des femmes victimes de violences de retrouver confiance grâce à des rencontres avec des motards bienveillants. Une belle démonstration de solidarité.","body":"Dans le département de Seine-et-Marne, une association de motards a lancé un projet pour soutenir les femmes victimes de violences. Ces rencontres, baptisées « Des nounours au cœur tendre », offrent un espace d'échange et de réconfort. Les participantes soulignent l'impact positif de ces moments partagés, qui leur permettent de se reconstruire. Une initiative qui montre comment la solidarité peut transformer des vies.","source":"Actu.fr","sourceUrl":"https://actu.fr/ile-de-france/mitry-mory_77294/des-nounours-au-coeur-tendre-en-seine-et-marne-des-motards-redonnent-confiance-aux-femmes-victimes-de-violences_64914810.html","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":16,"cat":"sport","title":"Gabby Williams et les Françaises de Golden State qualifiées pour la finale de la WNBA","excerpt":"L'équipe de basket féminine de Golden State, avec à sa tête la Française Gabby Williams, s'est qualifiée pour la finale de la WNBA. Une performance historique pour le sport français.","body":"Gabby Williams et ses coéquipières de Golden State ont réalisé un exploit en se qualifiant pour la finale de la WNBA. Cette performance marque l'histoire du basket français et inspire les jeunes joueuses. Les supporters français suivent avec passion cette aventure sportive, qui montre la vitalité du sport féminin. Une belle démonstration de talent et de détermination.","source":"RMC Sport","sourceUrl":"https://rmcsport.bfmtv.com/basket/feminin/wnba-gabby-williams-et-les-francaises-de-golden-state-qualifiees-pour-la-finale_AN-202610100147.html","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
-  {"id":17,"cat":"innovation","title":"Le grand plan de relance européen a profité aux Vingt-Sept : un bilan positif","excerpt":"Le plan de relance européen, doté de plus de 600 milliards d'euros, a permis de dynamiser l'économie des Vingt-Sept. Une initiative saluée pour son impact concret.","body":"Le grand plan de relance européen, lancé en 2020, a permis de soutenir l'économie des Vingt-Sept avec plus de 600 milliards d'euros. Selon les analystes, ce plan a eu un impact positif sur la croissance et l'emploi. Les États membres saluent cette initiative, qui a permis de faire face aux défis économiques post-pandémie. Une belle preuve de la solidarité européenne.","source":"France 24","sourceUrl":"https://www.france24.com/fr/europe/20261012-comment-le-plan-de-plus-de-600-milliards-d-euros-a-t-il-relanc%C3%A9-l-europe","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
+  {"id":17,"cat":"innovation","title":"Le grand plan de relance européen a profité aux Vingt-Sept : un bilan positif","excerpt":"Le plan de relance européen, doté de plus de 600 milliards d'euros, a permis de dynamiser l'économie des Vingt-Sept. Une initiative saluée pour son impact concret.","body":"Le grand plan de relance européen, lancé en 2020, a permis de soutenir l'économie des Vingt-Sept avec plus de 600 milliards d'euros. Selon les analystes, ce plan a eu un impact positif sur la croissance et l'emploi. Les États membres saluent cette initiative, qui a permis de faire face aux défis économiques post-pandémie. Une belle preuve de la solidarité européenne.","source":"France 24","sourceUrl":"https://www.france24.com/fr/europe/20261012-comment-le-plan-de-plus-de-600-milliards-d-euros-a-t-il-relanc%C3%A9-leurope","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":18,"cat":"sante","title":"Un soldat inconnu de Normandie enfin identifié après 82 ans : une émotion partagée","excerpt":"Un soldat inconnu, inhumé en Normandie pendant 82 ans, a enfin été identifié. Une découverte qui a ému les familles et les historiens.","body":"En Normandie, une découverte historique a permis d'identifier un soldat inconnu inhumé pendant 82 ans. Les familles des disparus et les historiens ont été profondément émus par cette identification. Cette nouvelle offre une réponse à des questions restées sans réponse pendant des décennies. Une belle preuve que la mémoire et l'histoire peuvent être honorées.","source":"Actu.fr","sourceUrl":"https://actu.fr/normandie/valdalliere_14726/inhume-en-normandie-comme-soldat-inconnu-pendant-82-ans-il-est-finalement-identifie-nous-sommes-tres-emus_64913722.html","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":19,"cat":"culture","title":"Tony Estanguet se lance dans l'organisation d'événements sportifs : une nouvelle vie pour l'ancien champion","excerpt":"Tony Estanguet, triple champion olympique de canoë, a choisi de se reconvertir dans l'organisation d'événements sportifs. Une transition réussie pour ce passionné.","body":"Après une carrière sportive exceptionnelle, Tony Estanguet a décidé de se lancer dans l'organisation d'événements sportifs. Cette nouvelle aventure lui permet de partager sa passion et son expérience avec le public. Les organisateurs saluent son dynamisme et son engagement. Une belle preuve que la passion peut prendre de nouvelles formes après une carrière sportive.","source":"Ouest-France","sourceUrl":"https://www.ouest-france.fr/jeux-olympiques/entretien-c-est-une-nouvelle-vie-pour-moi-tony-estanguet-se-lance-dans-lorganisation-devenements-sportifs-b7acd91a-c63e-11f1-92e9-819eb738846b","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":20,"cat":"regions","title":"Flotte fantôme : la Marine française démantèle un réseau de transport illicite de carburants près de La Réunion","excerpt":"Un coup dur pour les trafics illégaux en mer. Emmanuel Macron a annoncé l'arraisonnement d'un pétrolier impliqué dans des activités frauduleuses.","body":"Cette opération, menée par la Marine nationale, illustre l'engagement de la France contre les trafics en mer et la protection de ses eaux territoriales. Le navire, saisi avec des milliers de litres de carburant illicite, sera désormais sous contrôle judiciaire. Une victoire pour la sécurité maritime et l'environnement, qui rappelle l'importance de la vigilance contre les réseaux criminels.","source":"La Dépêche","sourceUrl":"https://www.ladepeche.fr/2026/10/12/flotte-fantome-la-marine-francaise-arraisonne-un-petrolier-implique-dans-des-activites-illicites-de-transport-de-carburants-annonce-emmanuel-macron-13597674.php","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
@@ -230,7 +238,7 @@ const ARTICLES = [
   {"id":32,"cat":"sport","title":"Tristan Buch, nouveau champion du monde de savate : « Ce n'est qu'une étape »","excerpt":"Un titre mondial qui couronne des années d'efforts. Le boxeur français vise déjà de nouveaux défis.","body":"En remportant le titre mondial de savate, Tristan Buch prouve que le sport français reste une référence. Malgré la pression, il reste humble et ambitieux, prêt à enchaîner les compétitions. Une victoire qui redonne de la visibilité à un sport trop souvent méconnu.","source":"Ouest-France","sourceUrl":"https://www.ouest-france.fr/sport/boxe/boxe-tristan-buch-apres-son-titre-mondial-en-savate-ce-nest-quune-etape-6a69b64e-c65e-11f1-92e9-819eb738846b","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":33,"cat":"sport","title":"Yannis Pelé, diagnostiqué paraplégique après un accident, se relève et reprend le sport","excerpt":"Un parcours de résilience et de détermination. L'ancien cycliste pro défie les pronostics pour retrouver la compétition.","body":"Après un grave accident, Yannis Pelé a dû apprendre à vivre avec un handicap. Pourtant, il a relevé le défi en reprenant le sport, prouvant que la volonté peut tout surmonter. Son histoire est une source d'inspiration pour tous ceux qui luttent contre l'adversité.","source":"Franceinfo","sourceUrl":"https://www.franceinfo.fr/sports/cyclisme/vtt/c-etait-impossible-de-concevoir-une-vie-en-fauteuil-roulant-diagnostique-paraplegique-apres-un-accident-yannis-pele-s-est-releve_8233735.html","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":34,"cat":"sport","title":"Max Verstappen remporte deux Grands Prix de Formule 1 d'affilée à Singapour","excerpt":"Un doublé historique pour le champion néerlandais. La domination de Verstappen se confirme sur la scène mondiale.","body":"En enchaînant deux victoires à Singapour, Max Verstappen confirme sa place de leader en Formule 1. Une performance qui renforce sa réputation de pilote invincible. Une nouvelle qui ravit ses fans et montre l'excellence du sport automobile, avec des équipes comme Alpine.","source":"Franceinfo","sourceUrl":"https://www.franceinfo.fr/sports/auto-moto/formule-1/max-verstappen-remporte-a-singapour-son-deuxieme-grand-prix-d-affilee-kimi-antonelli-toujours-solide-leader-au-classement-pilotes_8232718.html","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
-  {"id":36,"cat":"regions","title":"Un père offre une maison à Sydney à son fils étudiant… aux enchères","excerpt":"Un geste d'amour et de générosité qui fait rêver. L'immobilier au service de la famille.","body":"Un père français a dépensé plus d'1,3 million d'euros aux enchères pour offrir une maison à Sydney à son fils étudiant. Ce coup de cœur immobilier, aussi surprenant que touchant, montre à quel point l'amour familial peut transcender les frontières. Une histoire qui rappelle que, parfois, les plus belles surprises viennent des actes les plus inattendus.","source":"La Dépêche","sourceUrl":"https://www.ladepeche.fr/2026/10/12/le-pere-voulait-acheter-un-bien-pour-son-fils-etudiant-il-depense-13-million-deuros-aux-encheres-pour-lui-offrir-une-maison-en-plein-sydney-13597192.php","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
+  {"id":36,"cat":"regions","title":"Un père offre une maison à Sydney à son fils étudiant… aux enchères","excerpt":"Un geste d'amour et de générosité qui fait rêver. L'immobilier au service de la famille.","body":"Un père français a dépensé plus d'1,3 million d'euros aux enchères pour offrir une maison à Sydney à son fils étudiant. Ce coup de cœur immobilier, aussi surprenant que touchant, montre à quel point l'amour familial peut transcender les frontières. Une histoire qui rappelle que, parfois, les plus belles surprises viennent des actes les plus inattendus.","source":"La Dépêche","sourceUrl":"https://www.ladepeche.fr/2026/10/12/le-pere-voulait-acheter-un-bien-pour-son-fils-etudiant-il-depense-13-million-deuros-aux-cheres-pour-lui-offrir-une-maison-en-plein-sydney-13597192.php","verified":true,"date":"12 oct. 2026","readTime":"3 min"},
   {"id":37,"cat":"sante","title":"Retraites complémentaires Agirc-Arrco : votre pension augmentera dès le 1er novembre","excerpt":"Une bonne nouvelle pour les retraités. Les pensions ne seront pas gelées et bénéficieront d'une revalorisation.","body":"Après des mois d'incertitude, les retraités peuvent enfin souffler : leurs pensions Agirc-Arrco augmenteront en novembre. Une décision qui redonne du pouvoir d'achat à des millions de Français. Une avancée sociale qui rappelle l'importance de protéger les plus vulnérables.","source":"La Dépêche","sourceUrl":"https://www.ladepeche.fr/2026/10/12/decryptage-retraites-complementaires-agirc-arrco-pourquoi-votre-pension-ne-sera-pas-gelee-cette-annee-et-va-bel-et-bien-augmenter-des-le-1-novembre-13596788.php","verified":true,"date":"12 oct. 2026","readTime":"3 min"}
 ];
 // AUTO-ARTICLES:END
