@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   update:
@@ -23,9 +24,9 @@ jobs:
           import fs from 'fs';
           const KEY = process.env.MISTRAL_API_KEY || '';
           const FEEDS = {
-          france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml', 'https://www.lafranceagricole.fr/rss/flux.xml', 'https://www.francetvinfo.fr/societe.rss', 'https://www.leparisien.fr/services/rss//rss-une.xml', 'https://www.france24.com/fr/rss', 'https://www.francetvinfo.fr/france.rss', 'https://www.publicsenat.fr/rss.xml', 'https://www.francebleu.fr/feeds/rss/info.rss'],
-          regions: ['https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml', 'https://www.ouest-france.fr/feeds/rss/une-toute', 'https://www.maville.com/rss.xml', 'https://france3-regions.francetvinfo.fr/rss.xml', 'https://www.francebleu.fr/feeds/rss/une.rss', 'https://www.actu.fr/rss.xml'],
-          sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss', 'https://rmcsport.bfmtv.com/rss/football/', 'https://www.francebleu.fr/feeds/rss/sports.rss', 'https://rmcsport.bfmtv.com/rss/tennis/', 'https://www.eurosport.fr/rss.xml', 'https://www.lequipe.fr/rss/actu_badminton.rss', 'https://rmcsport.bfmtv.com/rss/badminton/', 'https://rmcsport.bfmtv.com/rss/basket/', 'https://rmcsport.bfmtv.com/rss/handball/', 'https://rmcsport.bfmtv.com/rss/rugby/', 'https://rmcsport.bfmtv.com/rss/cyclisme/', 'https://rmcsport.bfmtv.com/rss/voile/', 'https://rmcsport.bfmtv.com/rss/athletisme/', 'https://rmcsport.bfmtv.com/rss/sports-us/', 'https://news.google.com/rss/search?q=sport+fran%C3%A7ais+victoire+OR+troph%C3%A9e+OR+titre+when:2d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+qualification+OR+victoire+OR+finale+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://www.directvelo.com/feed', 'https://www.lequipe.fr/rss/actu_football.rss', 'https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+victoire+OR+championnat+OR+tournoi&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+badminton&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+when:2d&hl=fr&gl=FR&ceid=FR:fr', 'https://www.badzine.fr/blog-feed.xml'],
+          france: ['https://www.francetvinfo.fr/titres.rss', 'https://www.20minutes.fr/feeds/rss-une.xml', 'https://www.lafranceagricole.fr/rss/flux.xml', 'https://www.francetvinfo.fr/societe.rss', 'https://www.france24.com/fr/rss', 'https://www.francetvinfo.fr/france.rss', 'https://www.publicsenat.fr/rss.xml'],
+          regions: ['https://www.actu.fr/rss.xml', 'https://www.ouest-france.fr/rss-en-continu.xml', 'https://www.ladepeche.fr/rss.xml', 'https://www.sudouest.fr/rss.xml', 'https://www.midilibre.fr/rss.xml', 'https://www.lavoixdunord.fr/rss.xml', 'https://www.lunion.fr/rss.xml', 'https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9+OR+initiative+OR+r%C3%A9ussite+%22Auvergne-Rh%C3%B4ne-Alpes%22+OR+Lyon+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9+OR+initiative+OR+r%C3%A9ussite+%22Provence-Alpes-C%C3%B4te+d%27Azur%22+OR+Marseille+OR+Corse+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9+OR+initiative+OR+r%C3%A9ussite+%22Grand+Est%22+OR+Alsace+OR+Lorraine+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9+OR+initiative+OR+r%C3%A9ussite+%22Bourgogne-Franche-Comt%C3%A9%22+OR+%22Centre-Val+de+Loire%22+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9+OR+initiative+OR+r%C3%A9ussite+Normandie+OR+%22Pays+de+la+Loire%22+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9+OR+initiative+OR+r%C3%A9ussite+Outre-mer+OR+Guadeloupe+OR+R%C3%A9union+OR+Martinique+when:3d&hl=fr&gl=FR&ceid=FR:fr'],
+          sport: ['https://www.francetvinfo.fr/sports.rss', 'https://www.lequipe.fr/rss/actu.rss', 'https://rmcsport.bfmtv.com/rss/football/', 'https://rmcsport.bfmtv.com/rss/tennis/', 'https://www.eurosport.fr/rss.xml', 'https://www.lequipe.fr/rss/actu_badminton.rss', 'https://rmcsport.bfmtv.com/rss/badminton/', 'https://rmcsport.bfmtv.com/rss/basket/', 'https://rmcsport.bfmtv.com/rss/handball/', 'https://rmcsport.bfmtv.com/rss/rugby/', 'https://rmcsport.bfmtv.com/rss/cyclisme/', 'https://rmcsport.bfmtv.com/rss/voile/', 'https://rmcsport.bfmtv.com/rss/athletisme/', 'https://rmcsport.bfmtv.com/rss/sports-us/', 'https://news.google.com/rss/search?q=sport+fran%C3%A7ais+victoire+OR+troph%C3%A9e+OR+titre+when:2d&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+qualification+OR+victoire+OR+finale+when:3d&hl=fr&gl=FR&ceid=FR:fr', 'https://www.directvelo.com/feed', 'https://www.lequipe.fr/rss/actu_football.rss', 'https://news.google.com/rss/search?q=badminton+France&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+victoire+OR+championnat+OR+tournoi&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=%22%C3%A9quipe+de+France%22+badminton&hl=fr&gl=FR&ceid=FR:fr', 'https://news.google.com/rss/search?q=badminton+when:2d&hl=fr&gl=FR&ceid=FR:fr', 'https://www.badzine.fr/blog-feed.xml'],
           innovation: ['https://www.francetvinfo.fr/sciences.rss', 'https://www.cnrs.fr/rss/lesoresdufutur.xml', 'https://www.usine-digitale.com/rss.xml', 'https://www.pourlascience.fr/rss.xml', 'https://www.futura-sciences.com/rss/actualites.xml', 'https://trustmyscience.com/feed/', 'https://www.sciencepost.fr/feed/', 'https://www.maxisciences.com/rss.xml'],
           ecologie: ['https://www.actu-environnement.com/rss/flux.xml', 'https://reporterre.net/feed/', 'https://www.goodplanet.org/feed/', 'https://www.notre-planete.info/rss.xml', 'https://www.futura-sciences.com/rss/planete.xml', 'https://www.bonpote.com/feed/'],
           sante: ['https://www.pourquoidocteur.fr/feed', 'https://www.lefigaro.fr/rss/figaro_sante.xml', 'https://www.passeportsante.net/rss/rss.xml', 'https://www.francetvinfo.fr/sante.rss', 'https://sante.lefigaro.fr/rss/figaro_sante.xml', 'https://www.futura-sciences.com/rss/sante.xml'],
@@ -44,7 +45,7 @@ jobs:
           for (const cat of Object.keys(FEEDS)){
           for (const url of FEEDS[cat]){
           try {
-          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' } });
+          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(15000) });
           if (!r.ok) continue;
           const xml = await r.text();
           const items = xml.split('<item').slice(1, 14);
@@ -70,7 +71,7 @@ jobs:
           model: 'mistral-small-latest',
           temperature: 0.3,
           response_format: { type: 'json_object' },
-          messages: [{ role: 'user', content: prompt }]
+          messages: [{ role: 'user', content: prompt }], signal: AbortSignal.timeout(90000)
           })
           });
           const j = await r.json();
@@ -94,7 +95,7 @@ jobs:
           // === AGENT VERIFICATEUR : 2e passe IA ===
           if (articles.length && KEY){
           try {
-          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente (une histoire de badminton doit rester en categorie sport) ; (4) ANTI-DOUBLON CRUCIAL : si plusieurs articles traitent du MEME SUJET (meme evenement, meme entreprise, meme annonce, memes mots-cles principaux), ne garde QUE LE MEILLEUR des doublons et rejette les autres — la credibilite du journal depend de l'absence de doublons ; (5) COHERENCE FACTUELLE : rejette tout article contenant une incoherence geographique ou factuelle evident (ex : un produit breton presente comme corse, une ville confondue avec une autre, un evenement decrit hors de son contexte reel) ; (6) VERITE DES SOURCES : le champ sourceUrl doit etre EXACTEMENT un des liens [source: ...] de la liste des titres fournis a la redaction — toute URL fabriquee ou modifiee entraine le rejet de l'article. Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
+          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente (une histoire de badminton doit rester en categorie sport) ; (4) ANTI-DOUBLON CRUCIAL : si plusieurs articles traitent du MEME SUJET (meme evenement, meme entreprise, meme annonce, memes mots-cles principaux), ne garde QUE LE MEILLEUR des doublons et rejette les autres — la credibilite du journal depend de l'absence de doublons ; (5) COHERENCE FACTUELLE : rejette tout article contenant une incoherence geographique ou factuelle evident (ex : un produit breton presente comme corse, une ville confondue avec une autre, un evenement decrit hors de son contexte reel) ; (6) VERITE DES SOURCES : le champ sourceUrl doit etre EXACTEMENT un des liens [source: ...] de la liste des titres fournis a la redaction — toute URL fabriquee ou modifiee entraine le rejet de l'article. (7) DIVERSITE GEOGRAPHIQUE : si plusieurs articles concernent la meme region ou la meme ville, ne garde que le meilleur. Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
           const v = await mistral(vPrompt);
           const valides = (v.valid || []).map(Number).filter(n => n >= 1 && n <= articles.length);
           if (valides.length >= 6){
@@ -210,6 +211,9 @@ jobs:
           } else {
           console.log('Couverture complete : les ' + CATS.length + ' rubriques ont au moins un article.');
           }
+          // === RAPPORT D'ETAT pour la veille (lu par l'etape suivante du workflow) ===
+          fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: edition, fluxTotal: feedHealth.length, fluxActifs: vivants.length, fluxMorts: morts, nouveauxArticles: nouveaux.length, articlesTotal: tous.length, rubriquesVides: manquantes }, null, 2));
+          console.log('Rapport etat-robot.json ecrit.');
 
           // === NEWSLETTER : envoi du meilleur de l edition a 7h ===
           const BREVO = process.env.BREVO_API_KEY || '';
@@ -271,4 +275,47 @@ jobs:
           else
             git commit -m "Edition $(date +%H)h du $(date +%d/%m/%Y)"
             git push
+          fi
+      - name: Veille robot et site - alerte automatique si probleme
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "veille-robot" --color D93F0B --description "Alertes de la veille automatique" 2>/dev/null || true
+          PROBLEMES=""
+          # --- 1) Le robot a-t-il produit son rapport ? ---
+          if [ -f etat-robot.json ]; then
+            eval "$(node -e "const e=require('./etat-robot.json'); console.log('NOUVEAUX='+e.nouveauxArticles+'; TOTAL='+e.articlesTotal+'; ACTIFS='+e.fluxActifs+'; MORTS='+e.fluxMorts.length+'; VIDES='+e.rubriquesVides.length);")"
+            if [ "$NOUVEAUX" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Aucun nouvel article dans cette edition (sources ou IA en panne ?)."; fi
+            if [ "$TOTAL" -lt 8 ]; then PROBLEMES="$PROBLEMES"$'\n'"- Seulement $TOTAL articles au total sur le site (seuil d'alerte : 8)."; fi
+            if [ "$MORTS" -ge 5 ]; then PROBLEMES="$PROBLEMES"$'\n'"- $MORTS flux RSS muets sur $((MORTS+ACTIFS)) : a verifier dans le fichier etat-robot.json du dernier run."; fi
+            if [ "$VIDES" -ge 2 ]; then PROBLEMES="$PROBLEMES"$'\n'"- $VIDES rubriques sans aucun article (source a elargir)."; fi
+          else
+            PROBLEMES="$PROBLEMES"$'\n'"- Le robot n'a pas produit son rapport etat-robot.json : possible crash de l'edition (voir logs du run)."
+          fi
+          # --- 2) Le site est-il en ligne et bien structure ? ---
+          CODE=$(curl -s -o /tmp/site.html -w "%{http_code}" --max-time 25 "https://www.unbienfou.fr/" || echo 000)
+          if [ "$CODE" != "200" ]; then
+            PROBLEMES="$PROBLEMES"$'\n'"- Le site unbienfou.fr ne repond pas correctement (HTTP $CODE)."
+          elif ! grep -q "AUTO-ARTICLES:START" /tmp/site.html; then
+            PROBLEMES="$PROBLEMES"$'\n'"- Le site en ligne ne contient plus le bloc articles : structure cassee."
+          fi
+          # --- 3) Ouvrir, mettre a jour ou fermer le ticket d'alerte ---
+          OUVERTE=$(gh issue list --label "veille-robot" --state open --json number --jq '.[0].number' 2>/dev/null)
+          if [ -n "$PROBLEMES" ]; then
+            CORPS="## Veille automatique du $(date '+%d/%m/%Y a %Hh%M')"$'\n'"Problemes detectes par la veille :"$PROBLEMES$'\n\n'"_Cette veille tourne a chaque edition (7h et 17h). Ce ticket se fermera tout seul quand tout rentrera dans l'ordre._"
+            if [ -n "$OUVERTE" ]; then
+              echo "Problemes persistants : commentaire sur le ticket #$OUVERTE."
+              gh issue comment "$OUVERTE" --body "$CORPS"
+            else
+              echo "Nouveaux problemes : ouverture d'un ticket d'alerte."
+              gh issue create --title "Robot ou site Un bien fou - probleme detecte le $(date '+%d/%m/%Y')" --body "$CORPS" --label "veille-robot"
+            fi
+          else
+            if [ -n "$OUVERTE" ]; then
+              echo "Retour a la normal : fermeture du ticket #$OUVERTE."
+              gh issue close "$OUVERTE" --comment "Tout est redevenu normal le $(date '+%d/%m/%Y a %Hh%M') : veille sans probleme."
+            else
+              echo "Veille OK : robot et site fonctionnent, aucune alerte."
+            fi
           fi
