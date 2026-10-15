@@ -45,11 +45,10 @@ jobs:
           for (const cat of Object.keys(FEEDS)){
           for (const url of FEEDS[cat]){
           try {
-          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(15000) });
+          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(15000) });
           if (!r.ok) continue;
           const xml = await r.text();
           const items = xml.split('<item').slice(1, 14);
-          // === SANTE DES FLUX : compter les items par flux pour le bilan ===
           feedHealth.push({ url: url.slice(0, 70), cat: cat, items: items.length });
           for (const it of items){
           const t = pick(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/is, it).trim();
@@ -83,7 +82,7 @@ jobs:
           if (!KEY) console.log('ALERTE : la cle MISTRAL_API_KEY est absente ou vide ! Verifier sur GitHub : Settings > Secrets and variables > Actions.');
           let articles = [];
           if (headlines.length >= 3 && KEY){
-          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 16 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. IMPORTANT BADMINTON : les titres de badminton (flux Badzine, hebdomadaire) doivent etre classés dans la categorie SPORT — accepte un titre de badminton meme s'il date de la semaine ecoulee, trouve son angle positif (equipe en tete, club qui impressionne), UNIQUEMENT a partir des elements du titre fourni. Mais n'invente JAMAIS : si aucun titre de badminton ne figure ci-dessus, n'en cree pas. Redige 16 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, sans inventer de noms de personnes, de clubs, d'equipes ou d'evenements qui ne figurent pas dans le titre ; source = nom du media d'origine). COUVERTURE OBLIGATOIRE : veille a proposer au moins 1 article pour chaque rubrique presente dans les titres ci-dessus ; si une rubrique n'a aucun titre exploitable ce jour, ne la force pas (n'invente rien). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, solidarite, culture, insolite. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
+          const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 16 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. IMPORTANT : ne selectionne JAMAIS deux titres qui racontent la MEME information (meme evenement, meme annonce, meme mesure) — si plusieurs titres parlent de la meme chose, garde un seul, le meilleur. IMPORTANT BADMINTON : les titres de badminton (flux Badzine, hebdomadaire) doivent etre classes dans la categorie SPORT — accepte un titre de badminton meme s'il date de la semaine ecoulee, trouve son angle positif (equipe en tete, club qui impressionne), UNIQUEMENT a partir des elements du titre fourni. Mais n'invente JAMAIS : si aucun titre de badminton ne figure ci-dessus, n'en cree pas. Redige 16 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, sans inventer de noms de personnes, de clubs, d'equipes ou d'evenements qui ne figurent pas dans le titre ; source = nom du media d'origine). COUVERTURE OBLIGATOIRE : veille a proposer au moins 1 article pour chaque rubrique presente dans les titres ci-dessus ; si une rubrique n'a aucun titre exploitable ce jour, ne la force pas (n'invente rien). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, solidarite, culture, insolite. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
           try {
           const parsed = await mistral(prompt);
           articles = parsed.articles || [];
@@ -107,7 +106,8 @@ jobs:
           headers: { 'api-key': BREVO }
           });
           const cj = await contactsRes.json();
-          const emails = (cj.contacts || []).map(c => c.email).filter(Boolean);
+          // === ANTI-DOUBLE ENVOI : dedoublonner les adresses (un contact presente deux fois = un seul mail) ===
+          const emails = [...new Set((cj.contacts || []).map(c => c.email).filter(Boolean))];
           if (!emails.length){
           console.log('Aucun abonne Brevo pour le moment : newsletter non envoyee.');
           return;
@@ -139,7 +139,7 @@ jobs:
           })
           });
           }
-          console.log('Newsletter envoyee a ' + emails.length + ' abonne(s).');
+          console.log('Newsletter envoyee a ' + emails.length + ' abonne(s) unique(s).');
           } catch (e) {
           console.log('Erreur newsletter Brevo : ' + e.message);
           }
@@ -163,7 +163,6 @@ jobs:
           const videsExit = CATS.filter(c => !catsPresentesExit.has(c));
           fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: editionCourante, fluxTotal: feedHealth.length, fluxActifs: vivantsExit.length, fluxMorts: mortsExit, nouveauxArticles: 0, articlesTotal: anciensExit.length, rubriquesVides: videsExit, raison: KEY ? 'IA sans article exploitable (' + headlines.length + ' titres collectes)' : 'cle MISTRAL_API_KEY absente' }, null, 2));
           console.log('Rapport etat-robot.json ecrit (edition sans nouvel article).');
-          // === NEWSLETTER quand meme : les abonnes recoivent leur mail de 7h avec les articles existants ===
           if (editionCourante === '7 h' && anciensExit.length){
           await envoyerNewsletter(anciensExit);
           }
@@ -172,7 +171,7 @@ jobs:
           // === AGENT VERIFICATEUR : 2e passe IA ===
           if (articles.length && KEY){
           try {
-          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente (une histoire de badminton doit rester en categorie sport) ; (4) ANTI-DOUBLON CRUCIAL : si plusieurs articles traitent du MEME SUJET (meme evenement, meme entreprise, meme annonce, memes mots-cles principaux), ne garde QUE LE MEILLEUR des doublons et rejette les autres — la credibilite du journal depend de l'absence de doublons ; (5) COHERENCE FACTUELLE : rejette tout article contenant une incoherence geographique ou factuelle evident (ex : un produit breton presente comme corse, une ville confondue avec une autre, un evenement decrit hors de son contexte reel) ; (6) VERITE DES SOURCES : le champ sourceUrl doit etre EXACTEMENT un des liens [source: ...] de la liste des titres fournis a la redaction — toute URL fabriquee ou modifiee entraine le rejet de l'article. (7) DIVERSITE GEOGRAPHIQUE : si plusieurs articles concernent la meme region ou la meme ville, ne garde que le meilleur. Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
+          const vPrompt = "Tu es l'agent VERIFICATEUR du journal de bonnes nouvelles Un bien fou. Voici des articles proposes par la redaction :\n" + articles.map((a, i) => (i + 1) + '. [' + a.cat + '] ' + a.title + ' — source: ' + (a.sourceUrl || 'AUCUN LIEN')).join('\n') + "\n\nPour chaque article, verifie : (1) le titre raconte bien une BONNE NOUVELLE (fait positif, progres, solidarite, reussite), PAS un simple fait divers neutre ou negatif ; (2) un lien source plausible est fourni ; (3) la categorie est coherente (une histoire de badminton doit rester en categorie sport) ; (4) ANTI-DOUBLON CRUCIAL : si plusieurs articles traitent du MEME SUJET (meme evenement, meme entreprise, meme annonce, memes mots-cles principaux), ne garde QUE LE MEILLEUR des doublons et rejette les autres — la credibilite du journal depend de l'absence de doublons ; (5) COHERENCE FACTUELLE : rejette tout article contenant une incoherence geographique ou factuelle evidente (ex : un produit breton presente comme corse, une ville confondue avec une autre, un evenement decrit hors de son contexte reel) ; (6) VERITE DES SOURCES : le champ sourceUrl doit etre EXACTEMENT un des liens [source: ...] de la liste des titres fournis a la redaction — toute URL fabriquee ou modifiee entraine le rejet de l'article. (7) DIVERSITE GEOGRAPHIQUE : si plusieurs articles concernent la meme region ou la meme ville, ne garde que le meilleur. Reponds UNIQUEMENT avec du JSON {\"valid\":[liste des numeros des articles valides]} en conservant au minimum 8 articles si possible.";
           const v = await mistral(vPrompt);
           const valides = (v.valid || []).map(Number).filter(n => n >= 1 && n <= articles.length);
           if (valides.length >= 6){
@@ -192,6 +191,17 @@ jobs:
           const nbAvant = articles.length;
           articles = articles.filter(a => urlsCollectees.has(normU(a.sourceUrl)));
           if (articles.length < nbAvant) console.log('VERACITE : ' + (nbAvant - articles.length) + ' article(s) REJETE(S) : sourceUrl non present dans les flux collectes (invention IA interdite).');
+          // === LIENS VIVANTS : rejeter les articles dont la source est introuvable (page supprimee / lien casse) ===
+          const verifLien = async u => {
+          try {
+          const r = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(12000), redirect: 'follow' });
+          return r.status !== 404 && r.status !== 410 && r.status !== 400;
+          } catch (e) { return false; }
+          };
+          const liensOk = await Promise.all(articles.map(a => verifLien(String(a.sourceUrl || ''))));
+          const nbAvantLien = articles.length;
+          articles = articles.filter((a, i) => liensOk[i]);
+          if (articles.length < nbAvantLien) console.log('LIENS : ' + (nbAvantLien - articles.length) + ' article(s) rejete(s) : lien source introuvable ou casse.');
           // === DATES REELLES : chaque article porte la date de parution de sa source, pas la date d'edition ===
           const dateParUrl = {};
           headlines.forEach(h => { if (h.pub) dateParUrl[normU(h.url)] = h.pub; });
@@ -222,34 +232,60 @@ jobs:
           } catch (e) {
           console.log('Lecture des anciens articles impossible : nouvelle edition seule.');
           }
-          const normaliser = t => String(t || '').toLowerCase().replace(/[^\wÀ-ÿ]/g, '');
-          // === ANTI-DOUBLON RENFORCE : par URL source + similarite de titres ===
-          const motsVides = new Set(['le','la','les','un','une','des','du','de','d','l','et','en','a','au','aux','pour','avec','sur','dans','son','sa','ses','est','sont','que','qui','se','ce','cet','cette','apres','avant','plus','moins','par','pas','ne','il','elle','ils','elles','on','nous','vous','du','des','ca','sa']);
-          const motsCles = t => String(t || '').toLowerCase().split(/\s+/).map(m => m.replace(/[^\wÀ-ÿ]/g, '')).filter(m => m.length > 3 && !motsVides.has(m));
+          // === ANTI-DOUBLON RENFORCE : comparaison sur titre + resume, mots singularises, seuil serre ===
+          const motsVides = new Set(['le','la','les','un','une','des','du','de','d','l','et','en','a','au','aux','pour','avec','sur','dans','son','sa','ses','est','sont','que','qui','se','ce','cet','cette','apres','avant','plus','moins','par','pas','ne','il','elle','ils','elles','on','nous','vous','du','des','ca','sa','leur','leurs','ceci','cela','cette','tout','tous','toute','toutes','meme','aussi','alors','ainsi','chez','vers','depuis','pendant','selon']);
+          const motsCles = t => String(t || '').toLowerCase().split(/\s+/).map(m => m.replace(/[^\wÀ-ÿ]/g, '').replace(/s$/, '')).filter(m => m.length > 3 && !motsVides.has(m));
           const similaires = (t1, t2) => {
           const m1 = new Set(motsCles(t1)), m2 = new Set(motsCles(t2));
           if (!m1.size || !m2.size) return false;
           let communs = 0;
           m1.forEach(m => { if (m2.has(m)) communs++; });
-          return (communs / Math.min(m1.size, m2.size)) >= 0.6;
+          return (communs / Math.min(m1.size, m2.size)) >= 0.35;
           };
+          const texteArticle = a => String(a.title || '') + ' ' + String(a.excerpt || '');
+          // === NETTOYAGE : supprimer les doublons DEJA PUBLIES parmi les anciens articles ===
+          const anciensNet = [];
+          for (const a of anciens){
+          const u = String(a.sourceUrl || '').split('#')[0];
+          const ta = texteArticle(a);
+          if (anciensNet.some(r => (u && String(r.sourceUrl || '').split('#')[0] === u) || similaires(texteArticle(r), ta))) continue;
+          anciensNet.push(a);
+          }
+          if (anciensNet.length < anciens.length) console.log('NETTOYAGE : ' + (anciens.length - anciensNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
+          anciens = anciensNet;
           const urlsSources = new Set(anciens.map(a => String(a.sourceUrl || '').split('#')[0]).filter(Boolean));
-          const titresExistants = anciens.map(a => a.title);
+          const textesExistants = anciens.map(texteArticle);
           let nouveaux = articles.filter(a => {
           // 1) rejet si meme URL de source (meme article de presse)
           const u = String(a.sourceUrl || '').split('#')[0];
           if (u && urlsSources.has(u)) return false;
-          // 2) rejet si titre similaire a un titre existant (meme sujet)
-          if (titresExistants.some(t => similaires(t, a.title))) return false;
+          // 2) rejet si titre+resume similaires a un article existant (meme sujet)
+          if (textesExistants.some(t => similaires(t, texteArticle(a)))) return false;
           return true;
           });
           // 3) dedoublonnage interne : entre les nouveaux articles eux-memes
           const retenus = [];
           for (const a of nouveaux){
-          if (!retenus.some(r => (r.sourceUrl || '') === (a.sourceUrl || '') || similaires(r.title, a.title))) retenus.push(a);
+          if (!retenus.some(r => (String(r.sourceUrl || '') === String(a.sourceUrl || '')) || similaires(texteArticle(r), texteArticle(a)))) retenus.push(a);
           }
           nouveaux = retenus;
-          const tous = nouveaux.concat(anciens).slice(0, 40);
+          let tous = nouveaux.concat(anciens).slice(0, 40);
+          // === ANTI-DOUBLON GLOBAL (IA) : passe finale sur toute la liste qui va etre publiee ===
+          if (KEY && tous.length > 8){
+          try {
+          const gPrompt = "Tu es l'agent ANTI-DOUBLON du journal de bonnes nouvelles Un bien fou. Voici la liste complete des articles qui vont etre publies :\n" + tous.map((a, i) => (i + 1) + '. ' + a.title + ' [' + a.cat + ']').join('\n') + "\n\nIdentifie les groupes d'articles qui racontent la MEME information (meme evenement, meme annonce, meme mesure, meme sujet precise). Pour chaque groupe, garde LE MEILLEUR (le plus precis, le plus riche) et liste les numeros des autres a supprimer. Attention : ne supprime PAS des articles qui parlent simplement du meme theme ou de la meme rubrique — seulement les vrais doublons d'information (ex : deux articles sur la meme loi, meme reprise d'entreprise, meme victoire). Reponds UNIQUEMENT avec du JSON {\"supprimer\":[liste des numeros a supprimer]}. Si aucun doublon, reponds {\"supprimer\":[]}.";
+          const g = await mistral(gPrompt);
+          const aSuppr = (g.supprimer || []).map(Number).filter(n => n >= 1 && n <= tous.length);
+          if (aSuppr.length){
+          const supprSet = new Set(aSuppr);
+          const avant = tous.length;
+          tous = tous.filter((a, i) => !supprSet.has(i + 1));
+          console.log('ANTI-DOUBLON GLOBAL : ' + (avant - tous.length) + ' article(s) en double supprime(s) par l IA.');
+          } else {
+          console.log('ANTI-DOUBLON GLOBAL : aucun doublon restant detecte.');
+          }
+          } catch (e) { console.log('Erreur anti-doublon global (etape IA ignoree) : ' + e.message); }
+          }
           const entries = tous.slice(0, 40).map((a, i) => {
           const cat = CATS.includes(a.cat) ? a.cat : 'france';
           const obj = {
@@ -270,7 +306,7 @@ jobs:
           const block = startTag + '\nconst ARTICLES = [\n' + entries + '\n];\n' + endTag;
           html = html.slice(0, start) + block + html.slice(end + endTag.length);
           fs.writeFileSync('index.html', html);
-          console.log('Edition ' + edition + ' publiee : ' + nouveaux.length + ' nouveaux, ' + tous.length + ' articles au total.');
+          console.log('Edition ' + edition + ' publiee : ' + nouveaux.length + ' nouveaux, ' + tous.length + ' articles au total (doublons exclus).');
           // === BILAN DE SANTE DES FLUX (a surveiller dans les logs) ===
           const morts = feedHealth.filter(f => f.items <= 0).map(f => f.url);
           const vivants = feedHealth.filter(f => f.items > 0);
