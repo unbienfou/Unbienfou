@@ -242,6 +242,16 @@ jobs:
           let nbRecat = 0;
           articles = articles.map(a => { const c = catParUrl[normU(a.sourceUrl)]; if (c && c !== a.cat){ nbRecat++; return Object.assign({}, a, { cat: c }); } return a; });
           console.log('RUBRIQUES : categorie du flux source appliquee (' + nbRecat + ' article(s) recategorise(s) sur ' + articles.length + ').');
+          // === SPORT (v10) : un article dont le titre parle de sport va TOUJOURS en rubrique sport ===
+          const motsSport = /(equipe de france|ligue europa|ligue des champions|championnat|tournoi|qualification|demi-finale|quart de finale|huitiemes de finale|medaille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|voile|athletisme|pongiste|traileur|ultra-trail|trail|palmares sportif|exploit sportif|\bpsg\b|olympique)/i;
+          const reclasserSport = liste => {
+          let n = 0;
+          const r = liste.map(a => { if (a.cat !== 'sport' && motsSport.test(String(a.title || ''))){ n++; return Object.assign({}, a, { cat: 'sport' }); } return a; });
+          return { liste: r, n: n };
+          };
+          const resSport = reclasserSport(articles);
+          articles = resSport.liste;
+          console.log('SPORT : ' + resSport.n + ' article(s) sportif(s) reclasses en rubrique sport.');
           // === LIENS VIVANTS : rejeter les articles dont la source est introuvable (page supprimee / lien casse) ===
           const verifLien = async u => {
           try {
@@ -284,6 +294,12 @@ jobs:
           console.log('Lecture des anciens articles impossible : nouvelle edition seule.');
           }
           console.log('ETAPES : ' + articles.length + ' articles de l IA apres tous les filtres, ' + anciens.length + ' anciens articles lus sur le site.');
+          // === SPORT ANCIENS (v10) : corriger aussi les articles deja publies mal ranges ===
+          const resSportAnciens = reclasserSport(anciens);
+          if (resSportAnciens.n){
+          anciens = resSportAnciens.liste;
+          console.log('SPORT ANCIENS : ' + resSportAnciens.n + ' ancien(s) article(s) sportif(s) reclasses en rubrique sport.');
+          }
           // === NETTOYAGE : supprimer les doublons DEJA PUBLIES parmi les anciens articles ===
           const anciensNet = nettoyerDoublons(anciens);
           if (anciensNet.length < anciens.length) console.log('NETTOYAGE : ' + (anciens.length - anciensNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
