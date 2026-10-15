@@ -40,12 +40,38 @@ jobs:
           const m = s.match(re);
           return m ? m[1] : '';
           }
+
+          // === OUTILS ANTI-DOUBLON (partages) : titre + resume, mots singularises, seuil 0.35 ===
+          const motsVides = new Set(['le','la','les','un','une','des','du','de','d','l','et','en','a','au','aux','pour','avec','sur','dans','son','sa','ses','est','sont','que','qui','se','ce','cet','cette','apres','avant','plus','moins','par','pas','ne','il','elle','ils','elles','on','nous','vous','du','des','ca','sa','leur','leurs','ceci','cela','cette','tout','tous','toute','toutes','meme','aussi','alors','ainsi','chez','vers','depuis','pendant','selon']);
+          const motsCles = t => String(t || '').toLowerCase().split(/\s+/).map(m => m.replace(/[^\wÀ-ÿ]/g, '').replace(/s$/, '')).filter(m => m.length > 3 && !motsVides.has(m));
+          const similaires = (t1, t2) => {
+          const m1 = new Set(motsCles(t1)), m2 = new Set(motsCles(t2));
+          if (!m1.size || !m2.size) return false;
+          let communs = 0;
+          m1.forEach(m => { if (m2.has(m)) communs++; });
+          return (communs / Math.min(m1.size, m2.size)) >= 0.35;
+          };
+          const texteArticle = a => String(a.title || '') + ' ' + String(a.excerpt || '');
+          function nettoyerDoublons(liste){
+          const propres = [];
+          for (const a of liste){
+          const u = String(a.sourceUrl || '').split('#')[0];
+          const ta = texteArticle(a);
+          if (propres.some(r => (u && String(r.sourceUrl || '').split('#')[0] === u) || similaires(texteArticle(r), ta))) continue;
+          propres.push(a);
+          }
+          return propres;
+          }
+          function blocArticlesBrut(liste){
+          const lignes = liste.map((a, i) => { const o = Object.assign({}, a); o.id = i + 1; if (i === 0) o.hero = true; else delete o.hero; return '  ' + JSON.stringify(o) + ','; }).join('\n');
+          return '// AUTO-ARTICLES:START\nconst ARTICLES = [\n' + lignes + '\n];\n// AUTO-ARTICLES:END';
+          }
           async function getHeadlines(){
           let news = [];
           for (const cat of Object.keys(FEEDS)){
           for (const url of FEEDS[cat]){
           try {
-          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(15000) });
+          const r = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(15000) });
           if (!r.ok) continue;
           const xml = await r.text();
           const items = xml.split('<item').slice(1, 14);
@@ -159,6 +185,21 @@ jobs:
           const mExit = hx.slice(sIx, eIx).match(/const ARTICLES = (\[[\s\S]*?\]);/);
           if (mExit) anciensExit = JSON.parse(mExit[1].replace(/,\s*\]/g, ']'));
           } catch (e) { console.log('Lecture des anciens articles impossible pour le rapport.'); }
+          // === NETTOYAGE MEME SANS NOUVELLE : le site se debarrasse de ses doublons quand meme ===
+          const anciensExitNet = nettoyerDoublons(anciensExit);
+          if (anciensExitNet.length < anciensExit.length){
+          console.log('NETTOYAGE : ' + (anciensExit.length - anciensExitNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
+          try {
+          const hx2 = fs.readFileSync('index.html', 'utf8');
+          const s2 = hx2.indexOf('// AUTO-ARTICLES:START');
+          const e2 = hx2.indexOf('// AUTO-ARTICLES:END');
+          if (s2 !== -1 && e2 !== -1){
+          fs.writeFileSync('index.html', hx2.slice(0, s2) + blocArticlesBrut(anciensExitNet) + hx2.slice(e2 + '// AUTO-ARTICLES:END'.length));
+          console.log('index.html nettoye et mis a jour (edition sans nouvelle).');
+          }
+          } catch (eN) { console.log('Nettoyage impossible : ' + eN.message); }
+          anciensExit = anciensExitNet;
+          }
           const catsPresentesExit = new Set(anciensExit.map(a => a.cat));
           const videsExit = CATS.filter(c => !catsPresentesExit.has(c));
           fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: editionCourante, fluxTotal: feedHealth.length, fluxActifs: vivantsExit.length, fluxMorts: mortsExit, nouveauxArticles: 0, articlesTotal: anciensExit.length, rubriquesVides: videsExit, raison: KEY ? 'IA sans article exploitable (' + headlines.length + ' titres collectes)' : 'cle MISTRAL_API_KEY absente' }, null, 2));
@@ -194,7 +235,7 @@ jobs:
           // === LIENS VIVANTS : rejeter les articles dont la source est introuvable (page supprimee / lien casse) ===
           const verifLien = async u => {
           try {
-          const r = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(12000), redirect: 'follow' });
+          const r = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(12000), redirect: 'follow' });
           return r.status !== 404 && r.status !== 410 && r.status !== 400;
           } catch (e) { return false; }
           };
@@ -232,25 +273,8 @@ jobs:
           } catch (e) {
           console.log('Lecture des anciens articles impossible : nouvelle edition seule.');
           }
-          // === ANTI-DOUBLON RENFORCE : comparaison sur titre + resume, mots singularises, seuil serre ===
-          const motsVides = new Set(['le','la','les','un','une','des','du','de','d','l','et','en','a','au','aux','pour','avec','sur','dans','son','sa','ses','est','sont','que','qui','se','ce','cet','cette','apres','avant','plus','moins','par','pas','ne','il','elle','ils','elles','on','nous','vous','du','des','ca','sa','leur','leurs','ceci','cela','cette','tout','tous','toute','toutes','meme','aussi','alors','ainsi','chez','vers','depuis','pendant','selon']);
-          const motsCles = t => String(t || '').toLowerCase().split(/\s+/).map(m => m.replace(/[^\wÀ-ÿ]/g, '').replace(/s$/, '')).filter(m => m.length > 3 && !motsVides.has(m));
-          const similaires = (t1, t2) => {
-          const m1 = new Set(motsCles(t1)), m2 = new Set(motsCles(t2));
-          if (!m1.size || !m2.size) return false;
-          let communs = 0;
-          m1.forEach(m => { if (m2.has(m)) communs++; });
-          return (communs / Math.min(m1.size, m2.size)) >= 0.35;
-          };
-          const texteArticle = a => String(a.title || '') + ' ' + String(a.excerpt || '');
           // === NETTOYAGE : supprimer les doublons DEJA PUBLIES parmi les anciens articles ===
-          const anciensNet = [];
-          for (const a of anciens){
-          const u = String(a.sourceUrl || '').split('#')[0];
-          const ta = texteArticle(a);
-          if (anciensNet.some(r => (u && String(r.sourceUrl || '').split('#')[0] === u) || similaires(texteArticle(r), ta))) continue;
-          anciensNet.push(a);
-          }
+          const anciensNet = nettoyerDoublons(anciens);
           if (anciensNet.length < anciens.length) console.log('NETTOYAGE : ' + (anciens.length - anciensNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
           anciens = anciensNet;
           const urlsSources = new Set(anciens.map(a => String(a.sourceUrl || '').split('#')[0]).filter(Boolean));
@@ -358,7 +382,8 @@ jobs:
           # --- 1) Le robot a-t-il produit son rapport ? ---
           if [ -f etat-robot.json ]; then
             eval "$(node -e "const e=require('./etat-robot.json'); console.log('NOUVEAUX='+e.nouveauxArticles+'; TOTAL='+e.articlesTotal+'; ACTIFS='+e.fluxActifs+'; MORTS='+e.fluxMorts.length+'; VIDES='+e.rubriquesVides.length);")"
-            if [ "$NOUVEAUX" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Aucun nouvel article dans cette edition (sources ou IA en panne ?)."; fi
+            RAISON=$(node -e "const e=require('./etat-robot.json'); console.log(e.raison||'raison inconnue')" 2>/dev/null)
+            if [ "$NOUVEAUX" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Aucun nouvel article dans cette edition. Raison : $RAISON"; fi
             if [ "$TOTAL" -lt 8 ]; then PROBLEMES="$PROBLEMES"$'\n'"- Seulement $TOTAL articles au total sur le site (seuil d'alerte : 8)."; fi
             if [ "$MORTS" -ge 5 ]; then PROBLEMES="$PROBLEMES"$'\n'"- $MORTS flux RSS muets sur $((MORTS+ACTIFS)) : a verifier dans le fichier etat-robot.json du dernier run."; fi
             if [ "$VIDES" -ge 2 ]; then PROBLEMES="$PROBLEMES"$'\n'"- $VIDES rubriques sans aucun article (source a elargir)."; fi
