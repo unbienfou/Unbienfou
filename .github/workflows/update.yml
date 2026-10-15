@@ -42,6 +42,7 @@ jobs:
           }
 
           // === OUTILS ANTI-DOUBLON (partages) : titre + resume, mots singularises, seuil 0.35 ===
+          // GARDE-FOU v8 : deux articles ne sont consideres doubles que s'ils partagent AU MOINS 2 mots-cles
           const motsVides = new Set(['le','la','les','un','une','des','du','de','d','l','et','en','a','au','aux','pour','avec','sur','dans','son','sa','ses','est','sont','que','qui','se','ce','cet','cette','apres','avant','plus','moins','par','pas','ne','il','elle','ils','elles','on','nous','vous','du','des','ca','sa','leur','leurs','ceci','cela','cette','tout','tous','toute','toutes','meme','aussi','alors','ainsi','chez','vers','depuis','pendant','selon']);
           const motsCles = t => String(t || '').toLowerCase().split(/\s+/).map(m => m.replace(/[^\wÀ-ÿ]/g, '').replace(/s$/, '')).filter(m => m.length > 3 && !motsVides.has(m));
           const similaires = (t1, t2) => {
@@ -49,6 +50,7 @@ jobs:
           if (!m1.size || !m2.size) return false;
           let communs = 0;
           m1.forEach(m => { if (m2.has(m)) communs++; });
+          if (communs < 2) return false;
           return (communs / Math.min(m1.size, m2.size)) >= 0.35;
           };
           const texteArticle = a => String(a.title || '') + ' ' + String(a.excerpt || '');
@@ -274,6 +276,7 @@ jobs:
           } catch (e) {
           console.log('Lecture des anciens articles impossible : nouvelle edition seule.');
           }
+          console.log('ETAPES : ' + articles.length + ' articles de l IA apres tous les filtres, ' + anciens.length + ' anciens articles lus sur le site.');
           // === NETTOYAGE : supprimer les doublons DEJA PUBLIES parmi les anciens articles ===
           const anciensNet = nettoyerDoublons(anciens);
           if (anciensNet.length < anciens.length) console.log('NETTOYAGE : ' + (anciens.length - anciensNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
@@ -296,12 +299,18 @@ jobs:
           nouveaux = retenus;
           let tous = nouveaux.concat(anciens).slice(0, 40);
           // === ANTI-DOUBLON GLOBAL (IA) : passe finale sur toute la liste qui va etre publiee ===
+          // GARDE-FOU v8 : l IA ne peut JAMAIS vider le site — max 25% de suppressions, toujours au moins 16 articles au final
           if (KEY && tous.length > 8){
           try {
-          const gPrompt = "Tu es l'agent ANTI-DOUBLON du journal de bonnes nouvelles Un bien fou. Voici la liste complete des articles qui vont etre publies :\n" + tous.map((a, i) => (i + 1) + '. ' + a.title + ' [' + a.cat + ']').join('\n') + "\n\nIdentifie les groupes d'articles qui racontent la MEME information (meme evenement, meme annonce, meme mesure, meme sujet precise). Pour chaque groupe, garde LE MEILLEUR (le plus precis, le plus riche) et liste les numeros des autres a supprimer. Attention : ne supprime PAS des articles qui parlent simplement du meme theme ou de la meme rubrique — seulement les vrais doublons d'information (ex : deux articles sur la meme loi, meme reprise d'entreprise, meme victoire). Reponds UNIQUEMENT avec du JSON {\"supprimer\":[liste des numeros a supprimer]}. Si aucun doublon, reponds {\"supprimer\":[]}.";
+          const gPrompt = "Tu es l'agent ANTI-DOUBLON du journal de bonnes nouvelles Un bien fou. Voici la liste complete des articles qui vont etre publies :\n" + tous.map((a, i) => (i + 1) + '. ' + a.title + ' [' + a.cat + ']').join('\n') + "\n\nIdentifie les groupes d'articles qui racontent la MEME information (meme evenement, meme annonce, meme mesure, meme sujet precise). Pour chaque groupe, garde LE MEILLEUR (le plus precis, le plus riche) et liste les numeros des autres a supprimer. Attention : ne supprime PAS des articles qui parlent simplement du meme theme ou de la meme rubrique — seulement les vrais doublons d'information (ex : deux articles sur la meme loi, meme reprise d'entreprise, meme victoire). Sois CONSERVATEUR : en cas de doute, ne supprime rien. Reponds UNIQUEMENT avec du JSON {\"supprimer\":[liste des numeros a supprimer]}. Si aucun doublon, reponds {\"supprimer\":[]}.";
           const g = await mistral(gPrompt);
           const aSuppr = (g.supprimer || []).map(Number).filter(n => n >= 1 && n <= tous.length);
-          if (aSuppr.length){
+          const maxSuppr = Math.ceil(tous.length * 0.25);
+          if (aSuppr.length > maxSuppr){
+          console.log('ANTI-DOUBLON GLOBAL : l IA veut supprimer ' + aSuppr.length + ' articles sur ' + tous.length + ' — reponse trop large (max ' + maxSuppr + '), on l ignore par securite.');
+          } else if (aSuppr.length && (tous.length - aSuppr.length) < 16){
+          console.log('ANTI-DOUBLON GLOBAL : suppression ignoree par securite, il resterait moins de 16 articles.');
+          } else if (aSuppr.length){
           const supprSet = new Set(aSuppr);
           const avant = tous.length;
           tous = tous.filter((a, i) => !supprSet.has(i + 1));
