@@ -74,10 +74,13 @@ jobs:
           messages: [{ role: 'user', content: prompt }], signal: AbortSignal.timeout(90000)
           })
           });
+          if (!r.ok){ const errTxt = await r.text(); throw new Error('API Mistral HTTP ' + r.status + ' : ' + errTxt.slice(0, 200)); }
           const j = await r.json();
           return JSON.parse(j.choices && j.choices[0] && j.choices[0].message.content || '{}');
           }
           const headlines = await getHeadlines();
+          console.log('BILAN : ' + headlines.length + ' titres collectes dans les flux.');
+          if (!KEY) console.log('ALERTE : la cle MISTRAL_API_KEY est absente ou vide ! Verifier sur GitHub : Settings > Secrets and variables > Actions.');
           let articles = [];
           if (headlines.length >= 3 && KEY){
           const prompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), un journal de bonnes nouvelles qui fait du bien. Voici des titres de la presse FRANCAISE recus aujourd'hui, classes par rubrique avec leur lien source :\n" + headlines.map(h => '- [' + h.cat + '] ' + h.title + ' [source: ' + h.url + ']').join('\n') + "\n\nParmi ces titres, selectionne les 16 meilleurs qui racontent une BONNE NOUVELLE (fait divers positif, progres, initiative, reussite, solidarite, victoire). Preferer couvrir des rubriques differentes. IMPORTANT BADMINTON : les titres de badminton (flux Badzine, hebdomadaire) doivent etre classés dans la categorie SPORT — accepte un titre de badminton meme s'il date de la semaine ecoulee, trouve son angle positif (equipe en tete, club qui impressionne), UNIQUEMENT a partir des elements du titre fourni. Mais n'invente JAMAIS : si aucun titre de badminton ne figure ci-dessus, n'en cree pas. Redige 16 articles courts EN FRANCAIS inspires de ces titres (reformule avec prudence, sans inventer de chiffres precis, sans inventer de noms de personnes, de clubs, d'equipes ou d'evenements qui ne figurent pas dans le titre ; source = nom du media d'origine). COUVERTURE OBLIGATOIRE : veille a proposer au moins 1 article pour chaque rubrique presente dans les titres ci-dessus ; si une rubrique n'a aucun titre exploitable ce jour, ne la force pas (n'invente rien). Pour chaque article, recopie EXACTEMENT le lien [source: ...] correspondant dans le champ sourceUrl, et garde la categorie indiquee entre crochets. Choisis la categorie parmi : france, regions, sport, innovation, ecologie, sante, solidarite, culture, insolite. Si un titre n'est pas une bonne nouvelle, ignore-le. Reponds UNIQUEMENT avec du JSON de la forme {\"articles\":[{\"cat\":\"...\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"source\":\"...\",\"sourceUrl\":\"lien exact de la source\",\"readTime\":\"3 min\"}]}";
@@ -85,11 +88,85 @@ jobs:
           const parsed = await mistral(prompt);
           articles = parsed.articles || [];
           } catch (e) {
-          console.log('Erreur IA redaction : ' + e.message);
+          console.log('Erreur IA redaction (tentative 1) : ' + e.message);
+          try {
+          const parsed2 = await mistral(prompt);
+          articles = parsed2.articles || [];
+          } catch (e2) {
+          console.log('Erreur IA redaction (tentative 2) : ' + e2.message);
           }
           }
+          }
+          // === NEWSLETTER (fonction partagee) : envoyee a l edition de 7h, meme sans nouvel article ===
+          async function envoyerNewsletter(tous){
+          const BREVO = process.env.BREVO_API_KEY || '';
+          const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
+          if (!BREVO || !LIST_ID){ console.log('Newsletter sautee : BREVO_API_KEY ou BREVO_LIST_ID absent.'); return; }
+          try {
+          const contactsRes = await fetch('https://api.brevo.com/v3/contacts/lists/' + LIST_ID + '/contacts?limit=50&offset=0', {
+          headers: { 'api-key': BREVO }
+          });
+          const cj = await contactsRes.json();
+          const emails = (cj.contacts || []).map(c => c.email).filter(Boolean);
+          if (!emails.length){
+          console.log('Aucun abonne Brevo pour le moment : newsletter non envoyee.');
+          return;
+          }
+          const top3 = tous.slice(0, 3);
+          const dateMail = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
+          const objet = '☀️ Votre dose de bonnes nouvelles du ' + dateMail;
+          const htmlMail = '<div style="font-family:Georgia,serif;background:#faf8f3;padding:32px;text-align:center;">' +
+          '<h2 style="color:#1c1917;letter-spacing:.06em;text-transform:uppercase;font-size:.8rem;margin-bottom:6px;">Un bien fou</h2>' +
+          '<h1 style="color:#b45309;margin:0 0 24px;font-size:1.5em;">Les bonnes nouvelles du jour ☀️</h1>' +
+          top3.map((a, i) => '<div style="background:#fffdf9;border:1px solid #e9e2d4;border-radius:8px;padding:20px 24px;margin:0 auto 16px;max-width:520px;text-align:left;">' +
+          '<p style="font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#059669;font-weight:700;margin:0 0 8px;">✓ Vérifié · ' + (a.cat || '') + '</p>' +
+          '<p style="font-size:1.05em;font-weight:700;color:#1c1917;margin:0 0 10px;">' + String(a.title || '').slice(0, 140) + '</p>' +
+          '<p style="font-size:.9em;color:#44403c;margin:0 0 14px;">' + String(a.excerpt || '').slice(0, 180) + '</p>' +
+          '<a href="https://www.unbienfou.fr" style="background:#1c1917;color:#faf8f3;text-decoration:none;padding:10px 18px;border-radius:4px;font-size:.8rem;font-family:Arial,sans-serif;">Lire sur Un bien fou →</a>' +
+          '</div>').join('') +
+          '<p style="color:#8a8177;font-size:.75rem;margin-top:28px;font-family:Arial,sans-serif;">Chaque jour à 7h · <a href="https://www.unbienfou.fr" style="color:#b45309;">unbienfou.fr</a></p>' +
+          '<p style="color:#b8b0a4;font-size:.68rem;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>' +
+          '</div>';
+          for (const email of emails){
+          await fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: { 'api-key': BREVO, 'content-type': 'application/json' },
+          body: JSON.stringify({
+          sender: { name: 'Un bien fou', email: 'unbienfou.media@gmail.com' },
+          to: [{ email: email }],
+          subject: objet,
+          htmlContent: htmlMail
+          })
+          });
+          }
+          console.log('Newsletter envoyee a ' + emails.length + ' abonne(s).');
+          } catch (e) {
+          console.log('Erreur newsletter Brevo : ' + e.message);
+          }
+          }
+          const heureEdition = new Date().getUTCHours() + 2; // heure de Paris
+          const editionCourante = heureEdition >= 14 ? '17 h' : '7 h';
           if (!articles.length){
           console.log('Pas de nouvelles pour cette edition : on garde les articles existants.');
+          // === RAPPORT quand meme : la veille saura exactement pourquoi ===
+          const mortsExit = feedHealth.filter(f => f.items <= 0).map(f => f.url);
+          const vivantsExit = feedHealth.filter(f => f.items > 0);
+          let anciensExit = [];
+          try {
+          const hx = fs.readFileSync('index.html', 'utf8');
+          const sIx = hx.indexOf('// AUTO-ARTICLES:START');
+          const eIx = hx.indexOf('// AUTO-ARTICLES:END');
+          const mExit = hx.slice(sIx, eIx).match(/const ARTICLES = (\[[\s\S]*?\]);/);
+          if (mExit) anciensExit = JSON.parse(mExit[1].replace(/,\s*\]/g, ']'));
+          } catch (e) { console.log('Lecture des anciens articles impossible pour le rapport.'); }
+          const catsPresentesExit = new Set(anciensExit.map(a => a.cat));
+          const videsExit = CATS.filter(c => !catsPresentesExit.has(c));
+          fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: editionCourante, fluxTotal: feedHealth.length, fluxActifs: vivantsExit.length, fluxMorts: mortsExit, nouveauxArticles: 0, articlesTotal: anciensExit.length, rubriquesVides: videsExit, raison: KEY ? 'IA sans article exploitable (' + headlines.length + ' titres collectes)' : 'cle MISTRAL_API_KEY absente' }, null, 2));
+          console.log('Rapport etat-robot.json ecrit (edition sans nouvel article).');
+          // === NEWSLETTER quand meme : les abonnes recoivent leur mail de 7h avec les articles existants ===
+          if (editionCourante === '7 h' && anciensExit.length){
+          await envoyerNewsletter(anciensExit);
+          }
           process.exit(0);
           }
           // === AGENT VERIFICATEUR : 2e passe IA ===
@@ -216,50 +293,9 @@ jobs:
           console.log('Rapport etat-robot.json ecrit.');
 
           // === NEWSLETTER : envoi du meilleur de l edition a 7h ===
-          const BREVO = process.env.BREVO_API_KEY || '';
-          const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
-          if (BREVO && LIST_ID && edition === '7 h'){
-          try {
-          const contactsRes = await fetch('https://api.brevo.com/v3/contacts/lists/' + LIST_ID + '/contacts?limit=50&offset=0', {
-          headers: { 'api-key': BREVO }
-          });
-          const cj = await contactsRes.json();
-          const emails = (cj.contacts || []).map(c => c.email).filter(Boolean);
-          if (emails.length){
-          const top3 = tous.slice(0, 3);
-          const objet = '☀️ Votre dose de bonnes nouvelles du ' + dateFr;
-          const htmlMail = '<div style="font-family:Georgia,serif;background:#faf8f3;padding:32px;text-align:center;">' +
-          '<h2 style="color:#1c1917;letter-spacing:.06em;text-transform:uppercase;font-size:.8rem;margin-bottom:6px;">Un bien fou</h2>' +
-          '<h1 style="color:#b45309;margin:0 0 24px;font-size:1.5em;">Les bonnes nouvelles du jour ☀️</h1>' +
-          top3.map((a, i) => '<div style="background:#fffdf9;border:1px solid #e9e2d4;border-radius:8px;padding:20px 24px;margin:0 auto 16px;max-width:520px;text-align:left;">' +
-          '<p style="font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#059669;font-weight:700;margin:0 0 8px;">✓ Vérifié · ' + (a.cat || '') + '</p>' +
-          '<p style="font-size:1.05em;font-weight:700;color:#1c1917;margin:0 0 10px;">' + String(a.title || '').slice(0, 140) + '</p>' +
-          '<p style="font-size:.9em;color:#44403c;margin:0 0 14px;">' + String(a.excerpt || '').slice(0, 180) + '</p>' +
-          '<a href="https://www.unbienfou.fr" style="background:#1c1917;color:#faf8f3;text-decoration:none;padding:10px 18px;border-radius:4px;font-size:.8rem;font-family:Arial,sans-serif;">Lire sur Un bien fou →</a>' +
-          '</div>').join('') +
-          '<p style="color:#8a8177;font-size:.75rem;margin-top:28px;font-family:Arial,sans-serif;">Chaque jour à 7h · <a href="https://www.unbienfou.fr" style="color:#b45309;">unbienfou.fr</a></p>' +
-          '<p style="color:#b8b0a4;font-size:.68rem;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>' +
-          '</div>';
-          for (const email of emails){
-          await fetch('https://api.brevo.com/v3/smtp/email', {
-          method: 'POST',
-          headers: { 'api-key': BREVO, 'content-type': 'application/json' },
-          body: JSON.stringify({
-          sender: { name: 'Un bien fou', email: 'unbienfou.media@gmail.com' },
-          to: [{ email: email }],
-          subject: objet,
-          htmlContent: htmlMail
-          })
-          });
-          }
-          console.log('Newsletter envoyee a ' + emails.length + ' abonne(s).');
+          if (edition === '7 h'){
+          await envoyerNewsletter(tous);
           } else {
-          console.log('Aucun abonne pour le moment : newsletter non envoyee.');
-          }
-          } catch (e) {
-          console.log('Erreur newsletter Brevo : ' + e.message);
-          }
-          } else if (edition === '17 h') {
           console.log('Edition du soir : pas de newsletter (envoi uniquement a 7h).');
           }
           SCRIPT_EOF
