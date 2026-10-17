@@ -254,6 +254,53 @@ jobs:
           const nbPolArt = articles.length;
           articles = articles.filter(a => !estPolitique(a.title) && !estPolitique(a.excerpt));
           if (articles.length < nbPolArt) console.log('POLITIQUE : ' + (nbPolArt - articles.length) + ' article(s) politique(s) rejete(s) par le filtre.');
+          // === GARANTIE TOUS SPORTS (v12.4) : si la presse du jour parle de sport et que la selection IA a zappe le sujet, on le redige quand meme ===
+          {
+            const titresSport = headlines.filter(h => h.cat === 'sport' && !estPolitique(h.title));
+            const nonCouverts = [];
+            for (const h of titresSport) {
+              const m1 = new Set(motsCles(h.title));
+              const couvert = articles.some(a => {
+                const m2 = new Set(motsCles(String(a.title || '') + ' ' + String(a.excerpt || '')));
+                let c = 0; m1.forEach(m => { if (m2.has(m)) c++; });
+                return c >= 2;
+              });
+              if (!couvert) nonCouverts.push(h);
+            }
+            if (nonCouverts.length && articles.length < 30) {
+              try {
+                const listeSP = nonCouverts.slice(0, 8).map((h, i) => (i + 1) + '. ' + h.title).join('\n');
+                const spPrompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), journal de bonnes nouvelles. Voici des titres sportifs de la presse francaise recus aujourd'hui, NON retenus par la selection principale :\n" + listeSP + "\n\nParmi ces titres, choisis jusqu'a 3 BONNES NOUVELLES sportives differentes (victoire, qualification, titre, medaille, record, exploit, performance) et redige pour chacune un article court EN FRANCAIS. Reformule avec prudence, sans inventer de chiffres, de noms ou d'evenements absents des titres. Reponds UNIQUEMENT avec du JSON {\"articles\":[{\"titreSource\":\"copie exactement un des titres de la liste\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"readTime\":\"3 min\"}]}" ;
+                const spTxt = await mistral(spPrompt);
+                const spJson = JSON.parse(spTxt);
+                let ajoutes = 0;
+                for (const sp of (spJson.articles || []).slice(0, 3)) {
+                  if (articles.length >= 30) break;
+                  if (estPolitique(String(sp.title || '') + ' ' + String(sp.excerpt || ''))) continue; // securite : jamais de politique meme en garantie
+                  const mNew = new Set(motsCles(String(sp.title || '')));
+                  const dejaSemblable = articles.some(a => { const mOld = new Set(motsCles(String(a.title || ''))); let c = 0; mNew.forEach(m => { if (mOld.has(m)) c++; }); return c >= 3; });
+                  if (dejaSemblable) continue; // securite : pas de doublon
+                  // rattacher l article au titre source le plus proche pour l URL et le nom du media
+                  let best = null, bestC = 0;
+                  const msp = new Set(motsCles(String(sp.titreSource || sp.title || '')));
+                  for (const h of nonCouverts) {
+                    const mh = new Set(motsCles(h.title));
+                    let c = 0; msp.forEach(m => { if (mh.has(m)) c++; });
+                    if (c > bestC) { bestC = c; best = h; }
+                  }
+                  const art = { cat: 'sport', title: sp.title, excerpt: sp.excerpt, body: sp.body, source: best ? best.media || 'Presse francaise' : 'Presse francaise', sourceUrl: best ? best.url : '', verified: true, readTime: sp.readTime || '3 min' };
+                  articles.push(art);
+                  ajoutes++;
+                  console.log('GARANTIE SPORT : article ajoute : ' + String(art.title).slice(0, 60));
+                }
+                if (ajoutes) console.log('GARANTIE SPORT : ' + ajoutes + ' article(s) sportif(s) ajoute(s) (sujets zappes par la selection).');
+              } catch (e) {
+                console.log('GARANTIE SPORT : echec (' + String(e.message || e).slice(0, 120) + ')');
+              }
+            } else if (nonCouverts.length) {
+              console.log('GARANTIE SPORT : ' + nonCouverts.length + ' titre(s) sportif(s) non couverts, liste deja pleine (max 30).');
+            }
+          }
           // === VERACITE (filtre DETERMINISTE, sans IA) : un article n'est publie que si son URL source a reellement ete collectee dans les flux ===
           const normU = u => String(u || '').split('#')[0].split('?')[0].replace(/\/$/, '');
           const urlsCollectees = new Set(headlines.map(h => normU(h.url)).filter(Boolean));
