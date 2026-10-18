@@ -330,7 +330,7 @@ jobs:
           ['innovation', /(intelligence artificielle|scientifique|d[eé]couverte|recherche|nobel|quantique|innovation|startup|technologi|horloge atomique|red[eé]fini|brevet|spatial|satellite)/i],
           ['ecologie', /([eé]mission|co2|biodiversit[eé]|[eé]nergie renouvelable|panneaux solaires|climat|esp[eè]ce|r[eé]introduction|d[eé]pollution|r[eé]forestation|gaz a effet de serre|gaz à effet de serre|transition [eé]cologique|d[eé]carbon|for[eê]t|reforestation|d[eé]forestation|d[eé]chets?|nettoyage|r[eé]serve naturelle|parc naturel|protection marine|moratoire|plage|oc[eé]an)/i],
           ['sante', /(sant[eé]|m[eé]dicament|vaccin|gu[eé]rison|r[eé]mission|h[oô]pital|soignant|don du sang|greffe|m[eé]nopause|p[eé]rim[eé]nopause|sympt[oô]me|bien-être|bien-etre)/i],
-          ['culture', /(jeu vid[eé]o|jeux vid[eé]o|\bgta\b|musique|film|cin[eé]ma|exposition|mus[eé]e|palme|c[eé]sar|prix litt[eé]raire|roman|concert|festival|patrimoine|bande originale|th[eé][aâ]tre|livre)/i],
+          ['culture', /(jeu vid[eé]o|jeux vid[eé]o|\bgta\b|musique|film|cin[eé]ma|exposition|mus[eé]e|palme|c[eé]sar|prix litt[eé]raire|roman|concert|festival|patrimoine|bande originale|th[eé][aâ]tre|livre|ch[âa]teau|diamant|bijou|joaillerie|pierre pr[eé]cieuse)/i],
           ['insolite', /(insolite|cocasse|hilarant|dr[oô]le|[eé]tonnant|incroyable|d[eé]nich[eé])/i],
           ['solidarite', /(b[eé]n[eé]vole|association|solidarit[eé]|g[eé]n[eé]rosit[eé]|collecte|\bdon\b|\bdons\b|engagement|epicerie sociale|maraude|humanitaire|chaine de solidarit[eé]|donation|don record)/i]
           ];
