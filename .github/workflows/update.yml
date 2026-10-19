@@ -384,7 +384,7 @@ jobs:
               const r = await fetch(u, { headers: { 'user-agent': 'Mozilla/5.0 (compatible: UnBienFouBot/1.0; +https://unbienfou.fr)' }, signal: AbortSignal.timeout(12000), redirect: 'follow' });
               if (!r.ok) return null;
               const html = await r.text();
-              return html.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/ /g, ' ').replace(/'/g, "'").replace(/’/g, "'").replace(/&[^;]+;/g, ' ');
+              return html.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&rsquo;/g, "'").replace(/&[^;]+;/g, ' ');
             } catch (e) { return null; }
           };
           {
