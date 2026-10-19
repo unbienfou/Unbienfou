@@ -145,7 +145,7 @@
         <circle cx="118" cy="66" r="6" fill="#e88a6a"/>
         <circle cx="118" cy="66" r="2.4" fill="#fff3de"/>
       </svg>
-      <span class="mh-title">Un bien fou</span>
+      <span class="mh-title">Un&nbsp;bien&nbsp;fou</span>
     </div>
     <p class="mh-tag">Le journal des nouvelles qui font du bien · vérifiées, sourcées, gratuites</p>
   </div>
@@ -245,7 +245,7 @@ var view = "home";
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function(c) {
-    return { "&":"&", "<":"<", ">":">", '"':""", "'":"'" }[c];
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
   });
 }
 
@@ -278,7 +278,7 @@ var BREVO_URL = "https://9ff52e8c.sibforms.com/serve/MUIFAEmreW3M7r1ekLheX77a7io
 function newsletterHTML() {
   return '<div class="nl">' +
     '<div><h3>La bonne humeur dans votre boîte mail ☀️</h3><p>Chaque matin, une sélection des actualités qui font du bien — issues de nos éditions de 7h et 17h. Newsletter 100 % gratuite, sans spam.</p></div>' +
-    '<button class="nlbtn" onclick="window.open(BREVO_URL, \'_blank\')">S’abonner à la newsletter — gratuit</button></div>';
+    '<button class="nlbtn" onclick="window.open(BREVO_URL, \'_blank\')">S&rsquo;abonner à la newsletter — gratuit</button></div>';
 }
 
 function pageHTML() {
@@ -314,7 +314,7 @@ function renderMain() {
   if (view === "home" && hero) {
     heroHTML = '<div class="hero">' +
       '<div>' +
-        '<div class="kicker">À la une aujourd’hui</div>' +
+        '<div class="kicker">À la une aujourd&rsquo;hui</div>' +
         "<h1 onclick=\"openA(" + hero.id + ')">' + esc(hero.title) + "</h1>" +
         '<p class="standfirst">' + esc(hero.excerpt) + "</p>" +
         '<div class="meta-line"><span class="verified">✓ Vérifié</span><span>' + esc(hero.date) + "</span><span>" + esc(hero.readTime) + " de lecture</span></div>" +
