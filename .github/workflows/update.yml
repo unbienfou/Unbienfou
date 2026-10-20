@@ -281,7 +281,7 @@ jobs:
           if (articles.length < nbSombreArt) console.log('SUJETS SOMBRES : ' + (nbSombreArt - articles.length) + ' article(s) au contexte dramatique rejete(s).');
           // === GARANTIE TOUS SPORTS (v12.4) : si la presse du jour parle de sport et que la selection IA a zappe le sujet, on le redige quand meme ===
           {
-            const RE_SUJET_SPORTIF = /([eé]quipe de france|ligue europ|ligue des champion|hu[ie]temes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvolley|b|athl[eé]tisme|pongiste|tennis de table|champion d|championne d|open d|qualifi|palmares sportif|exploit sportif|\bpsg\b|olympiqu|\bnba\b|\bligue 1\b|\bligue 2\b|top 14|pro d2|\bf1\b|formule 1|tour de france|tournoi|victoire en finale|sacr[eé] champion|\bwembanyama\b|\blebrun\b|\blanier\b)/i;
+            const RE_SUJET_SPORTIF = /([eé]quipe de france|ligue europ|ligue des champion|hu[ie]temes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvolley|athl[eé]tisme|pongiste|tennis de table|champion d|championne d|open d|qualifi|palmares sportif|exploit sportif|\bpsg\b|olympiqu|\bnba\b|\bligue 1\b|\bligue 2\b|top 14|pro d2|\bf1\b|formule 1|tour de france|tournoi|victoire en finale|sacr[eé] champion|\bwembanyama\b|\blebrun\b|\blanier\b)/i;
             const titresSport = headlines.filter(h => RE_SUJET_SPORTIF.test(h.title) && !estPolitique(h.title));
             const nonCouverts = [];
             for (const h of titresSport) {
@@ -353,7 +353,7 @@ jobs:
                   let best = null, bestC = 0;
                   const mRub = new Set(motsCles(String(rub.titreSource || rub.title || '')));
                   for (const h of titresCat) { const mh = new Set(motsCles(h.title)); let c = 0; mRub.forEach(m => { if (mh.has(m)) c++; }); if (c > bestC) { bestC = c; best = h; } }
-                  articles.push({ cat: catVide, title: rub.title, excerpt: rub.excerpt, body: rub.body, source: best ? best.media || 'Presse francaise' : 'Presse francaise', sourceUrl: best ? best.url : '', verified: true, readTime: rub.readTime || '3 min' });
+                  articles.push({ cat: catVide, garanti: true, title: rub.title, excerpt: rub.excerpt, body: rub.body, source: best ? best.media || 'Presse francaise' : 'Presse francaise', sourceUrl: best ? best.url : '', verified: true, readTime: rub.readTime || '3 min' });
                   rubAjoutes++;
                   console.log('GARANTIE RUBRIQUES : article ajoute en rubrique ' + catVide + ' : ' + String(rub.title).slice(0, 60));
                 }
@@ -374,7 +374,7 @@ jobs:
           const catParUrl = {};
           headlines.forEach(h => { const u = normU(h.url); if (u && !catParUrl[u]) catParUrl[u] = h.cat; });
           let nbRecat = 0;
-          articles = articles.map(a => { const c = catParUrl[normU(a.sourceUrl)]; if (c && c !== a.cat){ nbRecat++; return Object.assign({}, a, { cat: c }); } return a; });
+          articles = articles.map(a => { if (a.garanti) return a; const c = catParUrl[normU(a.sourceUrl)]; if (c && c !== a.cat){ nbRecat++; return Object.assign({}, a, { cat: c }); } return a; });
           console.log('RUBRIQUES : categorie du flux source appliquee (' + nbRecat + ' article(s) recategorise(s) sur ' + articles.length + ').');
           // === RECLASSIFICATION AUTO (v11) : chaque article va dans la rubrique de son sujet, par mots-cles du titre ===
           // Priorite : sport > innovation > ecologie > sante > culture > insolite. Deterministe, l IA n a plus son mot a dire.
@@ -390,6 +390,9 @@ jobs:
           const reclasser = liste => {
           let n = 0;
           const r = liste.map(a => {
+          if (a.garanti) return a;
+          const regleActuelle = REGLES.find(([rc]) => rc === a.cat);
+          if (regleActuelle && regleActuelle[1].test(String(a.title || ''))) return a;
           for (const [cat, re] of REGLES){
           if (re.test(String(a.title || ''))){
           if (a.cat !== cat){ n++; return Object.assign({}, a, { cat: cat }); }
@@ -653,4 +656,5 @@ jobs:
               echo "Veille OK : robot et site fonctionnent, aucune alerte."
             fi
           fi
+
 
