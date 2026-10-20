@@ -137,7 +137,7 @@ jobs:
           console.log('BILAN : ' + headlines.length + ' titres collectes dans les flux.');
           // === FILTRE POLITIQUE (v12) : aucun titre politique n entre dans le journal ===
           const RE_POLITIQUE = /([eé]lection|pr[eé]sidentielle|l[eé]gislative|municipales|r[eé]gionales|s[eé]nat(eur)?|assembl[eé]e nationale|d[eé]put[eé]|ministre|minist[eè]re|gouvernement|candidat|scrutin|urnes|[eé]lys[eé]e|matignon|palais bourbon|sondage|parti |parti,|politique)/i;
-          const RE_SOMBRE = /(violen|saccag|pillage|pill[eé]|eacute|emeute|[eé]meute|riot|morte? tu[eé]e?|assassin|attentat|otage|fusill|homicide|noy[eé]e?|d[eé]c[eè]s de|accident mortel|bless[eé]e? grave|incendie ravage|cambriolag|agression|kidnapping|enlevement|drame|trag[eé]die|deuil|deces |d[eé]c[eè]s \b|corps retrouv|disparition inqui)/i;
+          const RE_SOMBRE = /(violen|saccag|pillage|pill[eé]|eacute|emeute|[eé]meute|riot|morte? tu[eé]e?|assassin|attentat|otage|fusill|homicide|noy[eé]e?|d[eé]c[eè]s de|accident mortel|bless[eé]e? grave|incendie ravage|cambriolag|agression|kidnapping|enlevement|drame|trag[eé]die|deuil|deces |d[eé]c[eè]s \b|corps retrouv|disparition inqui|[uU]kraine|guerre|soldat|combattant|missile|frappe militaire|invasion|s[eé]isme)/i;
           const estSombre = t => RE_SOMBRE.test(String(t || ''));
           const estPolitique = t => RE_POLITIQUE.test(String(t || ''));
           const nbPolCollecte = headlines.length;
@@ -326,6 +326,42 @@ jobs:
             } else if (nonCouverts.length) {
               console.log('GARANTIE SPORT : ' + nonCouverts.length + ' titre(s) sportif(s) non couverts, liste deja pleine (max 30).');
             }
+          }
+          // === GARANTIE RUBRIQUES VIDES (v12.11) : une rubrique sans article nuit a la credibilite du site — si une rubrique est vide, le robot redige 1 article a partir des titres de ses flux ===
+          {
+            const catsPresentes = new Set(articles.map(a => a.cat));
+            const rubriquesVides = CATS.filter(c => !catsPresentes.has(c));
+            if (rubriquesVides.length) console.log('GARANTIE RUBRIQUES : rubrique(s) vide(s) dans la selection IA : ' + rubriquesVides.join(', ') + ' — le robot va les remplir.');
+            let rubAjoutes = 0;
+            for (const catVide of rubriquesVides) {
+              if (articles.length >= 40) break;
+              try {
+                // meilleurs titres disponibles de cette rubrique (hors politique, hors sombre)
+                const titresCat = headlines.filter(h => h.cat === catVide && !estPolitique(h.title) && !estSombre(h.title)).slice(0, 4);
+                if (!titresCat.length) { console.log('GARANTIE RUBRIQUES : aucun titre exploitable pour ' + catVide + ' dans les flux du jour.'); continue; }
+                const listeRub = titresCat.map((h, i) => (i + 1) + '. ' + h.title + ' [source: ' + h.url + ']').join('\n');
+                const rubPrompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), journal de bonnes nouvelles. La rubrique '" + catVide + "' est VIDE dans l'edition du jour, ce qui nuit a la credibilite du site. Voici des titres de la presse francaise recents pour cette rubrique :\n" + listeRub + "\n\nRedige UN article EN FRANCAIS inspire du meilleur de ces titres (le plus positif et factuel). REGLE ABSOLUE DES NOMS : ne cite JAMAIS un nom de personne, de club, de ville ou d'adversaire qui ne figure pas MOT POUR MOT dans un des titres ci-dessus. Sans inventer de chiffres, de noms ou d'evenements absents des titres. Reformule avec prudence. Reponds UNIQUEMENT avec le JSON {\"articles\":[{\"titreSource\":\"copie exactement un des titres de la liste\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"readTime\":\"3 min\"}]}";
+                const rubTxt = await mistral(rubPrompt);
+                const rubJson = JSON.parse(rubTxt);
+                for (const rub of (rubJson.articles || []).slice(0, 1)) {
+                  if (articles.length >= 40) break;
+                  if (estPolitique(String(rub.title || '') + ' ' + String(rub.excerpt || ''))) continue;
+                  if (estSombre(String(rub.title || '') + ' ' + String(rub.excerpt || ''))) continue;
+                  const mNew = new Set(motsCles(String(rub.title || '')));
+                  const deja = articles.some(a => { const mOld = new Set(motsCles(String(a.title || ''))); let c = 0; mNew.forEach(m => { if (mOld.has(m)) c++; }); return c >= 3; });
+                  if (deja) continue;
+                  let best = null, bestC = 0;
+                  const mRub = new Set(motsCles(String(rub.titreSource || rub.title || '')));
+                  for (const h of titresCat) { const mh = new Set(motsCles(h.title)); let c = 0; mRub.forEach(m => { if (mh.has(m)) c++; }); if (c > bestC) { bestC = c; best = h; } }
+                  articles.push({ cat: catVide, title: rub.title, excerpt: rub.excerpt, body: rub.body, source: best ? best.media || 'Presse francaise' : 'Presse francaise', sourceUrl: best ? best.url : '', verified: true, readTime: rub.readTime || '3 min' });
+                  rubAjoutes++;
+                  console.log('GARANTIE RUBRIQUES : article ajoute en rubrique ' + catVide + ' : ' + String(rub.title).slice(0, 60));
+                }
+              } catch (e) {
+                console.log('GARANTIE RUBRIQUES : echec pour ' + catVide + ' (' + String(e.message || e).slice(0, 100) + ')');
+              }
+            }
+            if (rubAjoutes) console.log('GARANTIE RUBRIQUES : ' + rubAjoutes + ' article(s) ajoute(s) pour combler les rubriques vides.');
           }
           // === VERACITE (filtre DETERMINISTE, sans IA) : un article n'est publie que si son URL source a reellement ete collectee dans les flux ===
           const normU = u => String(u || '').split('#')[0].split('?')[0].replace(/\/$/, '');
