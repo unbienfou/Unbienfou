@@ -130,10 +130,15 @@ jobs:
           console.log('BILAN : ' + headlines.length + ' titres collectes dans les flux.');
           // === FILTRE POLITIQUE (v12) : aucun titre politique n entre dans le journal ===
           const RE_POLITIQUE = /([eé]lection|pr[eé]sidentielle|l[eé]gislative|municipales|r[eé]gionales|s[eé]nat(eur)?|assembl[eé]e nationale|d[eé]put[eé]|ministre|minist[eè]re|gouvernement|candidat|scrutin|urnes|[eé]lys[eé]e|matignon|palais bourbon|sondage|parti |parti,|politique)/i;
+          const RE_SOMBRE = /(violen|saccag|pillage|pill[eé]|eacute|emeute|[eé]meute|riot|morte? tu[eé]e?|assassin|attentat|otage|fusill|homicide|noy[eé]e?|d[eé]c[eè]s de|accident mortel|bless[eé]e? grave|incendie ravage|cambriolag|agression|kidnapping|enlevement|drame|trag[eé]die|deuil|deces |d[eé]c[eè]s \b|corps retrouv|disparition inqui)/i;
+          const estSombre = t => RE_SOMBRE.test(String(t || ''));
           const estPolitique = t => RE_POLITIQUE.test(String(t || ''));
           const nbPolCollecte = headlines.length;
           headlines = headlines.filter(h => !estPolitique(h.title));
           console.log('POLITIQUE : ' + (nbPolCollecte - headlines.length) + ' titre(s) politique(s) ecarte(s) a la collecte.');
+          const nbSombreCollecte = headlines.length;
+          headlines = headlines.filter(h => !estSombre(h.title));
+          if (headlines.length < nbSombreCollecte) console.log('SUJETS SOMBRES : ' + (nbSombreCollecte - headlines.length) + ' titre(s) au contexte dramatique ecarte(s) a la collecte (violences, saccages, faits divers graves).');
           if (!KEY) console.log('ALERTE : la cle MISTRAL_API_KEY est absente ou vide ! Verifier sur GitHub : Settings > Secrets and variables > Actions.');
           let articles = [];
           if (headlines.length >= 3 && KEY){
@@ -263,9 +268,14 @@ jobs:
           const nbPolArt = articles.length;
           articles = articles.filter(a => !estPolitique(a.title) && !estPolitique(a.excerpt));
           if (articles.length < nbPolArt) console.log('POLITIQUE : ' + (nbPolArt - articles.length) + ' article(s) politique(s) rejete(s) par le filtre.');
+          // === FILTRE SUJETS SOMBRES (v12.9) : pas de sujet dramatique, meme avec un angle positif ===
+          const nbSombreArt = articles.length;
+          articles = articles.filter(a => !estSombre(a.title) && !estSombre(a.excerpt));
+          if (articles.length < nbSombreArt) console.log('SUJETS SOMBRES : ' + (nbSombreArt - articles.length) + ' article(s) au contexte dramatique rejete(s).');
           // === GARANTIE TOUS SPORTS (v12.4) : si la presse du jour parle de sport et que la selection IA a zappe le sujet, on le redige quand meme ===
           {
-            const titresSport = headlines.filter(h => h.cat === 'sport' && !estPolitique(h.title));
+            const RE_SUJET_SPORTIF = /([eé]quipe de france|ligue europ|ligue des champion|hu[ie]temes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvolley|b|athl[eé]tisme|pongiste|tennis de table|champion d|championne d|open d|qualifi|palmares sportif|exploit sportif|\bpsg\b|olympiqu|\bnba\b|\bligue 1\b|\bligue 2\b|top 14|pro d2|\bf1\b|formule 1|tour de france|tournoi|victoire en finale|sacr[eé] champion|\bwembanyama\b|\blebrun\b|\blanier\b)/i;
+            const titresSport = headlines.filter(h => RE_SUJET_SPORTIF.test(h.title) && !estPolitique(h.title));
             const nonCouverts = [];
             for (const h of titresSport) {
               const m1 = new Set(motsCles(h.title));
@@ -447,6 +457,10 @@ jobs:
           const nbPolAnciens = anciens.length;
           anciens = anciens.filter(a => !estPolitique(a.title) && !estPolitique(a.excerpt));
           if (anciens.length < nbPolAnciens) console.log('POLITIQUE ANCIENS : ' + (nbPolAnciens - anciens.length) + ' ancien(s) article(s) politique(s) retire(s) du site.');
+          // === SUJETS SOMBRES ANCIENS (v12.9) : retirer du site les articles deja publies au contexte dramatique ===
+          const nbSombreAnciens = anciens.length;
+          anciens = anciens.filter(a => !estSombre(a.title) && !estSombre(a.excerpt));
+          if (anciens.length < nbSombreAnciens) console.log('SUJETS SOMBRES ANCIENS : ' + (nbSombreAnciens - anciens.length) + ' ancien(s) article(s) au contexte dramatique retire(s) du site.');
           // === NETTOYAGE : supprimer les doublons DEJA PUBLIES parmi les anciens articles ===
           const anciensNet = nettoyerDoublons(anciens);
           if (anciensNet.length < anciens.length) console.log('NETTOYAGE : ' + (anciens.length - anciensNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
