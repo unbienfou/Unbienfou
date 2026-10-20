@@ -486,6 +486,18 @@ jobs:
           return isNaN(d.getTime()) ? '' : new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
           };
           const dateFr = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
+          
+          // === ANCIENNETE (v12.14) : un article dont la source a plus de 7 jours n est PAS une nouvelle — rejet ===
+          const SEUIL_ANCIENNETE_MS = 7 * 24 * 3600 * 1000;
+          const nbAvantAnciennete = articles.length;
+          articles = articles.filter(a => {
+            const p = dateParUrl[normU(a.sourceUrl)];
+            if (!p) return true;
+            const d = new Date(p);
+            if (isNaN(d.getTime())) return true;
+            return (Date.now() - d.getTime()) <= SEUIL_ANCIENNETE_MS;
+          });
+          if (articles.length < nbAvantAnciennete) console.log('ANCIENNETE : ' + (nbAvantAnciennete - articles.length) + ' article(s) rejete(s) : source de plus de 7 jours.');
           const heure = new Date().getUTCHours() + 2; // heure de Paris
           const edition = heure >= 14 ? '17 h' : '7 h';
           // === FUSION : nouvelles articles de l edition + anciens (max 40 au total) ===
@@ -521,6 +533,22 @@ jobs:
           const nbSombreAnciens = anciens.length;
           anciens = anciens.filter(a => !estSombre(a.title) && !estSombre(a.excerpt));
           if (anciens.length < nbSombreAnciens) console.log('SUJETS SOMBRES ANCIENS : ' + (nbSombreAnciens - anciens.length) + ' ancien(s) article(s) au contexte dramatique retire(s) du site.');
+          // === ANCIENNETE ANCIENS (v12.14) : retirer du site les articles dont la date affichee a plus de 7 jours ===
+          const MOIS_FR = { 'jan':0, 'janv':0, 'fev':1, 'fév':1, 'mar':2, 'avr':3, 'mai':4, 'juin':5, 'juil':6, 'aout':7, 'août':7, 'sep':8, 'sept':8, 'oct':9, 'nov':10, 'dec':11, 'déc':11 };
+          const parseDateFr = t => {
+            const m = String(t || '').match(/(\d{1,2})\s+([a-zéû]+)\.?\s+(\d{4})/i);
+            if (!m) return null;
+            const mo = MOIS_FR[String(m[2]).toLowerCase().slice(0, 4)] || MOIS_FR[String(m[2]).toLowerCase().slice(0, 3)];
+            if (mo === undefined) return null;
+            return new Date(Number(m[3]), mo, Number(m[1]));
+          };
+          const nbAvantAge = anciens.length;
+          anciens = anciens.filter(a => {
+            const d = parseDateFr(a.date);
+            if (!d || isNaN(d.getTime())) return true;
+            return (Date.now() - d.getTime()) <= (SEUIL_ANCIENNETE_MS + 24 * 3600 * 1000);
+          });
+          if (anciens.length < nbAvantAge) console.log('ANCIENNETE ANCIENS : ' + (nbAvantAge - anciens.length) + ' ancien(s) article(s) retire(s) du site : date de plus de 7 jours.');
           // === NETTOYAGE : supprimer les doublons DEJA PUBLIES parmi les anciens articles ===
           const anciensNet = nettoyerDoublons(anciens);
           if (anciensNet.length < anciens.length) console.log('NETTOYAGE : ' + (anciens.length - anciensNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
@@ -670,6 +698,7 @@ jobs:
               echo "Veille OK : robot et site fonctionnent, aucune alerte."
             fi
           fi
+
 
 
 
