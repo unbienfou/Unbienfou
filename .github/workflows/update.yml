@@ -115,7 +115,21 @@ jobs:
           }
           }
           const vus = new Set();
-          return news.filter(n => !vus.has(n.title) && vus.add(n.title)).slice(0, 250);
+          const uniques = news.filter(n => !vus.has(n.title) && vus.add(n.title));
+          // v12.13 REPARTITION EQUITABLE : le plafond de 250 coupait tout au niveau de france+regions, les autres rubriques n'etaient jamais lues
+          const parCatCol = {};
+          for (const n of uniques){ (parCatCol[n.cat] = parCatCol[n.cat] || []).push(n); }
+          const pris = new Set();
+          const gardes = [];
+          for (const cat of Object.keys(parCatCol)){
+            for (const n of parCatCol[cat].slice(0, 30)){ gardes.push(n); pris.add(n.title); }
+          }
+          for (const n of uniques){
+            if (gardes.length >= 250) break;
+            if (!pris.has(n.title)){ gardes.push(n); pris.add(n.title); }
+          }
+          console.log('COLLECTE EQUITABLE : ' + gardes.length + ' titres gardes sur ' + uniques.length + ' uniques (' + Object.keys(parCatCol).map(c => c + '=' + Math.min(parCatCol[c].length, 30)).join(', ') + ')');
+          return gardes;
           }
           async function mistral(prompt){
           const r = await fetch('https://api.mistral.ai/v1/chat/completions', {
@@ -656,5 +670,6 @@ jobs:
               echo "Veille OK : robot et site fonctionnent, aucune alerte."
             fi
           fi
+
 
 
