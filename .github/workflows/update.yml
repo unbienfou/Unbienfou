@@ -393,7 +393,7 @@ jobs:
           // === RECLASSIFICATION AUTO (v11) : chaque article va dans la rubrique de son sujet, par mots-cles du titre ===
           // Priorite : sport > innovation > ecologie > sante > culture > insolite. Deterministe, l IA n a plus son mot a dire.
           const REGLES = [
-          ['sport', /([eé]quipe de france|equipe de france|ligue europa|ligue des champions|championnat|tournoi|qualification|demi-finale|quart de finale|huitiemes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvoile\b|athletisme|pongiste|tennis de table|badminton|champion d|championne d|open d|qualifi|traileur|ultra-trail|trail|palmares sportif|exploit sportif|\bpsg\b|olympique)/i],
+          ['sport', /([eé]quipe de france|equipe de france|ligue europa|ligue des champions|championnat|tournoi|qualification|demi-finale|quart de finale|huitiemes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvoile\b|athletisme|pongiste|tennis de table|badminton|champion d|championne d|open d|qualifi|traileur|ultra-trail|trail|palmares sportif|exploit sportif|\bnba\b|wembanyama|\blebrun\b|\blanier\b|kayak|\bnage\b|paralympiqu|handisport|\bpsg\b|olympique)/i],
           ['innovation', /(intelligence artificielle|scientifique|d[eé]couverte|recherche|nobel|quantique|innovation|startup|technologi|horloge atomique|red[eé]fini|brevet|spatial|satellite)/i],
           ['ecologie', /([eé]mission|co2|biodiversit[eé]|[eé]nergie renouvelable|panneaux solaires|climat|esp[eè]ce|r[eé]introduction|d[eé]pollution|r[eé]forestation|gaz a effet de serre|gaz à effet de serre|transition [eé]cologique|d[eé]carbon|for[eê]t|reforestation|d[eé]forestation|d[eé]chets?|nettoyage|r[eé]serve naturelle|parc naturel|protection marine|moratoire|plage|oc[eé]an)/i],
           ['sante', /(sant[eé]|m[eé]dicament|vaccin|gu[eé]rison|r[eé]mission|h[oô]pital|soignant|don du sang|greffe|m[eé]nopause|p[eé]rim[eé]nopause|sympt[oô]me|bien-être|bien-etre)/i],
@@ -698,6 +698,7 @@ jobs:
               echo "Veille OK : robot et site fonctionnent, aucune alerte."
             fi
           fi
+
 
 
 
