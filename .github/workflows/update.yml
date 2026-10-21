@@ -109,7 +109,7 @@ jobs:
           const t = pick(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/is, it).trim();
           const l = pick(/<link>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/link>/is, it).trim();
           const pd = pick(/<pubDate>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/pubDate>/is, it).trim();
-          if (t) news.push({ title: t.replace(/<[^>]+>/g, ''), url: l || url, cat: cat, pub: pd });
+          if (t) news.push({ title: t.replace(/<[^>]+>/g, ''), url: l || url, cat: cat, pub: pd, feed: url });
           }
           } catch (e) { feedHealth.push({ url: url.slice(0, 70), cat: cat, items: -1 }); }
           }
@@ -122,7 +122,19 @@ jobs:
           const pris = new Set();
           const gardes = [];
           for (const cat of Object.keys(parCatCol)){
-            for (const n of parCatCol[cat].slice(0, 30)){ gardes.push(n); pris.add(n.title); }
+            // v12.16 ROUND-ROBIN : chaque flux de la rubrique contribue a tour de role, sinon les premiers flux remplissent tout et le badminton n arrive jamais
+            const parFlux = {};
+            for (const n of parCatCol[cat]){ (parFlux[n.feed || '?'] = parFlux[n.feed || '?'] || []).push(n); }
+            const queues = Object.keys(parFlux).map(k => parFlux[k]);
+            const choisis = [];
+            let actif = true;
+            while (actif && choisis.length < 30){
+              actif = false;
+              for (const q of queues){
+                if (q.length){ choisis.push(q.shift()); actif = true; if (choisis.length >= 30) break; }
+              }
+            }
+            for (const n of choisis){ gardes.push(n); pris.add(n.title); }
           }
           for (const n of uniques){
             if (gardes.length >= 250) break;
@@ -698,6 +710,7 @@ jobs:
               echo "Veille OK : robot et site fonctionnent, aucune alerte."
             fi
           fi
+
 
 
 
