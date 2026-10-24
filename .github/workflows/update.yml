@@ -307,15 +307,17 @@ jobs:
           if (articles.length < nbSombreArt) console.log('SUJETS SOMBRES : ' + (nbSombreArt - articles.length) + ' article(s) au contexte dramatique rejete(s).');
           // === GARANTIE TOUS SPORTS (v12.4) : si la presse du jour parle de sport et que la selection IA a zappe le sujet, on le redige quand meme ===
           {
-            const RE_SUJET_SPORTIF = /([eé]quipe de france|ligue europ|ligue des champion|hu[ie]temes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvolley|athl[eé]tisme|pongiste|tennis de table|champion d|championne d|open d|qualifi|palmares sportif|exploit sportif|\bpsg\b|olympiqu|\bnba\b|\bligue 1\b|\bligue 2\b|top 14|pro d2|\bf1\b|formule 1|tour de france|tournoi|victoire en finale|sacr[eé] champion|\bwembanyama\b|\blebrun\b|\blanier\b)/i;
+            const RE_SUJET_SPORTIF = /([eé]quipe de france|ligue europ|ligue des champion|hu[ie]temes de finale|m[eé]daille|record du monde|tennis|football|badminton|rugby|basket|handball|cyclisme|\bvolley|athl[eé]tisme|pongiste|tennis de table|champion d|championne d|open d|qualifi|palmares sportif|exploit sportif|\bpsg\b|olympiqu|\bnba\b|\bligue 1\b|\bligue 2\b|top 14|pro d2|\bf1\b|formule 1|tour de france|tournoi|victoire en finale|sacr[eé] champion|\bwembanyama\b|\blebrun\b|\blanier\b|\bifb\b|\byonex\b)/i;
             const titresSport = headlines.filter(h => RE_SUJET_SPORTIF.test(h.title) && !estPolitique(h.title));
+            const RE_BADMINTON = /(badminton|ifb|yonex|lanier|popov|gicquel|delrue)/i;
             const nonCouverts = [];
             for (const h of titresSport) {
+              const estBad = RE_BADMINTON.test(h.title);
               const m1 = new Set(motsCles(h.title));
               const couvert = articles.some(a => {
                 const m2 = new Set(motsCles(String(a.title || '') + ' ' + String(a.excerpt || '')));
-                let c = 0; m1.forEach(m => { if (m2.has(m)) c++; });
-                return c >= 2;
+                let c = 0; let cBad = 0; m1.forEach(m => { if (m2.has(m)) { c++; if (RE_BADMINTON.test(m)) cBad++; } });
+                return estBad ? (c >= 2 && cBad >= 1) : c >= 2;
               });
               if (!couvert) nonCouverts.push(h);
             }
