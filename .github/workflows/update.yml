@@ -324,7 +324,7 @@ jobs:
                 const listeSP = nonCouverts.slice(0, 8).map((h, i) => (i + 1) + '. ' + h.title).join('\n');
                 const spPrompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), journal de bonnes nouvelles. Voici des titres sportifs de la presse francaise recus aujourd'hui, NON retenus par la selection principale :\n" + listeSP + "\n\nParmi ces titres, choisis jusqu'a 3 BONNES NOUVELLES sportives differentes (victoire, qualification, titre, medaille, record, exploit, performance) et redige pour chacune un article court EN FRANCAIS. Reformule avec prudence, sans inventer de chiffres, de noms ou d'evenements absents des titres. REGLE ABSOLUE DES NOMS : ne cite JAMAIS le nom d'un adversaire ou d'une personne absent du titre — si le titre ne nomme pas l'adversaire, ecris « son adversaire » sans le nommer. Reponds UNIQUEMENT avec du JSON {\"articles\":[{\"titreSource\":\"copie exactement un des titres de la liste\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"readTime\":\"3 min\"}]}" ;
                 const spTxt = await mistral(spPrompt);
-                const spJson = JSON.parse(spTxt);
+                const spJson = (spTxt && typeof spTxt === 'object') ? spTxt : JSON.parse(String(spTxt).trim());
                 let ajoutes = 0;
                 for (const sp of (spJson.articles || []).slice(0, 3)) {
                   if (articles.length >= 30) break;
@@ -368,7 +368,7 @@ jobs:
                 const listeRub = titresCat.map((h, i) => (i + 1) + '. ' + h.title + ' [source: ' + h.url + ']').join('\n');
                 const rubPrompt = "Tu es la redaction du site francais Un bien fou (unbienfou.fr), journal de bonnes nouvelles. La rubrique '" + catVide + "' est VIDE dans l'edition du jour, ce qui nuit a la credibilite du site. Voici des titres de la presse francaise recents pour cette rubrique :\n" + listeRub + "\n\nRedige UN article EN FRANCAIS inspire du meilleur de ces titres (le plus positif et factuel). REGLE ABSOLUE DES NOMS : ne cite JAMAIS un nom de personne, de club, de ville ou d'adversaire qui ne figure pas MOT POUR MOT dans un des titres ci-dessus. Sans inventer de chiffres, de noms ou d'evenements absents des titres. Reformule avec prudence. Reponds UNIQUEMENT avec le JSON {\"articles\":[{\"titreSource\":\"copie exactement un des titres de la liste\",\"title\":\"...\",\"excerpt\":\"2 phrases\",\"body\":\"3-5 phrases\",\"readTime\":\"3 min\"}]}";
                 const rubTxt = await mistral(rubPrompt);
-                const rubJson = JSON.parse(rubTxt);
+                const rubJson = (rubTxt && typeof rubTxt === 'object') ? rubTxt : JSON.parse(String(rubTxt).trim());
                 for (const rub of (rubJson.articles || []).slice(0, 1)) {
                   if (articles.length >= 40) break;
                   if (estPolitique(String(rub.title || '') + ' ' + String(rub.excerpt || ''))) continue;
