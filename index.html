@@ -84,6 +84,18 @@
   .nl button:hover { background:var(--gold); }
   .nlbtn { border:none; background:var(--gold-bg); color:#fff; font-weight:700; border-radius:3px; padding:14px 30px; cursor:pointer; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; }
   .nlbtn:hover { background:var(--gold); }
+
+  .nlhero { max-width:760px; margin:44px auto 0; text-align:center; }
+  .nlhero h1 { font-family:var(--serif); font-weight:800; font-size:2.1rem; line-height:1.15; margin:16px 0 14px; }
+  .nlhero .standfirst { margin-bottom:8px; }
+  .nlavantages { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:760px; margin:26px auto 0; }
+  @media (max-width:640px){ .nlavantages { grid-template-columns:1fr; } }
+  .nlavantages .stat b { font-size:1.3rem; }
+  .nlform { background:var(--card); border:1px solid var(--hair); border-radius:10px; box-shadow:var(--shadow); max-width:560px; margin:30px auto 0; overflow:hidden; }
+  .nlform-head { padding:18px 22px 0; text-align:center; }
+  .nlform-head .dq-label { margin-bottom:4px; }
+  .nlform-frame { width:100%; height:620px; border:none; display:block; }
+  .nlfoot { text-align:center; font-size:.74rem; color:var(--muted); max-width:560px; margin:16px auto 60px; line-height:1.7; }
   .nl-ok { flex:1; min-width:270px; font-size:.95rem; line-height:1.6; color:#f5f1e8; background:#2f2a26; border:1px solid #3f3a35; border-radius:6px; padding:18px 22px; }
 
   .overlay { position:fixed; inset:0; background:rgba(28,25,23,.55); display:flex; align-items:flex-start; justify-content:center; padding:28px 14px; overflow-y:auto; z-index:100; }
@@ -189,6 +201,7 @@
       <p style="margin-bottom:10px;">Une bonne nouvelle à nous signaler ? Une réaction, une idée de rubrique ? Écrivez-nous, on lit tout ! ☀️</p>
       <div class="factions">
         <a href="mailto:unbienfou.media@gmail.com?subject=Une%20bonne%20nouvelle%20pour%20Un%20bien%20fou" style="text-decoration:none;"><button>✉️ Envoyer un message</button></a>
+        <button onclick="go('newsletter')">☀️ S'abonner à la newsletter</button>
       </div>
     </div>
     <div>
@@ -294,11 +307,23 @@ var BREVO_URL = "https://9ff52e8c.sibforms.com/serve/MUIFAEmreW3M7r1ekLheX77a7io
 function newsletterHTML() {
   return '<div class="nl">' +
     '<div><h3>La bonne humeur dans votre boîte mail ☀️</h3><p>Chaque matin, une sélection des actualités qui font du bien — issues de nos éditions de 7h et 17h. Newsletter 100 % gratuite, sans spam.</p></div>' +
-    '<button class="nlbtn" onclick="window.open(BREVO_URL, \'_blank\')">S&rsquo;abonner à la newsletter — gratuit</button></div>';
+    '<button class="nlbtn" onclick="go(\'newsletter\')">S&rsquo;abonner à la newsletter — gratuit</button></div>';
 }
 
 function pageHTML() {
-  var m = (view === "confidentialite")
+  var m = (view === "newsletter")
+    ? "<h1>La bonne humeur dans votre boîte mail ☀️</h1>" +
+      "<div class=\"nlhero\"><div class=\"kicker\">Newsletter</div>" +
+      "<div class=\"standfirst\">Chaque matin à 7h, recevez une sélection des nouvelles qui font du bien — vérifiées, sourcées, 100&nbsp;% gratuites.</div></div>" +
+      "<div class=\"nlavantages\">" +
+      "<div class=\"stat\"><b>7h</b><span>votre dose du matin</span></div>" +
+      "<div class=\"stat\"><b>2-3</b><span>bonnes nouvelles vérifiées</span></div>" +
+      "<div class=\"stat\"><b>0 €</b><span>gratuit, sans spam</span></div>" +
+      "</div>" +
+      "<div class=\"nlform\"><div class=\"nlform-head\"><div class=\"dq-label\">Inscription en 10 secondes</div></div>" +
+      "<iframe class=\"nlform-frame\" src=\"" + BREVO_URL + "\" title=\"Formulaire d'inscription à la newsletter Un bien fou\" loading=\"lazy\"></iframe></div>" +
+      "<p class=\"nlfoot\">Votre adresse n'est utilisée que pour la newsletter (voir notre <a href='#' onclick=\"go('confidentialite');return false;\">politique de confidentialité</a>). Désinscription en un clic, à tout moment.</p>"
+    : (view === "confidentialite")
     ? "<h1>Politique de confidentialité</h1>" +
       "<p><strong>Responsable du traitement :</strong> Un bien fou — Tony Roche, directeur de la publication (<a href='mailto:unbienfou.media@gmail.com'>unbienfou.media@gmail.com</a>).</p>" +
       "<h2>Données collectées</h2>" +
@@ -328,7 +353,7 @@ function pageHTML() {
 }
 
 function renderMain() {
-  if (view === "mentions" || view === "transparence" || view === "confidentialite") { pageHTML(); return; }
+  if (view === "mentions" || view === "transparence" || view === "confidentialite" || view === "newsletter") { pageHTML(); return; }
   var hero = null, list = [], i;
   for (i = 0; i < ARTICLES.length; i++) {
     if (ARTICLES[i].hero) hero = ARTICLES[i];
