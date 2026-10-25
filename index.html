@@ -35,6 +35,12 @@
   .sec:hover { color:var(--gold); }
   .sec.active { color:var(--ink); border-bottom-color:var(--gold); }
 
+  .dailyquote { margin:26px auto 0; text-align:center; }
+  .dailyquote .dq-inner { background:var(--gold-soft); border:1px solid var(--hair); border-radius:6px; padding:20px 26px; max-width:820px; margin:0 auto; box-shadow:var(--shadow); }
+  .dq-label { font-size:.66rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+  .dq-text { font-family:var(--serif); font-style:italic; font-weight:500; font-size:1.18rem; line-height:1.55; color:var(--soft); }
+  @media (max-width:640px){ .dq-text { font-size:1.02rem; } }
+
   .hero { margin:44px 0 10px; }
   @media (max-width:820px){ .hero { grid-template-columns:1fr; gap:28px; } }
   .kicker { display:flex; align-items:center; gap:16px; color:var(--gold); font-size:.7rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; margin-bottom:18px; }
@@ -151,6 +157,13 @@
   </div>
   <nav class="sections"><div class="secbar" id="nav"></div></nav>
 </header>
+
+<div class="wrap dailyquote" id="phraseDuJour" role="note" aria-label="La phrase du jour">
+  <div class="dq-inner">
+    <div class="dq-label">☀️ La phrase du jour</div>
+    <p class="dq-text" id="dqTexte">&nbsp;</p>
+  </div>
+</div>
 
 <main class="wrap" id="main"></main>
 
@@ -384,6 +397,45 @@ document.getElementById("frub").textContent = CATEGORIES.map(function(c) { retur
 try { document.getElementById("fstats").textContent = CATEGORIES.length + " rubriques · " + ARTICLES.length + " articles"; } catch (e) {}
 try {
   document.getElementById("today").textContent = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+} catch (e) {}
+// === PHRASE DU JOUR (indépendant du robot, hors bloc AUTO-ARTICLES) ===
+var PHRASES = [
+  "Une bonne nouvelle par jour, c'est déjà beaucoup de soleil dans une vie.",
+  "On ne rit pas parce qu'on est heureux ; on est heureux parce qu'on rit.",
+  "Les petites joies d'aujourd'hui sont les beaux souvenirs de demain.",
+  "Il n'y a pas de petit geste de gentillesse : chacun d'eux change une journée.",
+  "Le monde regorge de gens formidables qui ne font pas la une. Nous, on va les chercher.",
+  "Chaque matin est une page blanche : pourquoi ne pas y écrire quelque chose de beau ?",
+  "Ce qui compte, ce n'est pas la longueur du chemin, mais les rencontres qu'on y fait.",
+  "Planter un arbre, aider un voisin, sourire à un inconnu : le monde se répare en douceur.",
+  "Même la plus petite lumière chasse l'obscurité d'une pièce entière.",
+  "Prendre le temps de savourer, c'est déjà offrir une pause à ceux qui nous entourent.",
+  "Derrière chaque exploit, il y a quelqu'un qui a osé commencer petit.",
+  "La gentillesse est gratuite. C'est ce qui la rend inestimable.",
+  "Un sourire partagé voyage plus loin qu'on ne le croit.",
+  "La bonne nouvelle du jour, c'est vous : vous en faites partie.",
+  "Rien ne sert de courir après le bonheur ; il suffit de savoir le reconnaître.",
+  "Les bonnes idées poussent comme les arbres : lentement, mais pour longtemps.",
+  "Il y a toujours quelqu'un, quelque part, qui travaille en silence à rendre le monde meilleur.",
+  "Espérer, c'est déjà construire.",
+  "Une journée commencée par une bonne nouvelle finit souvent en bonne journée.",
+  "Le courage, ce n'est pas de ne jamais tomber ; c'est de se relever en chantant.",
+  "La nature prend son temps, et elle ne rate jamais son printemps.",
+  "Chaque génération ajoute sa pierre ; chaque génération embellit le mur.",
+  "Un merci sincère réchauffe plus qu'un manteau.",
+  "La curiosité est une politesse qu'on fait au monde.",
+  "Partager une bonne nouvelle la rend deux fois plus grande.",
+  "Les mains qui aident valent mieux que les lèvres qui promettent.",
+  "Il fait toujours beau quelque part : on va vous montrer où.",
+  "Le progrès ne fait pas de bruit ; il avance, un jour après l'autre.",
+  "Sourire à la vie, c'est lui mettre du soleil dans les yeux.",
+  "On ne grandit jamais autant que lorsqu'on fait grandir les autres."
+];
+try {
+  var maintenant = new Date();
+  var debutAnnee = new Date(maintenant.getFullYear(), 0, 0);
+  var jourAnnee = Math.floor((maintenant - debutAnnee) / 86400000);
+  document.getElementById("dqTexte").textContent = PHRASES[jourAnnee % PHRASES.length];
 } catch (e) {}
 go("home");
 </script>
