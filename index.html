@@ -328,7 +328,7 @@ function pageHTML() {
 }
 
 function renderMain() {
-  if (view === "mentions" || view === "transparence") { pageHTML(); return; }
+  if (view === "mentions" || view === "transparence" || view === "confidentialite") { pageHTML(); return; }
   var hero = null, list = [], i;
   for (i = 0; i < ARTICLES.length; i++) {
     if (ARTICLES[i].hero) hero = ARTICLES[i];
