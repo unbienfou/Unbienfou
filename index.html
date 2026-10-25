@@ -196,6 +196,7 @@
       <p style="margin-bottom:10px;">Contenus générés par IA, sourcés et vérifiés. Publicité clairement identifiée.</p>
       <div class="factions">
         <button onclick="go('mentions')">Mentions légales</button>
+        <button onclick="go('confidentialite')">Confidentialité</button>
         <button onclick="go('transparence')">Transparence IA</button>
       </div>
     </div>
@@ -297,7 +298,21 @@ function newsletterHTML() {
 }
 
 function pageHTML() {
-  var m = (view === "mentions")
+  var m = (view === "confidentialite")
+    ? "<h1>Politique de confidentialité</h1>" +
+      "<p><strong>Responsable du traitement :</strong> Un bien fou — Tony Roche, directeur de la publication (<a href='mailto:unbienfou.media@gmail.com'>unbienfou.media@gmail.com</a>).</p>" +
+      "<h2>Données collectées</h2>" +
+      "<p><strong>Newsletter :</strong> l'adresse e-mail fournie volontairement lors de l'inscription, via le formulaire hébergé par Brevo. Elle sert uniquement à envoyer la newsletter du matin. La base légale est votre consentement, révocable à tout moment (désinscription via le lien présent en bas de chaque e-mail, ou par simple message).</p>" +
+      "<p><strong>Statistiques d'audience :</strong> nous utilisons GoatCounter, un outil de mesure d'audience <u>sans cookies et sans données personnelles</u> (aucune adresse IP stockée, aucune publicité, aucune revente de données). Il ne dépose aucun traceur sur votre appareil : aucune bannière de consentement n'est donc nécessaire.</p>" +
+      "<p><strong>Aucune autre donnée</strong> n'est collectée, stockée ou cédée. Le site ne dépose aucun cookie.</p>" +
+      "<h2>Sous-traitants</h2>" +
+      "<p>L'adresse e-mail de newsletter est traitée par <strong>Brevo</strong> (Sendinblue SAS, France) ; le site est hébergé par <strong>Vercel Inc.</strong> (États-Unis) ; l'audience est mesurée par <strong>GoatCounter</strong>. Ces prestataires agissent sur nos instructions et selon leurs propres engagements de sécurité.</p>" +
+      "<h2>Durée de conservation</h2>" +
+      "<p>L'adresse e-mail est conservée jusqu'à votre désinscription, puis supprimée.</p>" +
+      "<h2>Vos droits</h2>" +
+      "<p>Vous pouvez à tout moment demander l'accès à vos données, leur rectification ou leur suppression en écrivant à <a href='mailto:unbienfou.media@gmail.com'>unbienfou.media@gmail.com</a>. Nous répondons sous 30 jours. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>" +
+      "<p style='font-size:.78rem;color:#8a8177'>Dernière mise à jour : 25 octobre 2026.</p>"
+    : (view === "mentions")
     ? "<h1>Mentions légales</h1>" +
       "<p><strong>Éditeur du site :</strong> Un bien fou — Tony Roche, en qualité de directeur de la publication.</p>" +
       "<p><strong>Nom de domaine :</strong> unbienfou.fr (registre OVHcloud / AFNIC).</p>" +
