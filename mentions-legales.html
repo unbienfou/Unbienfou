@@ -1,106 +1,481 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>À propos, mentions légales et confidentialité — Un bien fou</title>
-<meta name="description" content="À propos du média Un bien fou, mentions légales et politique de confidentialité.">
-<meta property="og:title" content="À propos — Un bien fou">
-<meta property="og:description" content="Le journal des nouvelles qui font du bien. Mentions légales et confidentialité.">
-<meta property="og:url" content="https://unbienfou.fr/mentions-legales.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Un bien fou — Le journal des nouvelles qui font du bien</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Crect width='240' height='240' rx='70' fill='%23f4b37e'/%3E%3Crect x='106' y='56' width='24' height='102' rx='12' fill='%23527055'/%3E%3Cpath d='M 130 106 q 28 -2 28 -26 q 0 -10 10 -10 q 9 0 9 10 q 0 40 -47 40 z' fill='%23527055'/%3E%3C/svg%3E">
+<meta name="description" content="Un bien fou : le média de journalisme de solutions. Des nouvelles qui font du bien, vérifiées, 100 % gratuites.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--creme:#fffaf2;--creme2:#fdf3e4;--cacao:#6b4a35;--cacao2:#8a6547;--corail:#e88a6a;--peche:#f0a56a;--sauge:#6d8f68;--filet:#e8a06a}
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:Georgia,'Times New Roman',serif;background:var(--creme);color:var(--cacao);line-height:1.65}
-  header{background:linear-gradient(180deg,var(--creme2),var(--creme));border-bottom:3px solid var(--filet);padding:2rem 1rem 1.4rem;text-align:center}
-  header a{text-decoration:none;color:var(--cacao)}
-  h1{font-size:1.7rem;font-style:italic;margin-bottom:.2rem}
-  .baseline{color:var(--corail);letter-spacing:.35em;font-size:.72rem;text-transform:uppercase;font-family:Verdana,Arial,sans-serif}
-  .retour{display:inline-block;margin-top:1rem;padding:.5rem 1.2rem;background:var(--corail);color:#fff;border-radius:999px;text-decoration:none;font-family:Verdana,Arial,sans-serif;font-size:.85rem}
-  main{max-width:760px;margin:0 auto;padding:1.6rem 1rem 3rem}
-  h2{color:var(--sauge);font-size:1.25rem;margin:2.2rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid var(--filet)}
-  h3{color:var(--cacao2);font-size:1.02rem;margin:1.2rem 0 .4rem}
-  p,li{margin-bottom:.7rem}
-  ul{padding-left:1.3rem}
-  .carte{background:var(--creme2);border-left:4px solid var(--corail);border-radius:8px;padding:1rem 1.2rem;margin:1rem 0}
-  .filet{height:1px;background:var(--filet);margin:2rem 0;opacity:.5}
-  footer{text-align:center;padding:1.4rem;font-size:.8rem;color:var(--cacao2);background:var(--creme2);border-top:3px solid var(--filet)}
-  footer a{color:var(--corail)}
-  @media(max-width:520px){h1{font-size:1.35rem}.baseline{letter-spacing:.25em}}
+  :root {
+    --paper:#faf8f3; --card:#fffdf9; --ink:#1c1917; --soft:#44403c; --muted:#8a8177;
+    --gold:#b45309; --gold-bg:#d97706; --gold-soft:#f7ead2; --emerald:#059669;
+    --hair:#e9e2d4; --hair2:#d6ccc0;
+    --serif:"Playfair Display",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    --shadow:0 1px 2px rgba(28,25,23,.04),0 10px 30px rgba(28,25,23,.05);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:var(--sans); background:var(--paper); color:var(--ink); min-height:100vh; }
+  .wrap { max-width:1120px; margin:0 auto; padding:0 20px; }
+  a { color:var(--gold); }
+
+  .masthead { background:var(--paper); border-bottom:1px solid var(--hair2); }
+  .mh-top { display:flex; justify-content:space-between; font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); max-width:1120px; margin:0 auto; padding:10px 20px 0; }
+  .mh-brand { display:flex; flex-direction:column; align-items:center; gap:10px; padding:18px 16px 14px; cursor:pointer; }
+  .mh-brand svg { width:58px; height:58px; }
+  .mh-title { font-family:var(--serif); font-weight:800; font-size:2.6rem; letter-spacing:.01em; line-height:1; }
+  .mh-tag { font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); text-align:center; padding:0 16px 16px; }
+  .sections { position:sticky; top:0; z-index:50; background:var(--card); border-top:1px solid var(--hair2); border-bottom:3px double var(--ink); box-shadow:0 4px 14px rgba(28,25,23,.05); }
+  .secbar { display:flex; justify-content:center; gap:4px 22px; flex-wrap:wrap; max-width:1120px; margin:0 auto; padding:10px 16px; }
+  .sec { border:none; background:none; cursor:pointer; font-family:var(--sans); font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); padding:4px 2px; border-bottom:2px solid transparent; }
+  .sec:hover { color:var(--gold); }
+  .sec.active { color:var(--ink); border-bottom-color:var(--gold); }
+
+  .dailyquote { margin:26px auto 0; text-align:center; }
+  .dailyquote .dq-inner { background:var(--gold-soft); border:1px solid var(--hair); border-radius:6px; padding:20px 26px; max-width:820px; margin:0 auto; box-shadow:var(--shadow); }
+  .dq-label { font-size:.66rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+  .dq-text { font-family:var(--serif); font-style:italic; font-weight:500; font-size:1.18rem; line-height:1.55; color:var(--soft); }
+  @media (max-width:640px){ .dq-text { font-size:1.02rem; } }
+
+  .hero { margin:44px 0 10px; }
+  @media (max-width:820px){ .hero { grid-template-columns:1fr; gap:28px; } }
+  .kicker { display:flex; align-items:center; gap:16px; color:var(--gold); font-size:.7rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; margin-bottom:18px; }
+  .kicker::before, .kicker::after { content:""; height:1px; background:var(--hair2); flex:1; }
+  .hero h1 { font-family:var(--serif); font-weight:800; font-size:2.35rem; line-height:1.14; letter-spacing:-.01em; margin-bottom:16px; cursor:pointer; }
+  .hero h1:hover { color:var(--gold); }
+  .standfirst { font-family:var(--serif); font-style:italic; font-size:1.12rem; line-height:1.6; color:var(--soft); margin-bottom:18px; }
+  .meta-line { font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); display:flex; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+  .meta-line .verified { color:var(--emerald); font-weight:700; }
+  .readbtn { display:inline-block; background:var(--ink); color:var(--paper); font-size:.75rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; padding:13px 26px; border:none; cursor:pointer; border-radius:3px; transition:background .15s; }
+  .readbtn:hover { background:var(--gold-bg); }
+  .hero-side { display:flex; flex-direction:column; gap:18px; }
+  .mission { background:var(--card); border:1px solid var(--hair); border-radius:6px; padding:26px; box-shadow:var(--shadow); }
+  .mission h3 { font-size:.7rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+  .mission p { font-family:var(--serif); font-size:1.02rem; line-height:1.6; color:var(--soft); }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .stat { background:var(--card); border:1px solid var(--hair); border-radius:6px; padding:16px 8px; text-align:center; }
+  .stat b { display:block; font-family:var(--serif); font-weight:700; font-size:1.7rem; color:var(--gold); }
+  .stat span { font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+
+  .sec-title { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:46px 0 22px; padding-top:22px; border-top:3px double var(--hair2); flex-wrap:wrap; }
+  .sec-title h2 { font-family:var(--serif); font-weight:700; font-size:1.65rem; }
+  .count { font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  @media (max-width:900px){ .grid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:600px){ .grid { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--hair); border-radius:6px; padding:24px; cursor:pointer; display:flex; flex-direction:column; gap:12px; box-shadow:var(--shadow); transition:transform .15s, border-color .15s, box-shadow .15s; }
+  .card:hover { transform:translateY(-3px); border-color:var(--gold); box-shadow:0 16px 34px rgba(28,25,23,.09); }
+  .cat-chip { font-size:.64rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; width:fit-content; padding:5px 11px; border-radius:2px; }
+  .card h3 { font-family:var(--serif); font-weight:700; font-size:1.18rem; line-height:1.3; }
+  .card .excerpt { font-size:.87rem; color:var(--muted); line-height:1.6; }
+  .card .meta { margin-top:auto; display:flex; justify-content:space-between; font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding-top:12px; border-top:1px solid var(--hair); }
+  .verified { color:var(--emerald); font-weight:700; }
+
+  .nl { margin:52px 0; background:var(--ink); color:#f5f1e8; border-radius:8px; padding:42px 46px; display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; box-shadow:var(--shadow); }
+  .nl h3 { font-family:var(--serif); font-weight:700; font-size:1.55rem; margin-bottom:8px; }
+  .nl p { font-size:.88rem; opacity:.72; line-height:1.5; }
+  .nl form { display:flex; gap:10px; flex:1; min-width:270px; max-width:430px; }
+  .nl input { flex:1; border:1px solid #3f3a35; background:#262220; color:#f5f1e8; border-radius:3px; padding:13px 16px; font-size:.92rem; font-family:var(--sans); }
+  .nl button { border:none; background:var(--gold-bg); color:#fff; font-weight:700; border-radius:3px; padding:13px 24px; cursor:pointer; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; }
+  .nl button:hover { background:var(--gold); }
+  .nlbtn { border:none; background:var(--gold-bg); color:#fff; font-weight:700; border-radius:3px; padding:14px 30px; cursor:pointer; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; }
+  .nlbtn:hover { background:var(--gold); }
+
+  .nlhero { max-width:760px; margin:44px auto 0; text-align:center; }
+  .nlhero h1 { font-family:var(--serif); font-weight:800; font-size:2.1rem; line-height:1.15; margin:16px 0 14px; }
+  .nlhero .standfirst { margin-bottom:8px; }
+  .nlavantages { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:760px; margin:26px auto 0; }
+  @media (max-width:640px){ .nlavantages { grid-template-columns:1fr; } }
+  .nlavantages .stat b { font-size:1.3rem; }
+  .nlform { background:var(--card); border:1px solid var(--hair); border-radius:10px; box-shadow:var(--shadow); max-width:560px; margin:30px auto 0; overflow:hidden; }
+  .nlform-head { padding:18px 22px 0; text-align:center; }
+  .nlform-head .dq-label { margin-bottom:4px; }
+  .nlform-frame { width:100%; height:620px; border:none; display:block; }
+  .nlfoot { text-align:center; font-size:.74rem; color:var(--muted); max-width:560px; margin:16px auto 60px; line-height:1.7; }
+  .nl-ok { flex:1; min-width:270px; font-size:.95rem; line-height:1.6; color:#f5f1e8; background:#2f2a26; border:1px solid #3f3a35; border-radius:6px; padding:18px 22px; }
+
+  .overlay { position:fixed; inset:0; background:rgba(28,25,23,.55); display:flex; align-items:flex-start; justify-content:center; padding:28px 14px; overflow-y:auto; z-index:100; }
+  .modal { background:var(--paper); border-radius:10px; max-width:720px; width:100%; padding:44px 48px; position:relative; margin:24px 0; box-shadow:0 30px 80px rgba(28,25,23,.3); }
+  @media (max-width:600px){ .modal { padding:30px 22px; } }
+  .modal .close { position:absolute; top:16px; right:16px; border:1px solid var(--hair2); background:var(--card); border-radius:999px; width:36px; height:36px; cursor:pointer; font-size:1rem; color:var(--muted); }
+  .modal h1 { font-family:var(--serif); font-weight:800; font-size:1.95rem; line-height:1.2; margin:16px 0 14px; }
+  .modal .m-stand { font-family:var(--serif); font-style:italic; font-size:1.1rem; line-height:1.6; color:var(--soft); border-left:3px solid var(--gold); padding-left:16px; margin:18px 0 22px; }
+  .abody { color:var(--soft); font-size:.98rem; line-height:1.85; }
+  .abody::first-letter { font-family:var(--serif); font-weight:700; font-size:3.3em; float:left; line-height:.82; padding:4px 10px 0 0; color:var(--gold); }
+  .src { font-size:.8rem; color:var(--muted); background:var(--card); border:1px solid var(--hair); border-radius:6px; padding:14px 16px; margin-top:24px; line-height:1.7; }
+  .src a { font-weight:700; text-decoration:none; }
+  .src a:hover { text-decoration:underline; }
+  .backbtn { border:1px solid var(--hair2); background:var(--card); border-radius:3px; padding:10px 18px; cursor:pointer; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--soft); margin-top:18px; }
+  .backbtn:hover { border-color:var(--gold); color:var(--gold); }
+  .share { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:18px; }
+  .share span { font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-right:4px; }
+  .shbtn { border:1px solid var(--hair2); background:var(--card); border-radius:3px; padding:8px 14px; cursor:pointer; font-size:.76rem; color:var(--soft); }
+  .shbtn:hover { border-color:var(--gold); color:var(--gold); }
+
+  .page { max-width:680px; margin:48px auto; background:var(--card); border:1px solid var(--hair); border-radius:10px; padding:40px 44px; box-shadow:var(--shadow); }
+  .page h1 { font-family:var(--serif); font-weight:800; font-size:1.7rem; margin-bottom:20px; }
+  .page p { font-size:.9rem; color:var(--soft); line-height:1.75; margin-bottom:14px; }
+
+  footer { border-top:3px double var(--hair2); background:var(--card); margin-top:60px; }
+  .fgrid { max-width:1120px; margin:0 auto; padding:44px 20px; display:grid; grid-template-columns:repeat(3,1fr); gap:36px; font-size:.86rem; color:var(--muted); line-height:1.7; }
+  @media (max-width:800px){ .fgrid { grid-template-columns:1fr; } }
+  .fgrid .fb { display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:800; font-size:1.15rem; color:var(--ink); }
+  .fgrid .fb svg { width:32px; height:32px; }
+  .fgrid h4 { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); margin-bottom:12px; }
+  .fbottom { border-top:1px solid var(--hair); text-align:center; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:18px; }
+  .factions button { display:inline-block; border:none; background:none; color:var(--gold); cursor:pointer; font-size:.86rem; padding:0; margin-right:16px; text-decoration:underline; }
 </style>
 </head>
 <body>
 <header>
-  <a href="https://unbienfou.fr"><h1>Un bien fou</h1></a>
-  <p class="baseline">Le média positif</p>
-  <a class="retour" href="https://unbienfou.fr">← Retour au journal</a>
+  <div class="masthead">
+    <div class="mh-top">
+      <span>Journalisme de solutions</span>
+      <span id="today"></span>
+    </div>
+    <div class="mh-brand" onclick="go('home')">
+      <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Un bien fou">
+        <defs>
+          <radialGradient id="solBrand" cx="50%" cy="100%" r="92%">
+            <stop offset="0%" stop-color="#f0a56a"/><stop offset="55%" stop-color="#f8c491"/><stop offset="100%" stop-color="#ffe8cd"/>
+          </radialGradient>
+          <radialGradient id="haloBrand" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f8c491" stop-opacity="0.55"/><stop offset="100%" stop-color="#f8c491" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="cacBrand" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#8aa882"/><stop offset="50%" stop-color="#6d8f68"/><stop offset="100%" stop-color="#527055"/>
+          </linearGradient>
+        </defs>
+        <rect width="240" height="240" rx="60" fill="#fdf3e4" stroke="#f0dfc2" stroke-width="2"/>
+        <circle cx="120" cy="160" r="80" fill="url(#haloBrand)"/>
+        <path d="M 60 160 A 58 58 0 0 1 176 160 Z" fill="url(#solBrand)"/>
+        <path d="M 84 160 A 34 34 0 0 1 152 160" fill="none" stroke="#fff3de" stroke-width="5" stroke-linecap="round" opacity="0.75"/>
+        <path d="M 52 161 Q 118 154 184 161" fill="none" stroke="#8a6547" stroke-width="2.6" stroke-linecap="round"/>
+        <g fill="url(#cacBrand)">
+          <rect x="106" y="74" width="24" height="84" rx="12"/>
+          <path d="M 106 118 q -28 -2 -28 -21 q 0 -10 10 -10 q 9 0 9 10 q 0 6 9 8 z"/>
+          <path d="M 130 106 q 28 -2 28 -26 q 0 -10 10 -10 q 9 0 9 10 q 0 40 -47 40 z"/>
+        </g>
+        <circle cx="118" cy="66" r="6" fill="#e88a6a"/>
+        <circle cx="118" cy="66" r="2.4" fill="#fff3de"/>
+      </svg>
+      <span class="mh-title">Un&nbsp;bien&nbsp;fou</span>
+    </div>
+    <p class="mh-tag">Le journal des nouvelles qui font du bien · vérifiées, sourcées, gratuites</p>
+  </div>
+  <nav class="sections"><div class="secbar" id="nav"></div></nav>
 </header>
-<main>
 
-<h2>À propos d'Un bien fou</h2>
-<p><strong>Un bien fou</strong> (unbienfou.fr) est un média français indépendant qui ne publie qu'une seule chose : des <strong>bonnes nouvelles réelles et vérifiées</strong>.</p>
-<p>Chaque jour, notre système de veille parcourt des dizaines de sources de presse françaises (médias nationaux et régionaux, Google News) à la recherche de faits positifs : solidarité, réussites sportives, découvertes, innovations, écologie, culture, initiatives locales, faits insolites heureux.</p>
-<div class="carte">
-<p><strong>Notre charte éditoriale :</strong></p>
-<ul>
-<li><strong>Tout est sourcé.</strong> Chaque article s'appuie sur un article de presse réel et affiche un lien « 📖 Voir la source ».</li>
-<li><strong>Pas de fake news.</strong> Les noms, chiffres et lieux sont vérifiés ; un article dont la source ne peut pas être confirmée n'est pas publié.</li>
-<li><strong>Pas de sombre.</strong> Même à angle positif, les faits divers tragiques, conflits et polémiques ne font pas partie du journal.</li>
-<li><strong>100 % gratuit</strong>, sans inscription obligatoire, deux éditions par jour (7 h et 17 h).</li>
-</ul>
+<div class="wrap dailyquote" id="phraseDuJour" role="note" aria-label="La phrase du jour">
+  <div class="dq-inner">
+    <div class="dq-label">☀️ La phrase du jour</div>
+    <p class="dq-text" id="dqTexte">&nbsp;</p>
+  </div>
 </div>
 
-<h2>Mentions légales</h2>
+<main class="wrap" id="main"></main>
 
-<h3>Éditeur du site</h3>
-<p><strong>Un bien fou</strong> — média édité par <strong>Tony Roche</strong>, agissant en qualité d'entrepreneur individuel (micro-entreprise en cours d'immatriculation ; les présentes mentions seront actualisées avec le numéro SIREN le cas échéant).</p>
-<ul>
-<li><strong>Directeur de la publication :</strong> Tony Roche</li>
-<li><strong>Adresse :</strong> 752 avenue Paul Cezanne 13880 Velaux</li>
-<li><strong>Contact :</strong> unbienfou.media@gmail.com</li>
-</ul>
-
-<h3>Hébergement</h3>
-<p>Le site est hébergé par :</p>
-<p><strong>Vercel Inc.</strong><br>
-440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis<br>
-Site : <a href="https://vercel.com" rel="noopener">vercel.com</a></p>
-
-<h3>Propriété intellectuelle</h3>
-<p>Le nom « Un bien fou », le logo et la mise en page du site sont la propriété de l'éditeur. Les articles publiés sont des synthèses rédigées à partir d'articles de presse de tiers, dont la source est citée et liée dans chaque article ; les droits sur les contenus sources restent la propriété de leurs éditeurs respectifs. Toute reproduction des articles d'Un bien fou est autorisée avec mention de la source et du lien vers unbienfou.fr.</p>
-
-<h3>Responsabilité</h3>
-<p>L'éditeur s'efforce d'assurer l'exactitude des informations publiées et corrige toute erreur signalée. Les articles renvoient systématiquement à leur source d'origine, qui fait foi. Une inexactitude ? Écrivez-nous : unbienfou.media@gmail.com.</p>
-
-<h3>Rédaction assistée par intelligence artificielle</h3>
-<p>Les articles d'Un bien fou sont rédigés avec l'aide d'outils d'intelligence artificielle, à partir d'articles de presse dont la source est citée et liée dans chaque article. Avant publication, ils font l'objet de contrôles automatisés — véracité des sources, exactitude des noms propres, cohérence des rubriques, élimination des doublons — sous la supervision et la responsabilité du directeur de la publication. Le détail de la méthode est présenté sur la page « Transparence IA » du site, conformément à l'article 50 du règlement (UE) 2024/1689 sur l'intelligence artificielle.</p>
-
-<h2>Politique de confidentialité</h2>
-
-<h3>Les données que nous collectons</h3>
-<p>Un bien fou est conçu pour collecter le moins de données possible :</p>
-<ul>
-<li><strong>Newsletter (Brevo) :</strong> si vous vous abonnez, nous conservons votre adresse e-mail uniquement pour vous envoyer la lettre quotidienne. Vous pouvez vous désinscrire à tout moment via le lien présent dans chaque e-mail. Nous ne revendons ni ne partageons ces adresses.</li>
-<li><strong>Statistiques de visites (GoatCounter) :</strong> un compteur de visites respectueux de la vie privée, <strong>sans cookie</strong> et sans identification personnelle (ni nom, ni e-mail, ni pistage publicitaire).</li>
-<li><strong>Aucun compte utilisateur</strong> n'est nécessaire : la lecture du site est totalement anonyme.</li>
-</ul>
-
-<h3>Hébergement des données</h3>
-<p>Le site et ses fichiers sont hébergés par Vercel Inc. (États-Unis) ; les adresses de la newsletter sont stockées par Brevo (Sendinblue, France). Aucune donnée sensible n'est collectée.</p>
-
-<h3>Vos droits (RGPD)</h3>
-<p>Conformément au Règlement général sur la protection des données, vous disposez d'un droit d'accès, de rectification et de suppression de vos données (en pratique : votre adresse e-mail). Pour l'exercer, un simple e-mail suffit : <strong>unbienfou.media@gmail.com</strong>. Vous pouvez aussi introduire une réclamation auprès de la CNIL (cnil.fr).</p>
-
-<h3>Cookies</h3>
-<p>Le site ne dépose <strong>aucun cookie</strong> de suivi. Aucune bannière de consentement n'est donc nécessaire.</p>
-
-<div class="filet"></div>
-<p style="text-align:center;font-size:.85rem">Dernière mise à jour : 28 octobre 2026</p>
-
-</main>
 <footer>
-<p>Un bien fou — le journal des nouvelles qui font du bien</p>
-<p><a href="https://unbienfou.fr">unbienfou.fr</a> · unbienfou.media@gmail.com</p>
+  <div class="fgrid">
+    <div>
+      <div class="fb">
+        <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"><rect width="240" height="240" rx="60" fill="#fdf3e4"/><path d="M 60 160 A 58 58 0 0 1 176 160 Z" fill="#f4b37e"/><g fill="#6d8f68"><rect x="106" y="74" width="24" height="84" rx="12"/><path d="M 106 118 q -28 -2 -28 -21 q 0 -10 10 -10 q 9 0 9 10 q 0 6 9 8 z"/><path d="M 130 106 q 28 -2 28 -26 q 0 -10 10 -10 q 9 0 9 10 q 0 40 -47 40 z"/></g></svg>
+        Un bien fou
+      </div>
+      <p style="margin-top:12px;">Le média qui fait du bien : journalisme de solutions, 100 % gratuit, financé par la publicité.</p>
+    </div>
+    <div>
+      <h4>Rubriques</h4>
+      <p id="frub"></p>
+    </div>
+    <div>
+      <h4>Notre mission</h4>
+      <p>Chaque jour, nos agents IA collectent, rédigent et vérifient les nouvelles qui font du bien en France. 100 % sourcé, 100 % gratuit — <b id="fstats"></b></p>
+    </div>
+    <div>
+      <h4>Nous écrire</h4>
+      <p style="margin-bottom:10px;">Une bonne nouvelle à nous signaler ? Une réaction, une idée de rubrique ? Écrivez-nous, on lit tout ! ☀️</p>
+      <div class="factions">
+        <a href="mailto:unbienfou.media@gmail.com?subject=Une%20bonne%20nouvelle%20pour%20Un%20bien%20fou" style="text-decoration:none;"><button>✉️ Envoyer un message</button></a>
+        <button onclick="go('newsletter')">☀️ S'abonner à la newsletter</button>
+      </div>
+    </div>
+    <div>
+      <h4>Transparence</h4>
+      <p style="margin-bottom:10px;">Contenus générés par IA, sourcés et vérifiés. Publicité clairement identifiée.</p>
+      <div class="factions">
+        <button onclick="location.href='mentions-legales.html'">Mentions légales</button>
+        <button onclick="go('confidentialite')">Confidentialité</button>
+        <button onclick="go('transparence')">Transparence IA</button>
+      </div>
+    </div>
+  </div>
+  <div class="fbottom">© 2026 Un bien fou — unbienfou.fr — Journalisme de solutions, vérifié</div>
 </footer>
+
+<script>
+var CATEGORIES = [
+  { id: "france", name: "France", color: "#3b82f6" },
+  { id: "regions", name: "Régions", color: "#10b981" },
+  { id: "sport", name: "Sport", color: "#ea580c" },
+  { id: "innovation", name: "Science & Innovation", color: "#7c3aed" },
+  { id: "ecologie", name: "Écologie", color: "#0d9488" },
+  { id: "sante", name: "Bien-être & Santé", color: "#e11d48" },
+  { id: "solidarite", name: "Solidarité", color: "#6366f1" },
+  { id: "culture", name: "Culture", color: "#c026d3" },
+  { id: "insolite", name: "Insolite", color: "#eab308" }
+];
+
+// AUTO-ARTICLES:START
+const ARTICLES = [
+  {"id":1,"cat":"regions","title":"Halloween inversé : un cortège de voitures décorées distribue des bonbons entre Nogent-le-Rotrou et La Ferté-Bernard","excerpt":"Un cortège de 50 voitures décorées a sillonné les routes entre Nogent-le-Rotrou et La Ferté-Bernard pour offrir des bonbons aux passants. Une initiative originale pour célébrer Halloween malgré les restrictions.","body":"Le 31 octobre 2026, des habitants de Nogent-le-Rotrou et La Ferté-Bernard ont organisé un « Halloween inversé » : au lieu de demander des friandises, ils en ont distribué depuis leurs véhicules décorés. Plus de 200 bonbons ont été offerts en une heure, sous une pluie fine mais sans décourager les participants. Cette initiative a permis de rassembler des familles et des voisins autour d’un moment joyeux, dans un esprit de solidarité et de convivialité. L’événement a été relayé sur les réseaux sociaux, où des vidéos ont montré des enfants et des adultes souriants, certains déguisés en super-héros ou en fantômes.","source":"Un bien fou","sourceUrl":"https://actu.fr/centre-val-de-loire/nogent-le-rotrou_28280/un-halloween-inverse-un-cortege-de-voitures-decorees-distribue-des-bonbons-entre-nogent-le-rotrou-et-la-ferte-bernard_64982166.html","verified":true,"date":"28 oct. 2026","readTime":"3 min","hero":true},
+  {"id":2,"cat":"innovation","title":"Roomba 115 Combo+ : le robot aspirateur-laveur à 189 € (-46 %)","excerpt":"Le robot aspirateur Roomba 115 Combo+, capable de balayer et de laver les sols, est proposé à 189 € au lieu de 349,99 €, soit une réduction de 46 %. Sa base de vidage automatique collecte la poussière pendant plusieurs mois, lui permettant de fonctionner en autonomie.","body":"","source":"Futura-Sciences","sourceUrl":"https://www.futura-sciences.com/conso/bons-plans/guides-entretien-sols-roomba-115-combo-roi-robots-aspirateurs-perd-46-son-prix-cette-offre-11685/#xtor%3DRSS-8","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":3,"cat":"sante","title":"Un prototype de stérilet masculin réversible et sans hormones inventé par le CHU de Lille","excerpt":"Le CHU de Lille a développé un prototype de stérilet masculin réversible, sans hormones et posé en 15 minutes. Une première en France.","body":"Le CHU de Lille a présenté un prototype de stérilet masculin réversible, sans hormones et posé en seulement 15 minutes. Ce dispositif, inspiré des stérilets féminins, bloque temporairement la production de spermatozoïdes sans altérer la libido. Les essais cliniques, prévus pour 2027, pourraient révolutionner la contraception masculine. Une solution attendue par de nombreux couples souhaitant partager la responsabilité contraceptive.","source":"Un bien fou","sourceUrl":"https://sante.lefigaro.fr/mieux-etre/sexualite/reversible-sans-hormones-et-pose-en-une-quinzaine-de-minutes-un-prototype-de-sterilet-masculin-invente-par-le-chu-de-lille-20261024","verified":true,"date":"24 oct. 2026","readTime":"3 min"},
+  {"id":4,"cat":"solidarite","title":"Bergerac : un repas gratuit organisé pour 900 personnes âgées de 65 ans et plus","excerpt":"La ville de Bergerac a organisé un repas gratuit pour 900 personnes âgées de 65 ans et plus, une initiative solidaire pour lutter contre l’isolement.","body":"La mairie de Bergerac a convié 900 personnes âgées de 65 ans et plus à un repas gratuit dans un restaurant du centre-ville. L’événement, organisé en partenariat avec des associations locales, a permis de briser l’isolement de nombreux seniors. Les convives ont pu déguster un menu équilibré, suivi d’un spectacle de musique live. Cette initiative, renouvelée chaque année, est financée par la commune et des dons privés.","source":"Un bien fou","sourceUrl":"https://www.20minutes.fr/societe/4258261-20261028-bergerac-repas-gratuit-organise-900-personnes-agees-65-ans-plus?at_medium=display&at_campaign=149","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":5,"cat":"regions","title":"Solesmes : un nouveau chef étoilé pour le restaurant gastronomique du Grand Hôtel","excerpt":"Le Grand Hôtel de Solesmes accueille un nouveau chef pour son restaurant gastronomique. Ce changement s'accompagne d'une réorganisation des équipes pour renforcer l'offre culinaire.","body":"Depuis ce mois d'octobre, le restaurant gastronomique du Grand Hôtel à Solesmes a un nouveau visage derrière les fourneaux. Le chef, dont l'identité a été dévoilée par la presse locale, a pour mission de moderniser la carte tout en respectant l'héritage culinaire de l'établissement. Les premiers retours des clients soulignent une ambiance renouvelée et des plats revisités. Ce projet s'inscrit dans une dynamique de revitalisation du tourisme gastronomique dans la région. La réouverture officielle est prévue pour le 15 novembre.","source":"La Gazette France","sourceUrl":"https://actu.fr/pays-de-la-loire/solesmes_72336/qui-est-le-nouveau-chef-du-restaurant-gastronomique-du-grand-hotel-a-solesmes_64983460.html","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":6,"cat":"ecologie","title":"Bayonne : la ville mise sur l'hydrothermie pour développer son réseau de chaleur","excerpt":"Bayonne lance un projet pilote d'hydrothermie pour alimenter son réseau de chaleur urbain. Une solution renouvelable et locale pour réduire les émissions de CO2.","body":"Ce projet, soutenu par la région Nouvelle-Aquitaine, vise à exploiter la chaleur des eaux souterraines pour chauffer les bâtiments publics et privés. Les premiers forages ont été réalisés avec succès, et les premiers bâtiments connectés le seront dès le printemps prochain. À terme, ce système pourrait couvrir jusqu'à 30 % des besoins en chauffage de la ville. Une première en France pour une ville de cette taille.","source":"Sud Ouest","sourceUrl":"https://news.google.com/rss/articles/CBMi-gFBVV95cUxOM0piaHhyUnFPek0ybDlsMjB2SHN5VnFyOS1JVlNXV3VQVTBkY1VHUW9NUVEtb1phc0xMa01XZXdoWlZPc0JMUmV3U3g5SjI5NE5yb0oxSnlzcUg1RDR3eXFFVTBNbXNsOWRkeE1lN3ZoM0gyLW1tWkJ0OHptTDdzczJkdlJHMWc1Nl96VmZRYXhrUGJMXzg2RGhIc2pfN3BkMmlCTWlwYVgxOXJKYmZGbVBPb3gtcG11aUFzUTh2VEpnOU5ud1NQcWM3U0VJb2hYWlJHN0xCZG9pSXZHWDlac1dLWkQyNmVFV3pPaWtmdFFnRHVWa010S3pR?oc=5","verified":true,"date":"27 oct. 2026","readTime":"4 min"},
+  {"id":7,"cat":"culture","title":"France : le prix Décembre 2026 est attribué à Anne Godard pour son roman 'Nous aussi'","excerpt":"Le prestigieux prix Décembre 2026 récompense Anne Godard pour son roman 'Nous aussi'. Une consécration pour cette autrice dont l'œuvre explore les liens familiaux et sociaux.","body":"Anne Godard a reçu le prix Décembre 2026 lors d'une cérémonie à Paris, en présence de nombreux écrivains et critiques littéraires. Son roman, salué pour son style et sa profondeur psychologique, a séduit le jury par sa capacité à mêler intimité et universalité. L'autrice, déjà primée pour d'autres œuvres, confirme son talent et son ancrage dans le paysage littéraire français. La remise du prix s'est déroulée en présence de plusieurs médias nationaux.","source":"France Info","sourceUrl":"https://www.franceinfo.fr/culture/livres/prix-litteraires/le-prix-decembre-2026-est-attribue-a-anne-godard-pour-nous-aussi_8255944.html","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":8,"cat":"insolite","title":"Paris : un flash mob géant sur 'Thriller' pour Halloween","excerpt":"Un flash mob géant sur 'Thriller' est organisé place du Capitole à Toulouse pour Halloween. Une animation gratuite avec maquillage et coiffure de zombies pour tous les participants.","body":"Plus de 200 danseurs, maquilleurs et bénévoles se sont mobilisés pour organiser ce spectacle gratuit. Les participants, déguisés en zombies, ont dansé sur la célèbre chanson de Michael Jackson. L'événement, qui a attiré plusieurs centaines de spectateurs, a été salué pour son originalité et son côté festif. Les organisateurs prévoient de renouveler l'expérience l'année prochaine avec une nouvelle chorégraphie.","source":"ladepeche.fr","sourceUrl":"https://news.google.com/rss/articles/CBMinwJBVV95cUxQWmVHb0t4bEhIYWFZOGRQMTBoVS05d3hRbVdXMEZQaFFEVGtfQ3dSZmdpLTB0VWNWc3JvdVRUWDV5NTJkbDFiTzFvWG5NLVh6Tk1rLWFFeDNpY0ZfNk02YkZiTXd5UlhUbDZaNUIzaVNEZVV3ei1ENzFjREJnZXcxRFNieGZLN1ZOcnBRY0dmNUp2VktpWU10dkFGT2U5cDFtbTdjWE5ZcTBkV2NlQngyOW4wRUY1YzhKVlo4RTFIa2lnR1JEU0FaZXR1eFhoWVhJTzRIa2oyMzM2VFFMZHplOVI1WGd1bkdnbGZXZmpmeEdLUGNZaVJGb2k1eHpaYzdXM1B3dDRDX2ZjX1NyVko0dmpTU25GNW1ZWU91a0tNWQ?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":9,"cat":"france","title":"Dans les Deux-Sèvres, acteurs publics et privés unissent leurs efforts pour affronter la crise","excerpt":"Face à un contexte économique difficile, les acteurs locaux des Deux-Sèvres montrent l’exemple en combinant leurs ressources. Une mobilisation collective qui pourrait inspirer d’autres territoires.","body":"Dans les Deux-Sèvres, la crise actuelle a poussé les acteurs économiques, agricoles et institutionnels à dépasser leurs clivages pour travailler main dans la main. Cette alliance inédite, qui rassemble des professionnels de tous horizons, vise à atténuer les impacts de la situation et à préparer l’avenir. Les initiatives locales, souvent discrètes mais efficaces, prouvent qu’une réponse collective peut émerger même dans les moments les plus difficiles. Une dynamique qui rappelle que la solidarité reste un levier puissant, même en période de tension. Les premiers résultats, encore modestes, laissent entrevoir une lueur d’espoir pour les mois à venir.","source":"Presse francaise","sourceUrl":"https://www.lafranceagricole.fr/chambre-dagriculture/article/905377/face-a-la-crise-toutes-les-forces-s-allient-dans-les-deux-sevres","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":10,"cat":"regions","title":"Une fête foraine illuminée par un magnifique feu d’artifice à Vanlay","excerpt":"Les habitants de Vanlay ont pu profiter d’un spectacle pyrotechnique exceptionnel pour clore une journée festive. Une initiative qui a ravi petits et grands.","body":"La commune de Vanlay a organisé une fête foraine mémorable ce week-end, ponctuée par un feu d’artifice spectaculaire. Les rues du village se sont parées de couleurs vives, offrant aux familles une soirée magique. Une belle occasion de rassembler la communauté autour d’un moment de joie partagée. Les organisateurs ont veillé à ce que l’événement se déroule en toute sécurité, avec la présence des pompiers et des secours.","source":"La Voix du Nord","sourceUrl":"http://www.lunion.fr/id836562/article/2026-10-27/une-fete-foraine-illuminee-par-un-magnifique-feu-dartifice-vanlay","verified":true,"date":"28 oct. 2026","readTime":"2 min"},
+  {"id":11,"cat":"culture","title":"Comment vivaient nos ancêtres il y a 10 000 ans ? Le Musée de l'Homme rouvre sa galerie consacrée aux Néolithiques","excerpt":"Le Musée de l'Homme propose une plongée fascinante dans la vie de nos ancêtres néolithiques avec une galerie entièrement repensée. Une exposition à ne pas manquer.","body":"Le Musée de l'Homme a rouvert sa galerie dédiée aux Néolithiques, offrant une plongée fascinante dans la vie de nos ancêtres il y a 10 000 ans. Cette exposition permet de découvrir les innovations et les modes de vie de cette période charnière. Une occasion unique de mieux comprendre l’histoire de l’humanité. Une visite à recommander pour les passionnés d’histoire et de culture.","source":"France Info","sourceUrl":"https://www.franceinfo.fr/culture/arts-expos/comment-vivaient-nos-ancetres-il-y-a-10-000-ans-le-musee-de-l-homme-rouvre-sa-galerie-consacree-au-neolithique_8254876.html#xtor=RSS-3-%5Bgeneral%5D","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":12,"cat":"culture","title":"« Moulin » : un film sur les derniers jours de Jean Moulin sort au cinéma","excerpt":"Un nouveau film retrace les derniers jours de Jean Moulin, héros de la Résistance. Une œuvre à découvrir pour honorer son héritage.","body":"Le cinéma français s’enrichit d’un nouveau film consacré aux derniers jours de Jean Moulin, figure emblématique de la Résistance. Cette œuvre permet de mieux connaître l’histoire de ce héros et de son combat pour la liberté. Une occasion de rendre hommage à son engagement et à son courage. Une sortie à ne pas manquer pour les amateurs de cinéma et d’histoire.","source":"France Info","sourceUrl":"https://www.franceinfo.fr/culture/cinema/moulin-un-film-sur-les-derniers-jours-de-jean-moulin-sort-au-cinema_8255569.html#xtor=RSS-3-%5Bgeneral%5D","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":13,"cat":"insolite","title":"Sur « Daddy Cool » de Boney M., le Français Willis, 16 ans, remporte une compétition internationale de street dance","excerpt":"Un jeune Français de 16 ans, Willis, a remporté une compétition internationale de street dance sur le tube « Daddy Cool » de Boney M. Une performance exceptionnelle.","body":"Willis, un jeune Français de 16 ans, a marqué l’histoire de la street dance en remportant une compétition internationale sur le tube « Daddy Cool » de Boney M. Son talent et sa créativité ont impressionné le jury et le public. Une performance qui montre le dynamisme de la danse française et l’émergence de nouveaux talents. Une belle reconnaissance pour ce jeune prodige.","source":"20 Minutes","sourceUrl":"https://www.20minutes.fr/arts-stars/insolite/4258017-20261027-daddy-cool-boney-francais-willis-16-ans-remporte-competition-internationale-street-dance?at_medium=display&amp;at_campaign=149","verified":true,"date":"27 oct. 2026","readTime":"2 min"},
+  {"id":14,"cat":"sport","title":"Trois jeunes Français invités au Masters 1000 de Paris : une belle reconnaissance pour le tennis tricolore","excerpt":"Le tennis français se réjouit de l'invitation de trois jeunes talents au prestigieux Masters 1000 de Paris. Une opportunité en or pour ces joueurs de briller sur la scène internationale.","body":"Les organisateurs du Masters 1000 de Paris ont fait un geste fort en offrant une wild card à trois jeunes Français : Arthur Gea, Moïse Kouamé et Hugo Gaston. Cette invitation témoigne de la confiance accordée à la nouvelle génération, qui a su se distinguer par ses performances récentes. Une belle reconnaissance pour le tennis tricolore, qui voit ainsi ses espoirs confirmés sur la scène internationale. Ces joueurs auront l'occasion de se mesurer aux meilleurs mondiaux et de gagner en expérience dans un tournoi d'envergure.","source":"Presse francaise","sourceUrl":"https://www.franceinfo.fr/sports/tennis/tennis-arthur-gea-moise-kouame-hugo-gaston-invites-par-les-organisateurs-du-masters-1000-de-paris_8255647.html#xtor=RSS-3-%5Bgeneral%5D","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":15,"cat":"france","title":"2 000 arbres offerts pour renaître après les incendies en Gironde","excerpt":"La solidarité s’organise dans le sud-ouest pour redonner vie aux paysages ravagés. Une initiative concrète pour panser les blessures des forêts et des cœurs.","body":"Dans le Lège-Cap-Ferret, une opération de distribution de jeunes arbres a été lancée pour accompagner la régénération des espaces naturels touchés par les récents incendies. Cette démarche, portée par des acteurs locaux et des associations, vise à restaurer les écosystèmes tout en symbolisant l’espoir d’un renouveau. Les bénéficiaires, qu’ils soient particuliers ou collectivités, reçoivent des plants adaptés au climat local, avec des conseils pour leur plantation et leur entretien. Une façon de transformer l’épreuve en opportunité de reconstruction collective.","source":"Presse francaise","sourceUrl":"https://www.franceinfo.fr/replay-jt/france-2/13-heures/apres-les-incendies-en-gironde-2-000-arbres-distribues-au-lege-cap-ferret_8256004.html#xtor=RSS-3-%5Bgeneral%5D","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":16,"cat":"innovation","title":"235 millisecondes : les corneilles prennent deux fois plus vite leurs décisions que les humains","excerpt":"Une étude révèle que les corneilles ont une capacité de décision exceptionnelle. Une preuve de l’intelligence remarquable de ces oiseaux.","body":"Des chercheurs ont découvert que les corneilles prennent des décisions deux fois plus rapidement que les humains, avec une précision impressionnante. Cette étude met en lumière l’intelligence remarquable de ces oiseaux, capables de résoudre des problèmes complexes en un temps record. Une découverte qui fascine les scientifiques.","source":"trustmyscience.com","sourceUrl":"https://trustmyscience.com/235-millisecondes-les-corneilles-prennent-deux-fois-plus-vite-leurs-decisions-que-les-humains/","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":17,"cat":"solidarite","title":"À Siouville-Hague, les pompiers se forment au sauvetage aquatique","excerpt":"Une initiative qui renforce la sécurité des baigneurs et des plaisanciers. Une formation qui sauve des vies et protège les habitants.","body":"Les pompiers de Siouville-Hague ont suivi une formation spécialisée en sauvetage aquatique, renforçant ainsi la sécurité des baigneurs et des plaisanciers. Cette initiative, qui s’inscrit dans une démarche de prévention, montre l’engagement des secours locaux pour protéger les habitants. Une formation qui pourrait inspirer d’autres communes.","source":"Ouest-France","sourceUrl":"https://news.google.com/rss/articles/CBMilgJBVV95cUxQcXZFb19jOTlzTjFoelRMaWFKUmFycmpFNEp2OUhQZ195X01KOEJ4ZVFvUEhCcVUxTGw4ckZkck80SmUxWXVFZ0dfSkxfT1NpUDVFRmpzU0lkTmVVT3dpOHFHblppVlFYVUl4OC1fclM4SFUxbVEtb1VqWTRXdXhoTHNqSm1BY3ZLd2ExM3lrT2FOaUVpRU8zbEp6T1FsSXBQZjY1R09lT2xTVlkyT1ZnSmtXekw3bHdmWk5qQjUzOWhHN2hZMnFtckY4ZmRLU3drbTJEM0hTZWlCRjh3STYwMm1YSGNldGdWeXVjaGNHNzN4ekU4RkVhLVd1NW1EYkVPM0p0LU1oNlpXd2xlTmZVUXEtdU14UQ?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":18,"cat":"culture","title":"Une déclaration d’amour à la culture et à la création : l’exposition du rappeur Oli au Grand Palais","excerpt":"Une exposition qui célèbre la diversité culturelle et artistique. Une initiative qui montre le pouvoir de la culture pour rassembler.","body":"Le rappeur Oli présentera une exposition au Grand Palais en décembre, intitulée « Une déclaration d’amour à la culture et à la création ». Ce projet, qui met en valeur la diversité artistique, montre comment la culture peut rassembler et inspirer. Une initiative qui mérite d’être saluée.","source":"franceinfo.fr","sourceUrl":"https://www.franceinfo.fr/culture/arts-expos/une-declaration-d-amour-a-la-culture-et-a-la-creation-l-exposition-du-rappeur-oli-sera-au-grand-palais-a-paris-en-decembre_8254063.html","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":19,"cat":"solidarite","title":"Cléron : une chienne sauvée d’une falaise par les sapeurs-pompiers","excerpt":"Un sauvetage héroïque qui rappelle le courage et la dévotion des secours. Une histoire qui touche et inspire.","body":"Les sapeurs-pompiers de Cléron ont réalisé un sauvetage spectaculaire en récupérant une chienne coincée au bord d’une falaise. Cette opération, menée avec professionnalisme et rapidité, montre une fois de plus le courage et la dévotion des secours. Une histoire qui rappelle l’importance de la solidarité et du dévouement.","source":"Plein Air","sourceUrl":"https://news.google.com/rss/articles/CBMisAFBVV95cUxPVjd3UGJ2bEdfQlhsbE5sUE92cWppeTRpd3gzY1cyZmtqbzNfWndyX2tuWDdsTVIyRElNQTlWTjhXWVNKOHVjcUs0V19VWFFDRDRhZF9YZm5GSGJmdlpQQ2diTXNkWDZHS0xJZ24tRXVBSlFmU3M5cDRTUE5UUnVQWTFQUXYybExvekFfejFUOWtiZE1IVk5QMEI3YzVMRjhVZFQ3QXZzcEo3NzcwS3Yxdg?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":20,"cat":"regions","title":"À Dunkerque, un couple célèbre ses 50 ans de mariage avec faste","excerpt":"Corinne et Michel Sadowski ont marqué l’histoire de leur ville en célébrant leurs noces d’or. Une journée de joie et de souvenirs partagés.","body":"Un demi-siècle de vie commune, c’est le beau cadeau que Corinne et Michel Sadowski ont offert à Dunkerque. Leur mariage, célébré avec faste, a rassemblé famille et amis autour d’un moment unique. Une preuve que l’amour, même après tant d’années, reste une source d’inspiration. Leur histoire rappelle que les petites et grandes étapes de la vie méritent d’être célébrées.","source":"La Voix du Nord","sourceUrl":"http://www.lavoixdunord.fr/1749601/article/2026-10-26/dunkerque-corinne-et-michel-sadowski-ont-celebre-leurs-noces-d-or","verified":true,"date":"28 oct. 2026","readTime":"2 min"},
+  {"id":21,"cat":"regions","title":"La rénovation d’une ligne de train ouvre de nouvelles perspectives pour l’Allier, la Nièvre et Clermont-Ferrand","excerpt":"Un projet ambitieux pour moderniser les transports en commun. Les voyageurs bénéficieront bientôt d’un réseau plus performant et plus accessible.","body":"La rénovation de cette ligne ferroviaire est une excellente nouvelle pour les habitants de l’Allier, de la Nièvre et de Clermont-Ferrand. Ce projet, qui vise à améliorer la qualité du service, promet de faciliter les déplacements quotidiens. Une avancée majeure pour le développement économique et social de la région. Les usagers pourront enfin voyager dans des conditions optimales.","source":"La Montagne","sourceUrl":"https://news.google.com/rss/articles/CBMirgJBVV95cUxOTlZ6ZUdxMkpSWEk2am1UcUZDVHNsbjk5OTBRQU9CYl85STEzME1vdWN1V0IzSkdWVFRqTmRSNjR6NG41dDdJZThWRTJlY2pnRk1WSHFaUzluQ01kUlhTcTBQTndBLXRPd1BqTU4xTFJMd185NXc1bmR3VnF3ZXVEZjJCcVM1WTlrS3BrZTdTTnlhWVFYMzZIRW1wUzdjejhNazhTQTlqTVB5YWlRYmNTdlF2WndyUkhkRlF1bWFtdEJQdDg2ajFsc2pTN1N3YXlzcVlHQ1NoR3d0RzZuUldwM0I2SDFTRE01WVlwYWRjX21ELWk1NDdnb2FDLXV4Y3VQY3dhNmlyMHBtaW1OY1ZlcHd1M05SU0Z5bDJ2Q1VkN0k5dWJRSGEwVk1Vbm5yQQ?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":22,"cat":"innovation","title":"Une innovation toulousaine pour désinfecter les avions s’exporte dans le monde","excerpt":"Une solution française révolutionnaire pour assainir les cabines d’avion. Une avancée majeure pour la santé des passagers et du personnel navigant.","body":"Une innovation toulousaine, développée pour désinfecter les avions, séduit désormais le monde entier. Cette solution, à la fois écologique et efficace, permet d’éliminer les bactéries et virus en quelques minutes. Une avancée majeure pour la sécurité sanitaire dans le transport aérien. Les compagnies aériennes du monde entier s’intéressent à cette technologie prometteuse.","source":"La Tribune","sourceUrl":"https://news.google.com/rss/articles/CBMimAJBVV95cUxQRmE3WnhLQVh3SkVMWGxYcjkyUE03SDdNb2hNRFhfU2dEaVlGOUhTWWN5NzBhUVVQU3pnSWFhLVZOT3MzRS1DOTl4Z2tkN0I2dThWSDFlSlJodzFjTHRJN3hyUjlFQkNpUjFUaEVtX0dRdTljc0UzQ3FiUUd2X0tZRFVFYWxCZGdfazN6MUFLNmU2TEU4eFc2N1diby1mQURWQzBxSEptVlo5R2JiWmx1VjdKU0pEaXpscW56WFREci1aVG9kdWhpRWJjN2hXVlBXamkyclNqWmFWYmk5Y1BjakRuSXAzajV0TjlTalU4aUR0WHNfSXFiOEtpSkNTdE9XU0VyMlQwbzd2T2FKdGJwOW1YbjBObmpF?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":23,"cat":"innovation","title":"Des cellules musculaires vivantes pour propulser un mini-robot","excerpt":"Une avancée scientifique spectaculaire : un robot nage grâce à de vraies cellules musculaires. Une première mondiale qui ouvre des perspectives inédites.","body":"Des chercheurs ont réussi à créer un mini-robot capable de nager grâce à des cellules musculaires vivantes. Une première mondiale qui marque un tournant dans la robotique bio-inspirée. Cette innovation pourrait révolutionner de nombreux domaines, de la médecine à l’exploration sous-marine. Une preuve que la science continue de repousser les limites de l’impossible.","source":"Trust My Science","sourceUrl":"https://trustmyscience.com/ce-mini-robot-nage-grace-a-de-veritables-cellules-musculaires-vivantes/","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":24,"cat":"innovation","title":"Sorbonne Université parmi les établissements publics les mieux classés en Europe pour ses brevets","excerpt":"Une reconnaissance internationale pour l’excellence de la recherche française. Une fierté pour l’innovation made in France.","body":"Sorbonne Université se distingue en Europe pour la qualité de ses brevets et innovations. Une reconnaissance qui place la France parmi les leaders mondiaux en matière de recherche et développement. Une belle vitrine pour le savoir-faire français et une source de motivation pour les chercheurs de demain. Une avancée majeure pour l’attractivité scientifique du pays.","source":"Sorbonne Université","sourceUrl":"https://news.google.com/rss/articles/CBMizgFBVV95cUxOLURxMndCUUltaFU1Ui1zdTYwUTA4dHE1S2RsaGZOYklWTjRqQzNVSC0xYmtBd2hNYkhOWkpDVzlGcEN2elFad21HVVBvNUxtVzhFUzZobnpfalY4Y3dEQWdqaHlkZy1EeHNZZFR2VEZ1UmhJYUpnTkp0Tnk2Q3RFSnpva0V3d1pUczFCeTVQQk1TYWZoSnNDQzNxMmFZN1JzQTltQmRVN05xVXZ4M24tSFVISnBYNkFDTG9uMW5CZzVLcEpreXlvQTI4LVJCdw?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":25,"cat":"ecologie","title":"De nouveaux oursons observés dans les Pyrénées","excerpt":"Une excellente nouvelle pour la biodiversité : des oursons ont été repérés dans les Pyrénées. Une preuve que les efforts de protection portent leurs fruits.","body":"La nature nous offre une belle surprise avec la naissance de nouveaux oursons dans les Pyrénées. Une preuve que les mesures de protection mises en place portent leurs fruits. Cette observation encourageante montre que la biodiversité peut se rétablir grâce à l’engagement des scientifiques et des associations. Une lueur d’espoir pour la faune française.","source":"Vert.eco","sourceUrl":"https://vert.eco/culture/de-nouveaux-oursons-observes-dans-les-pyrenees-new-york-interdit-les-caleches-dans-central-park-les-bonnes-nouvelles-de-la-semaine/","verified":true,"date":"26 oct. 2026","readTime":"2 min"},
+  {"id":26,"cat":"ecologie","title":"L’installation de nouvelles sous-stations marque un tournant pour le parc éolien de Gennaker","excerpt":"Un pas de géant pour l’énergie éolienne en France. Ces nouvelles infrastructures permettront d’optimiser la production et de renforcer le réseau.","body":"Le parc éolien de Gennaker entre dans une nouvelle ère avec l’installation de sous-stations innovantes. Ces infrastructures permettront d’optimiser la production d’énergie et de renforcer le réseau électrique. Une avancée majeure pour l’indépendance énergétique de la région et la transition vers des énergies propres. Une belle illustration du potentiel de l’éolien en France.","source":"Environnement Magazine","sourceUrl":"https://news.google.com/rss/articles/CBMi6gFBVV95cUxNc2ZZbGhfU0xBMEJtRndLRTNELUdoTFJsWElvcTdKSEFSZXBMdFNuSU1xU0dCZTczUVZ4Mm9DRDJvc3FiWlpOZ3hxNnVjSXZrOE4zV1NFQk82ZGEzZVB3WUdFX29kVVlfRW1seUM5d0FoRTNoMF9tM19fbFdNZFNDSDc4X3lnMFlaQ2d4SkwtNEZIUXFyT2VSZnNzS2JQN0FDd2dubVBHdUxtV0xOcFl3bW00X0l4U3A1RmFxbTN6X3VPNXBod3N3NU9RUVNrR3Jkc1NYTHg4dTlPMDFucV9lOUNUZnFsQzM4ZWc?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":27,"cat":"solidarite","title":"Des bénévoles recherchés pour vivre gratuitement à Hawaï en échange de soins à des cochons sauvés","excerpt":"Une opportunité unique pour allier voyage et engagement solidaire. Une expérience enrichissante pour les amoureux des animaux et de la nature.","body":"Une initiative originale propose à des bénévoles de vivre gratuitement à Hawaï en échange de 20 heures de soins par semaine à des cochons sauvés. Une opportunité pour découvrir une culture riche tout en s’engageant pour une cause animale. Une belle illustration de la solidarité internationale et du tourisme responsable. Une expérience qui pourrait inspirer d’autres projets similaires.","source":"Marie France, magazine féminin","sourceUrl":"https://news.google.com/rss/articles/CBMigAJBVV95cUxQSzQ3XzRjTmtLZExJei1ZRFJPTExqd0NvdVFjSjlSdW9CRTVHWW0zZU5xX0VwelhES2sxbHF3a2NYZnQxSm5yaUZPblBJaVh5UmdIR3lrU3k4X0NhYXRuZEZQbkJZa0liak9UYkZRb200Q0VWMTlIWlZMbUU0eTBBWlhDNGhnWlJIaTZBc2JXUEw0Z1JDT2ZmUVpIZFc4cG9QR1IwNFl1R0llbTQ0eGRsNm5iNHJybWhsdmFIVUZzaDBRS1pUbWY3ZGt0dWszbWEtZEc0Y1V1WUVPRGtldmJ6b2pDR2did3dnWXpFR3huTGFlLVduemRiQmlJdmxSY3hY?oc=5","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":28,"cat":"culture","title":"Stephan Eicher raconte la chanson « Déjeuner en paix » : « Elle reste actuelle, c’est troublant »","excerpt":"Un classique intemporel qui continue de résonner. Stephan Eicher partage son attachement à cette chanson emblématique de sa carrière.","body":"Stephan Eicher évoque avec émotion la chanson « Déjeuner en paix », un titre intemporel qui continue de toucher le public. Une œuvre qui traverse les générations et reste d’une actualité surprenante. Une belle illustration du pouvoir de la musique à rassembler et à inspirer. Une chanson qui, plus de 30 ans après sa sortie, reste un symbole de paix et de simplicité.","source":"France Info","sourceUrl":"https://www.franceinfo.fr/replay-radio/le-monde-d-elodie/stephan-eicher-raconte-la-chanson-dejeuner-en-paix-elle-reste-actuelle-c-est-troublant_8233147.html#xtor=RSS-3-%5Bgeneral%5D","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":29,"cat":"culture","title":"Avec « ABC Penser », Philippe Petit rappelle pourquoi nous avons encore besoin des intellectuels","excerpt":"Un plaidoyer pour la pensée critique et la culture. Philippe Petit défend l’importance des intellectuels dans un monde en quête de sens.","body":"Philippe Petit signe « ABC Penser », un ouvrage qui défend l’importance des intellectuels et de la pensée critique. Un plaidoyer pour la culture et le débat d’idées dans un monde souvent dominé par l’immédiateté. Une belle illustration de l’engagement des penseurs pour éclairer les consciences et inspirer les générations futures. Un livre qui rappelle que la culture reste un pilier de la démocratie.","source":"Les Inrocks","sourceUrl":"https://www.lesinrocks.com/livres/avec-abc-penser-philippe-petit-rappelle-pourquoi-nous-avons-encore-besoin-des-intellectuels-704710-26-10-2026/","verified":true,"date":"28 oct. 2026","readTime":"3 min"},
+  {"id":30,"cat":"insolite","title":"17 barriques de vin déterrées sur une plage des Landes après une expérience insolite","excerpt":"Une découverte surprenante qui intrigue les habitants et les experts. Ces barriques pourraient révéler une histoire oubliée de la région.","body":"Une expérience insolite a permis de déterrer 17 barriques de vin sur une plage des Landes. Une découverte qui intrigue les habitants et les experts. Ces barriques pourraient révéler une histoire oubliée de la région, liée au commerce maritime ou à des naufrages. Une belle illustration de la richesse archéologique et historique de la côte atlantique. Une énigme à résoudre pour les passionnés d’histoire.","source":"20 Minutes","sourceUrl":"https://www.20minutes.fr/arts-stars/insolite/4257621-20261026-landes-17-barriques-vin-deterrees-plage-apres-etonnante-experience?at_medium=display&at_campaign=149","verified":true,"date":"28 oct. 2026","readTime":"2 min"},
+  {"id":31,"cat":"insolite","title":"Un voyage émouvant dans le temps au Salon du Collectionneur de Larçay","excerpt":"Une plongée dans l’histoire et les passions insolites. Le salon met à l’honneur des objets et des souvenirs qui racontent des histoires uniques.","body":"Le Salon du Collectionneur de Larçay propose une plongée émouvante dans l’histoire et les passions insolites. Entre objets rares et souvenirs d’enfance, les visiteurs découvrent des trésors qui racontent des histoires uniques. Une belle illustration de la diversité des passions et de la richesse du patrimoine culturel. Une expérience qui rappelle que chaque objet a une histoire à raconter.","source":"La Nouvelle République","sourceUrl":"https://news.google.com/rss/articles/CBMinwJBVV95cUxPVGR4Y0NzWXFTbFBSZWNvQV9UZFB2WjN1SFhHUk9SVmZZeHNxdWdnS1MzaHl6T0g4TS1hSHdZODJ0REQxZUk5RHdGa2RMWG9GV01SSGwzODhSdUNWQlhHY0Yyd1BkUi0xSHJkS2x0ZTVCYVQ3ZjFFejJwbzNvVlFXNEZIYXRnSkxsVmU5U21DLUJpbEdoWGRsX2FqSjlGQnBPWHVTQjBLR3Y1LVhQa0VwUEtIUkFvV2NadG5Na29DX0drN3RMMm92YTZJYVUwcVdFRVU4WlBxczQ2T1E5MXJnRXh6blhvbnA2T0lRQjlDMjFPbjY3Y0xmY1NzZWJXbE9OU1pwVzR6ZXUyR3FPNHBTVnREckJMMXlpc2Y5czItaw?oc=5","verified":true,"date":"28 oct. 2026","readTime":"2 min"},
+];
+// AUTO-ARTICLES:END
+
+var view = "home";
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+
+function catOf(a) {
+  var i;
+  for (i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].id === a.cat) return CATEGORIES[i];
+  return { name: a.cat, color: "#8a8177" };
+}
+
+function renderNav() {
+  var html = '<button class="sec ' + (view === "home" ? "active" : "") + '" onclick="go(\'home\')">La Une</button>';
+  CATEGORIES.forEach(function(c) {
+    html += '<button class="sec ' + (view === c.id ? "active" : "") + '" onclick="go(\'' + c.id + '\')">' + esc(c.name) + "</button>";
+  });
+  document.getElementById("nav").innerHTML = html;
+}
+
+function cardHTML(a) {
+  var c = catOf(a);
+  return '<div class="card" onclick="openA(' + a.id + ')">' +
+    '<span class="cat-chip" style="background:' + c.color + '14; color:' + c.color + '">' + esc(c.name) + "</span>" +
+    "<h3>" + esc(a.title) + "</h3>" +
+    '<div class="excerpt">' + esc(a.excerpt) + "</div>" +
+    '<div class="meta"><span class="verified">' + (a.verified ? "✓ Vérifié" : "") + '</span><span>' + esc(a.date) + " · " + esc(a.readTime) + "</span></div>" +
+  "</div>";
+}
+
+var BREVO_URL = "https://9ff52e8c.sibforms.com/serve/MUIFAEmreW3M7r1ekLheX77a7iok_xettJ1ak-01-A0Gip_ROjzNOwW7T1tJVL88isa8BpbNMx2GlChov3v_ks3zQ43PmQBi2egAyMewEdRGy8pTLnKgS9bNUOzHt_fFDfLWzPrqTs2gHRsXSw2E_Nc5czTmLMG6zifGSFpCJw07Wtv9dBR4mjaQcLGU_1_X0CgN7MdZyGRKHTKxgg==";
+
+function newsletterHTML() {
+  return '<div class="nl">' +
+    '<div><h3>La bonne humeur dans votre boîte mail ☀️</h3><p>Chaque matin, une sélection des actualités qui font du bien — issues de nos éditions de 7h et 17h. Newsletter 100 % gratuite, sans spam.</p></div>' +
+    '<button class="nlbtn" onclick="go(\'newsletter\')">S&rsquo;abonner à la newsletter — gratuit</button></div>';
+}
+
+function pageHTML() {
+  var m = (view === "newsletter")
+    ? "<h1>La bonne humeur dans votre boîte mail ☀️</h1>" +
+      "<div class=\"nlhero\"><div class=\"kicker\">Newsletter</div>" +
+      "<div class=\"standfirst\">Chaque matin à 7h, recevez une sélection des nouvelles qui font du bien — vérifiées, sourcées, 100&nbsp;% gratuites.</div></div>" +
+      "<div class=\"nlavantages\">" +
+      "<div class=\"stat\"><b>7h</b><span>votre dose du matin</span></div>" +
+      "<div class=\"stat\"><b>2-3</b><span>bonnes nouvelles vérifiées</span></div>" +
+      "<div class=\"stat\"><b>0 €</b><span>gratuit, sans spam</span></div>" +
+      "</div>" +
+      "<div class=\"nlform\"><div class=\"nlform-head\"><div class=\"dq-label\">Inscription en 10 secondes</div></div>" +
+      "<iframe class=\"nlform-frame\" src=\"" + BREVO_URL + "\" title=\"Formulaire d'inscription à la newsletter Un bien fou\" loading=\"lazy\"></iframe></div>" +
+      "<p class=\"nlfoot\">Votre adresse n'est utilisée que pour la newsletter (voir notre <a href='#' onclick=\"go('confidentialite');return false;\">politique de confidentialité</a>). Désinscription en un clic, à tout moment.</p>"
+    : (view === "confidentialite")
+    ? "<h1>Politique de confidentialité</h1>" +
+      "<p><strong>Responsable du traitement :</strong> Un bien fou — Tony Roche, directeur de la publication (<a href='mailto:unbienfou.media@gmail.com'>unbienfou.media@gmail.com</a>).</p>" +
+      "<h2>Données collectées</h2>" +
+      "<p><strong>Newsletter :</strong> l'adresse e-mail fournie volontairement lors de l'inscription, via le formulaire hébergé par Brevo. Elle sert uniquement à envoyer la newsletter du matin. La base légale est votre consentement, révocable à tout moment (désinscription via le lien présent en bas de chaque e-mail, ou par simple message).</p>" +
+      "<p><strong>Statistiques d'audience :</strong> nous utilisons GoatCounter, un outil de mesure d'audience <u>sans cookies et sans données personnelles</u> (aucune adresse IP stockée, aucune publicité, aucune revente de données). Il ne dépose aucun traceur sur votre appareil : aucune bannière de consentement n'est donc nécessaire.</p>" +
+      "<p><strong>Aucune autre donnée</strong> n'est collectée, stockée ou cédée. Le site ne dépose aucun cookie.</p>" +
+      "<h2>Sous-traitants</h2>" +
+      "<p>L'adresse e-mail de newsletter est traitée par <strong>Brevo</strong> (Sendinblue SAS, France) ; le site est hébergé par <strong>Vercel Inc.</strong> (États-Unis) ; l'audience est mesurée par <strong>GoatCounter</strong>. Ces prestataires agissent sur nos instructions et selon leurs propres engagements de sécurité.</p>" +
+      "<h2>Durée de conservation</h2>" +
+      "<p>L'adresse e-mail est conservée jusqu'à votre désinscription, puis supprimée.</p>" +
+      "<h2>Vos droits</h2>" +
+      "<p>Vous pouvez à tout moment demander l'accès à vos données, leur rectification ou leur suppression en écrivant à <a href='mailto:unbienfou.media@gmail.com'>unbienfou.media@gmail.com</a>. Nous répondons sous 30 jours. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>" +
+      "<p style='font-size:.78rem;color:#8a8177'>Dernière mise à jour : 25 octobre 2026.</p>"
+    : (view === "mentions")
+    ? "<h1>Mentions légales</h1>" +
+      "<p><strong>Éditeur du site :</strong> Un bien fou — Tony Roche, en qualité de directeur de la publication.</p>" +
+      "<p><strong>Nom de domaine :</strong> unbienfou.fr (registre OVHcloud / AFNIC).</p>" +
+      "<p><strong>Hébergeur :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — vercel.com.</p>" +
+      "<p><strong>Contact :</strong> <a href='mailto:unbienfou.media@gmail.com'>unbienfou.media@gmail.com</a></p>" +
+      '<p style="font-size:.78rem;color:#8a8177">Document type à compléter au lancement réel (SIRET le cas échéant). La désignation d\'un directeur de la publication est obligatoire pour tout éditeur de contenu en ligne (loi n° 2004-575 du 21 juin 2004). Les articles sont rédigés avec l\'aide d\'une IA contrôlée — voir la page Transparence.</p>'
+    : "<h1>Transparence IA</h1>" +
+      "<p><strong>Comment nos articles sont produits.</strong> Chaque matin, des agents logiciels collectent des informations publiées par des sources officielles et de presse (ministères, INSEE, collectivités, fédérations). Des agents IA rédigent ensuite les articles à partir de ces seules sources, un agent vérificateur contrôle chaque fait, et un agent « rédacteur en chef » valide le tout. Un humain supervise la file des cas sensibles.</p>" +
+      "<p><strong>Nos règles absolues :</strong> aucun fait inventé, aucune citation fabriquée, aucune image sous droit d\'auteur, et tout article non conforme est rejeté, jamais publié.</p>" +
+      "<p><strong>Publicité :</strong> les contenus publicitaires et partenaires sont toujours clairement identifiés comme tels.</p>"
+        + "<p style=\"font-size:.78rem;color:#8a8177\">Conformément à l'article 50 du règlement (UE) 2024/1689 sur l'intelligence artificielle, applicable depuis le 2 août 2026, les contenus générés par IA sont signalés au public. Dernière mise à jour : 28 octobre 2026.</p>";
+  document.getElementById("main").innerHTML =
+    '<div class="page"><button class="backbtn" onclick="go(\'home\')">← Retour</button>' + m + "</div>";
+}
+
+function renderMain() {
+  if (view === "mentions" || view === "transparence" || view === "confidentialite" || view === "newsletter") { pageHTML(); return; }
+  var hero = null, list = [], i;
+  for (i = 0; i < ARTICLES.length; i++) {
+    if (ARTICLES[i].hero) hero = ARTICLES[i];
+  }
+  for (i = 0; i < ARTICLES.length; i++) {
+    if (view === "home" && !ARTICLES[i].hero) list.push(ARTICLES[i]);
+    if (view !== "home" && ARTICLES[i].cat === view) list.push(ARTICLES[i]);
+  }
+  var cat = null;
+  for (i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].id === view) cat = CATEGORIES[i];
+
+  var heroHTML = "";
+  if (view === "home" && hero) {
+    heroHTML = '<div class="hero">' +
+      '<div>' +
+        '<div class="kicker">À la une aujourd&rsquo;hui</div>' +
+        "<h1 onclick=\"openA(" + hero.id + ')">' + esc(hero.title) + "</h1>" +
+        '<p class="standfirst">' + esc(hero.excerpt) + "</p>" +
+        '<div class="meta-line"><span class="verified">✓ Vérifié</span><span>' + esc(hero.date) + "</span><span>" + esc(hero.readTime) + " de lecture</span></div>" +
+        '<button class="readbtn" onclick="openA(' + hero.id + ')">Lire l\'article →</button>' +
+    "</div>";
+  }
+
+  var title = view === "home" ? "Tout ce qui fait du bien aujourd'hui" : esc(cat.name);
+  var cards = "";
+  list.forEach(function(a) { cards += cardHTML(a); });
+
+  document.getElementById("main").innerHTML =
+    heroHTML +
+    '<div class="sec-title"><h2>' + title + '</h2><span class="count">' + list.length + " article(s) · deux éditions, 7h & 17h</span></div>" +
+    '<div class="grid">' + cards + "</div>" +
+    newsletterHTML();
+}
+
+function openA(id) {
+  var a = null, i;
+  for (i = 0; i < ARTICLES.length; i++) if (ARTICLES[i].id === id) a = ARTICLES[i];
+  if (!a) return;
+  var c = catOf(a);
+  var ov = document.createElement("div");
+  ov.className = "overlay";
+  ov.setAttribute("onclick", "if(event.target===this)this.remove()");
+  ov.innerHTML = '<div class="modal">' +
+    '<button class="close" onclick="this.parentNode.remove()">✕</button>' +
+    '<span class="cat-chip" style="background:' + c.color + '14; color:' + c.color + '">' + esc(c.name) + "</span>" +
+    "<h1>" + esc(a.title) + "</h1>" +
+    '<div class="meta-line"><span class="verified">✓ Vérifié</span><span>' + esc(a.date) + "</span><span>" + esc(a.readTime) + " de lecture</span></div>" +
+    '<p class="m-stand">' + esc(a.excerpt) + "</p>" +
+    '<div class="abody">' + esc(a.body) + "</div>" +
+    '<div class="src"><strong>Source :</strong> ' + esc(a.source) + (a.sourceUrl ? ' · <a href="' + esc(a.sourceUrl) + '" target="_blank" rel="noopener">📖 Voir la source</a>' : "") + "</div>" +
+    '<div class="share"><span>Partager :</span>' +
+      '<button class="shbtn" onclick="partage(\'whatsapp\', ' + a.id + ')">WhatsApp</button>' +
+      '<button class="shbtn" onclick="partage(\'facebook\', ' + a.id + ')">Facebook</button>' +
+      '<button class="shbtn" onclick="partage(\'x\', ' + a.id + ')">X</button>' +
+      '<button class="shbtn" onclick="partage(\'copie\', ' + a.id + ')">Copier le lien</button>' +
+    "</div>" +
+    '<button class="backbtn" onclick="this.parentNode.remove()">← Retour à la Une</button>' +
+  "</div>";
+  document.body.appendChild(ov);
+}
+
+function partage(reseau, id) {
+  var a = null, i;
+  for (i = 0; i < ARTICLES.length; i++) if (ARTICLES[i].id === id) a = ARTICLES[i];
+  if (!a) return;
+  var url = "https://www.unbienfou.fr/";
+  var texte = a.title + " — Un bien fou ☀️";
+  if (reseau === "whatsapp") window.open("https://wa.me/?text=" + encodeURIComponent(texte + " " + url), "_blank");
+  if (reseau === "facebook") window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
+  if (reseau === "x") window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(texte) + "&url=" + encodeURIComponent(url), "_blank");
+  if (reseau === "copie") {
+    try { navigator.clipboard.writeText(url); } catch (e) {}
+    var b = event && event.target;
+    if (b) { var old = b.textContent; b.textContent = "✓ Lien copié"; setTimeout(function(){ b.textContent = old; }, 2000); }
+  }
+}
+
+function go(v) { view = v; renderNav(); renderMain(); window.scrollTo(0, 0); }
+
+document.getElementById("frub").textContent = CATEGORIES.map(function(c) { return c.name; }).join(" · ");
+try { document.getElementById("fstats").textContent = CATEGORIES.length + " rubriques · " + ARTICLES.length + " articles"; } catch (e) {}
+try {
+  document.getElementById("today").textContent = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+} catch (e) {}
+// === PHRASE DU JOUR (indépendant du robot, hors bloc AUTO-ARTICLES) ===
+var PHRASES = [
+  "Une bonne nouvelle par jour, c'est déjà beaucoup de soleil dans une vie.",
+  "On ne rit pas parce qu'on est heureux ; on est heureux parce qu'on rit.",
+  "Les petites joies d'aujourd'hui sont les beaux souvenirs de demain.",
+  "Il n'y a pas de petit geste de gentillesse : chacun d'eux change une journée.",
+  "Le monde regorge de gens formidables qui ne font pas la une. Nous, on va les chercher.",
+  "Chaque matin est une page blanche : pourquoi ne pas y écrire quelque chose de beau ?",
+  "Ce qui compte, ce n'est pas la longueur du chemin, mais les rencontres qu'on y fait.",
+  "Planter un arbre, aider un voisin, sourire à un inconnu : le monde se répare en douceur.",
+  "Même la plus petite lumière chasse l'obscurité d'une pièce entière.",
+  "Prendre le temps de savourer, c'est déjà offrir une pause à ceux qui nous entourent.",
+  "Derrière chaque exploit, il y a quelqu'un qui a osé commencer petit.",
+  "La gentillesse est gratuite. C'est ce qui la rend inestimable.",
+  "Un sourire partagé voyage plus loin qu'on ne le croit.",
+  "La bonne nouvelle du jour, c'est vous : vous en faites partie.",
+  "Rien ne sert de courir après le bonheur ; il suffit de savoir le reconnaître.",
+  "Les bonnes idées poussent comme les arbres : lentement, mais pour longtemps.",
+  "Il y a toujours quelqu'un, quelque part, qui travaille en silence à rendre le monde meilleur.",
+  "Espérer, c'est déjà construire.",
+  "Une journée commencée par une bonne nouvelle finit souvent en bonne journée.",
+  "Le courage, ce n'est pas de ne jamais tomber ; c'est de se relever en chantant.",
+  "La nature prend son temps, et elle ne rate jamais son printemps.",
+  "Chaque génération ajoute sa pierre ; chaque génération embellit le mur.",
+  "Un merci sincère réchauffe plus qu'un manteau.",
+  "La curiosité est une politesse qu'on fait au monde.",
+  "Partager une bonne nouvelle la rend deux fois plus grande.",
+  "Les mains qui aident valent mieux que les lèvres qui promettent.",
+  "Il fait toujours beau quelque part : on va vous montrer où.",
+  "Le progrès ne fait pas de bruit ; il avance, un jour après l'autre.",
+  "Sourire à la vie, c'est lui mettre du soleil dans les yeux.",
+  "On ne grandit jamais autant que lorsqu'on fait grandir les autres."
+];
+try {
+  var maintenant = new Date();
+  var debutAnnee = new Date(maintenant.getFullYear(), 0, 0);
+  var jourAnnee = Math.floor((maintenant - debutAnnee) / 86400000);
+  document.getElementById("dqTexte").textContent = PHRASES[jourAnnee % PHRASES.length];
+} catch (e) {}
+go("home");
+</script>
+<script data-goatcounter="https://unbienfou.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
