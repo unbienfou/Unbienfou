@@ -205,7 +205,41 @@ jobs:
           console.log('Aucun abonne Brevo pour le moment : newsletter non envoyee.');
           return;
           }
-          const top3 = tous.slice(0, 3);
+                    // === REGLE ANTI-REPETITION NEWSLETTER (v12.19) : jamais 2 fois le meme sujet dans un mail,
+          // et pas de sujet deja envoye dans un mail des 7 derniers jours (ex : Popov plusieurs jours de suite).
+          // Filet de securite : si pas assez de sujets frais, on complete avec les plus anciens, toujours distincts. ===
+          let nlHist = [];
+          try { nlHist = JSON.parse(fs.readFileSync('nl-historique.json', 'utf8') || '[]'); } catch (e) { nlHist = []; }
+          const urlNl = a => String(a.sourceUrl || '').split('#')[0];
+          const sujetMatchNl = (h, tA, u) => {
+          const hu = String(h.url || '').split('#')[0];
+          if (u && hu === u) return true;
+          if (similaires(h.texte, tA)) return true;
+          const mH = motsCles(h.texte); let c = 0;
+          for (const m of motsCles(tA)) { if (mH.includes(m)) c++; }
+          return c >= 2;
+          };
+          const dejaEnvoyeNl = a => { const tA = texteArticle(a); const u = urlNl(a); return nlHist.some(h => sujetMatchNl(h, tA, u)); };
+          const dernierEnvoiNl = a => { const tA = texteArticle(a); const u = urlNl(a); let ts = -Infinity; for (const h of nlHist) { if (sujetMatchNl(h, tA, u)) ts = Math.max(ts, h.ts); } return ts; };
+          let prisNL = [];
+          const distinctDansMailNl = a => {
+          const tA = texteArticle(a); const u = urlNl(a);
+          if (u && prisNL.some(p => urlNl(p) === u)) return false;
+          if (prisNL.some(p => similaires(texteArticle(p), tA))) return false;
+          const mA = motsCles(tA);
+          if (prisNL.some(p => { const mP = motsCles(texteArticle(p)); let c = 0; mA.forEach(m => { if (mP.includes(m)) c++; }); return c >= 2; })) return false;
+          return true;
+          };
+          for (const a of tous){ if (prisNL.length >= 3) break; if (distinctDansMailNl(a) && !dejaEnvoyeNl(a)) prisNL.push(a); }
+          if (prisNL.length < 3){
+          const restants = tous.filter(a => !prisNL.includes(a) && distinctDansMailNl(a)).sort((x, y) => dernierEnvoiNl(x) - dernierEnvoiNl(y));
+          for (const a of restants){ if (prisNL.length >= 3) break; prisNL.push(a); }
+          }
+          const top3 = prisNL.slice(0, 3);
+          const aujNl = Date.now();
+          const histNet = nlHist.filter(h => aujNl - h.ts < 7 * 24 * 3600 * 1000);
+          for (const a of top3) histNet.push({ ts: aujNl, url: urlNl(a), texte: texteArticle(a) });
+          try { fs.writeFileSync('nl-historique.json', JSON.stringify(histNet, null, 2)); console.log('NL-HISTORIQUE : ' + histNet.length + ' sujets memorises.'); } catch (e) { console.log('NL-HISTORIQUE : ecriture impossible : ' + e.message); }
           const dateMail = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
           const objet = '☀️ Votre dose de bonnes nouvelles du ' + dateMail;
           const htmlMail = '<div style="font-family:Georgia,serif;background:#faf8f3;padding:32px;text-align:center;">' +
