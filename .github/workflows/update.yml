@@ -617,7 +617,12 @@ jobs:
           if (!retenus.some(r => (String(r.sourceUrl || '') === String(a.sourceUrl || '')) || similaires(texteArticle(r), texteArticle(a)))) retenus.push(a);
           }
           nouveaux = retenus;
-          let tous = nouveaux.concat(anciens).slice(0, 40);
+                    let tous = nouveaux.concat(anciens).slice(0, 40);
+          // === CHRONOLOGIE (v12.20) : affichage du plus RECENT au plus ANCIEN ===
+          // Tri STABLE par date decroissante : les articles du jour restent en tete dans leur ordre de selection,
+          // donc la variete des rubriques du haut de page est preservee ; a date egale, l ordre existant est garde.
+          const poidsDateArt = t => { const d = parseDateFr(t); return d && !isNaN(d.getTime()) ? d.getTime() : 0; };
+          tous = tous.slice().sort((x, y) => poidsDateArt(y.date) - poidsDateArt(x.date));
           // === ANTI-DOUBLON GLOBAL (IA) : passe finale sur toute la liste qui va etre publiee ===
           // GARDE-FOU v8 : l IA ne peut JAMAIS vider le site — max 25% de suppressions, toujours au moins 16 articles au final
           if (KEY && tous.length > 8){
@@ -651,7 +656,7 @@ jobs:
           source: String(a.source || 'Presse internationale').slice(0, 80),
           sourceUrl: /^https?:\/\//.test(a.sourceUrl || '') ? a.sourceUrl : '',
           verified: true,
-          date: dateSource(a.sourceUrl) || dateFr,
+          date: a.date || dateFr, // v12.20 CHRONOLOGIE : date d ARRIVEE sur le site (dateFr seulement pour un nouvel article ; un ancien CONSERVE sa date stockee — sinon la purge 7 jours serait cassee et toutes les cartes afficheraient la date du jour)
           readTime: a.readTime || '3 min'
           };
           if (i === 0) obj.hero = true;
