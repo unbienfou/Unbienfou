@@ -621,7 +621,8 @@ jobs:
           // === CHRONOLOGIE (v12.20) : affichage du plus RECENT au plus ANCIEN ===
           // Tri STABLE par date decroissante : les articles du jour restent en tete dans leur ordre de selection,
           // donc la variete des rubriques du haut de page est preservee ; a date egale, l ordre existant est garde.
-                    const poidsDateArt = t => { const d = parseDateFr(t); return d && !isNaN(d.getTime()) ? d.getTime() : (parseDateFr(dateFr) || new Date()).getTime(); }; // v12.20b : un article SANS date est un article de l edition du jour (0 l aurait envoye en bas de page)          tous = tous.slice().sort((x, y) => poidsDateArt(y.date) - poidsDateArt(x.date));
+                    const poidsDateArt = t => { const d = parseDateFr(t); return d && !isNaN(d.getTime()) ? d.getTime() : (parseDateFr(dateFr) || new Date()).getTime(); }; // v12.20b : un article SANS date est un article de l edition du jour (0 l aurait envoye en bas de page) 
+                    tous = tous.slice().sort((x, y) => poidsDateArt(y.date) - poidsDateArt(x.date));
           // === ANTI-DOUBLON GLOBAL (IA) : passe finale sur toute la liste qui va etre publiee ===
           // GARDE-FOU v8 : l IA ne peut JAMAIS vider le site — max 25% de suppressions, toujours au moins 16 articles au final
           if (KEY && tous.length > 8){
