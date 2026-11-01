@@ -1,0 +1,79 @@
+name: Statistiques audience hebdo
+on:
+  schedule:
+    - cron: "0 8 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audience:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Relever l'audience (GoatCounter + Brevo)
+        env:
+          GOATCOUNTER_API_KEY: ${{ secrets.GOATCOUNTER_API_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_LIST_ID: ${{ secrets.BREVO_LIST_ID }}
+        run: |
+          cat > audience.mjs <<'SCRIPT_EOF'
+          import fs from 'fs';
+          const today = new Date().toISOString().slice(0, 10);
+          const debut = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
+
+          // 1. GoatCounter : visites des 7 derniers jours
+          let gc = 'n.c.';
+          try {
+            const r = await fetch('https://unbienfou.goatcounter.com/api/v0/stats/total?start=' + debut + '&end=' + today, {
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.GOATCOUNTER_API_KEY }
+            });
+            if (r.ok) { const j = await r.json(); gc = String(j.total); }
+          } catch (e) { gc = 'erreur'; }
+
+          // 2. Brevo : abonnes de la liste newsletter + stats transactionnelles 7 jours
+          let abonnes = 'n.c.', envoyes = 'n.c.', ouvertures = 'n.c.', clics = 'n.c.';
+          try {
+            const H = { 'api-key': process.env.BREVO_API_KEY, 'accept': 'application/json' };
+            const rl = await fetch('https://api.brevo.com/v3/contacts/lists?limit=50', { headers: H });
+            if (rl.ok) {
+              const jl = await rl.json();
+              const liste = (jl.lists || []).find(l => String(l.id) === String(process.env.BREVO_LIST_ID));
+              if (liste && typeof liste.totalSubscribers !== 'undefined') abonnes = String(liste.totalSubscribers);
+            }
+            const rs = await fetch('https://api.brevo.com/v3/smtp/statistics?days=7', { headers: H });
+            if (rs.ok) {
+              const js = await rs.json();
+              if (typeof js.requests !== 'undefined') envoyes = String(js.requests);
+              const ouv = js.opens ?? js.opened ?? js.openings;
+              if (typeof ouv !== 'undefined') ouvertures = String(ouv);
+              if (typeof js.clicks !== 'undefined') clics = String(js.clicks);
+            }
+          } catch (e) { /* Brevo indisponible : les champs restent n.c. */ }
+
+          const ligne = today + ',' + gc + ',' + abonnes + ',' + envoyes + ',' + ouvertures + ',' + clics;
+          // Reconstruction propre du fichier : une seule ligne d'en-tete,
+          // suppression des doublons d'en-tete eventuels, remplacement du jour.
+          const brut = fs.existsSync('audience.csv') ? fs.readFileSync('audience.csv', 'utf8') : '';
+          const lignes = brut.split('\n').map(l => l.trim()).filter(Boolean);
+          const data = lignes.filter(l => !l.startsWith('date,'));
+          const historique = data.filter(l => !l.startsWith(today + ','));
+          const fichier = ['date,visites_7j_goatcounter,brevo_abonnes,brevo_envoyes_7j,brevo_ouvertures_7j,brevo_clics_7j'].concat(historique, [ligne]).join('\n') + '\n';
+          fs.writeFileSync('audience.csv', fichier);
+          console.log('Audience du jour : ' + ligne);
+          SCRIPT_EOF
+          node audience.mjs
+
+      - name: Publier l'audience
+        run: |
+          git config user.name "robot-unbienfou"
+          git config user.email "action@github.com"
+          git add audience.csv
+          if git diff --cached --quiet; then
+            echo "Aucun changement"
+          else
+            git commit -m "Audience du $(date +%d/%m/%Y)"
+            git push
+          fi
