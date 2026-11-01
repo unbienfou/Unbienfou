@@ -446,8 +446,7 @@ function partage(reseau, id) {
 }
 
 function novBadge() {
-  try { history.replaceState(null, "", "?utm_source=badge-november"); } catch (e) {}
-  go("sante");
+  location.href = location.pathname + "?utm_source=badge-november";
 }
 
 function go(v) { view = v; renderNav(); renderMain(); window.scrollTo(0, 0); }
@@ -556,7 +555,9 @@ try {
   var jourAnnee = Math.floor((maintenant - debutAnnee) / 86400000);
   document.getElementById("dqTexte").textContent = PHRASES[jourAnnee % PHRASES.length];
 } catch (e) {}
-go("home");
+try {
+  go(new URLSearchParams(location.search).get("utm_source") === "badge-november" ? "sante" : "home");
+} catch (e) { go("home"); }
 </script>
 <script data-goatcounter="https://unbienfou.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
