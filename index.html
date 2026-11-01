@@ -393,9 +393,9 @@ function renderMain() {
 
   document.getElementById("main").innerHTML =
     heroHTML +
+    newsletterHTML() +
     '<div class="sec-title"><h2>' + title + '</h2><span class="count">' + list.length + " article(s) · deux éditions, 7h & 17h</span></div>" +
-    '<div class="grid">' + cards + "</div>" +
-    newsletterHTML();
+    '<div class="grid">' + cards + "</div>";
 }
 
 function openA(id) {
