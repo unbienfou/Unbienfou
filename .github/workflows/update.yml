@@ -193,16 +193,18 @@ jobs:
           async function envoyerNewsletter(tous){
           const BREVO = process.env.BREVO_API_KEY || '';
           const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
-          if (!BREVO || !LIST_ID){ console.log('Newsletter sautee : BREVO_API_KEY ou BREVO_LIST_ID absent.'); return; }
+          if (!BREVO || !LIST_ID){ console.log('Newsletter sautee : BREVO_API_KEY ou BREVO_LIST_ID absent.'); try { const eSk = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); eSk.newsletter = { envoisOk: 0, envoisTentes: 0, erreurs: ['BREVO_API_KEY ou BREVO_LIST_ID absent'] }; fs.writeFileSync('etat-robot.json', JSON.stringify(eSk, null, 2)); } catch (eSk2) { console.log('Statut newsletter non enregistre : ' + eSk2.message); } return; }
           try {
           const contactsRes = await fetch('https://api.brevo.com/v3/contacts/lists/' + LIST_ID + '/contacts?limit=50&offset=0', {
           headers: { 'api-key': BREVO }
           });
+          if (!contactsRes.ok){ console.log('ERREUR BREVO CONTACTS : HTTP ' + contactsRes.status + ' - liste d abonnes inaccessible, newsletter non envoyee.'); try { const eCc = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); eCc.newsletter = { envoisOk: 0, envoisTentes: 0, erreurs: ['HTTP ' + contactsRes.status + ' : liste d abonnes Brevo inaccessible'] }; fs.writeFileSync('etat-robot.json', JSON.stringify(eCc, null, 2)); } catch (eCc2) { console.log('Statut newsletter non enregistre : ' + eCc2.message); } return; }
           const cj = await contactsRes.json();
           // === ANTI-DOUBLE ENVOI : dedoublonner les adresses (un contact presente deux fois = un seul mail) ===
           const emails = [...new Set((cj.contacts || []).map(c => c.email).filter(Boolean))];
           if (!emails.length){
           console.log('Aucun abonne Brevo pour le moment : newsletter non envoyee.');
+          try { const eZe = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); eZe.newsletter = { envoisOk: 0, envoisTentes: 0, erreurs: ['Aucun abonne dans la liste Brevo'] }; fs.writeFileSync('etat-robot.json', JSON.stringify(eZe, null, 2)); } catch (eZe2) { console.log('Statut newsletter non enregistre : ' + eZe2.message); }
           return;
           }
                     // === REGLE ANTI-REPETITION NEWSLETTER (v12.19) : jamais 2 fois le meme sujet dans un mail,
@@ -352,8 +354,10 @@ jobs:
           '<p style="color:#8a8177;font-size:.75rem;margin-top:28px;font-family:Arial,sans-serif;">Chaque jour à 7h · <a href="https://www.unbienfou.fr" style="color:#b45309;">unbienfou.fr</a></p>' +
           '<p style="color:#b8b0a4;font-size:.68rem;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>' +
           '</div>';
+          let nlOk = 0; const nlErr = []; const nlErrPub = [];
           for (const email of emails){
-          await fetch('https://api.brevo.com/v3/smtp/email', {
+          try {
+          const rEnv = await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',
           headers: { 'api-key': BREVO, 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -363,8 +367,12 @@ jobs:
           htmlContent: htmlMail
           })
           });
+          if (rEnv.ok){ nlOk++; } else { const tErr = await rEnv.text().catch(() => ''); nlErr.push(email + ' : HTTP ' + rEnv.status + ' ' + String(tErr).slice(0, 150)); nlErrPub.push('HTTP ' + rEnv.status + ' : ' + (String(tErr).includes('@') ? String(tErr).split('@')[0].slice(0, 80) + ' [suite masquee]' : String(tErr).slice(0, 120))); }
+          } catch (eEnv){ nlErr.push(email + ' : ' + String(eEnv.message || eEnv).slice(0, 150)); nlErrPub.push(String(eEnv.message || eEnv).split('@')[0].slice(0, 120)); }
           }
-          console.log('Newsletter envoyee a ' + emails.length + ' abonne(s) unique(s).');
+          console.log('NEWSLETTER BREVO : ' + nlOk + ' envoi(s) CONFIRME(S) par l API Brevo sur ' + emails.length + ' abonne(s) unique(s).');
+          if (nlErr.length) console.log('NEWSLETTER ERREURS (log prive du run) : ' + nlErr.join(' | ').slice(0, 900));
+          try { const eNl = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); eNl.newsletter = { envoisOk: nlOk, envoisTentes: emails.length, erreurs: nlErrPub.slice(0, 10) }; fs.writeFileSync('etat-robot.json', JSON.stringify(eNl, null, 2)); console.log('Statut newsletter enregistre dans etat-robot.json (adresses masquees).'); } catch (eNl2) { console.log('Statut newsletter non enregistre : ' + eNl2.message); }
           } catch (e) {
           console.log('Erreur newsletter Brevo : ' + e.message);
           }
@@ -800,6 +808,7 @@ jobs:
           git config user.email "action@github.com"
                     git add index.html
           git add nl-historique.json 2>/dev/null || true
+          git add etat-robot.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Aucun changement"
           else
@@ -821,6 +830,14 @@ jobs:
             if [ "$TOTAL" -lt 8 ]; then PROBLEMES="$PROBLEMES"$'\n'"- Seulement $TOTAL articles au total sur le site (seuil d'alerte : 8)."; fi
             if [ "$MORTS" -ge 5 ]; then PROBLEMES="$PROBLEMES"$'\n'"- $MORTS flux RSS muets sur $((MORTS+ACTIFS)) : a verifier dans le fichier etat-robot.json du dernier run."; fi
             if [ "$VIDES" -ge 2 ]; then PROBLEMES="$PROBLEMES"$'\n'"- $VIDES rubriques sans aucun article (source a elargir)."; fi
+            # --- Newsletter : Brevo a-t-il confirme les envois de l edition du matin ? (fiabilisation 03/11/2026) ---
+            NL_ED=$(node -e "const e=require('./etat-robot.json'); console.log(e.edition||'?')" 2>/dev/null)
+            NL_OK=$(node -e "const e=require('./etat-robot.json'); console.log(e.newsletter ? e.newsletter.envoisOk : 'X')" 2>/dev/null)
+            NL_TOT=$(node -e "const e=require('./etat-robot.json'); console.log(e.newsletter ? e.newsletter.envoisTentes : 'X')" 2>/dev/null)
+            NL_ERR=$(node -e "const e=require('./etat-robot.json'); console.log(e.newsletter && e.newsletter.erreurs ? e.newsletter.erreurs.join(' | ').slice(0, 400) : '')" 2>/dev/null)
+            if [ "$NL_ED" = "7 h" ] && [ "$NL_OK" = "X" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter : statut d envoi ABSENT du rapport de l edition du matin (envoi non confirme par Brevo)."; fi
+            if [ "$NL_OK" != "X" ] && [ "$NL_OK" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter en ECHEC : 0 envoi confirme par Brevo sur $NL_TOT abonne(s). $NL_ERR"; fi
+            if [ "$NL_OK" != "X" ] && [ "$NL_OK" != "0" ] && [ "$NL_OK" != "$NL_TOT" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter PARTIELLE : $NL_OK envoi(s) confirme(s) sur $NL_TOT abonne(s). $NL_ERR"; fi
           else
             PROBLEMES="$PROBLEMES"$'\n'"- Le robot n'a pas produit son rapport etat-robot.json : possible crash de l'edition (voir logs du run)."
           fi
