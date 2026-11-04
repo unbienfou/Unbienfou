@@ -1,7 +1,7 @@
 name: Mise a jour quotidienne des articles
 on:
   schedule:
-    - cron: "0 5,15 * * *"
+    - cron: "0 5,6,15 * * *"
   workflow_dispatch:
 
 permissions:
@@ -63,6 +63,21 @@ jobs:
           };
           const CATS = ['france','regions','sport','innovation','ecologie','sante','solidarite','culture','insolite'];
           const feedHealth = [];
+          // === GARDE-FOU v12.22 ANTI DOUBLE EDITION MATINALE (05/11/2026) ===
+          // Si l edition du matin est deja publiee aujourd hui ET que Brevo a confirme ses envois,
+          // ce run (cron de repli 7h ou relance manuelle) s arrete immediatement, sans rien modifier.
+          // Objectif : impossible d envoyer deux editions ou deux newsletters du matin le meme jour.
+          let etatPrecedent = {};
+          try { etatPrecedent = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); } catch (e) { etatPrecedent = {}; }
+          {
+            const dPrec = etatPrecedent.date ? new Date(etatPrecedent.date) : null;
+            const memeJour = dPrec && !isNaN(dPrec.getTime()) && dPrec.toDateString() === new Date().toDateString();
+            const heureGF = new Date().getUTCHours() + 2; // heure de Paris (meme convention que le reste du script)
+            if (memeJour && heureGF < 14 && etatPrecedent.edition === '7 h' && etatPrecedent.newsletter && Number(etatPrecedent.newsletter.envoisOk) > 0){
+              console.log('GARDE-FOU : edition du matin deja publiee aujourd hui (' + etatPrecedent.newsletter.envoisOk + ' envois newsletter confirmes par Brevo) — arret propre, aucune action.');
+              process.exit(0);
+            }
+          }
           function pick(re, s){
           const m = s.match(re);
           return m ? m[1] : '';
