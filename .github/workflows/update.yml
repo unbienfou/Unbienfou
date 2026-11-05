@@ -1,7 +1,7 @@
 name: Mise a jour quotidienne des articles
 on:
   schedule:
-    - cron: "0 5,6,15 * * *"
+    - cron: "7 5,15 * * *"   # 6h07 et 16h07 heure de Paris (hiver : UTC+1) — hors heure pleine, ou GitHub droppe des runs (docs.github.com)
   workflow_dispatch:
 
 # === VERROU ANTI-CONCURRENCE (05/11/2026, GO Tony) : un seul run d edition a la fois ===
