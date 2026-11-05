@@ -4,6 +4,14 @@ on:
     - cron: "0 5,6,15 * * *"
   workflow_dispatch:
 
+# === VERROU ANTI-CONCURRENCE (05/11/2026, GO Tony) : un seul run d edition a la fois ===
+# Un 2e run (double-clic Run workflow, cron retarde par GitHub, repli 7h30) est mis EN FILE D ATTENTE
+# au lieu de tourner en parallele ; quand il demarre, le garde-fou v12.22 lit etat-robot.json deja
+# publie par le 1er run et s arrete proprement. Rend le double envoi de newsletter impossible.
+concurrency:
+  group: edition-unbienfou
+  cancel-in-progress: false
+
 permissions:
   contents: write
   issues: write
