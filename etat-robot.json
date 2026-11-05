@@ -1,24 +1,20 @@
 {
-  "date": "2026-11-05T06:22:46.913Z",
-  "edition": "7 h",
+  "date": "2026-11-05T21:30:00.007Z",
+  "edition": "17 h",
   "fluxTotal": 106,
-  "fluxActifs": 98,
+  "fluxActifs": 99,
   "fluxMorts": [
     "https://www.sciencesetavenir.com/rss.xml",
+    "https://news.google.com/rss/search?q=prix+Nobel+OR+decouverte+scientif",
     "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
-    "https://news.google.com/rss/search?q=decouverte+medicale+OR+essai+prom",
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
-    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p",
     "https://news.google.com/rss/search?q=record+insolite+OR+decouverte+inc"
   ],
-  "nouveauxArticles": 7,
-  "articlesTotal": 40,
-  "rubriquesVides": [],
-  "newsletter": {
-    "envoisOk": 21,
-    "envoisTentes": 21,
-    "erreurs": []
-  }
+  "nouveauxArticles": 21,
+  "articlesTotal": 38,
+  "rubriquesVides": [
+    "france"
+  ]
 }
