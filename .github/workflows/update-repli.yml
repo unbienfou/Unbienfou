@@ -17,25 +17,21 @@ jobs:
           GH_REPO: unbienfou/Unbienfou
         run: |
           set -e
-          # === FILET ULTIME (05/11/2026, GO Tony) — v2 du 06/11 : correction du bug du 05/11 ===
-          # Ce workflow est INDEPENDANT de update.yml : quand GitHub saute tous les crons
-          # d un workflow (incidents des 03-06/11), il declenche ici, separement, l edition du
-          # matin a 7h30 Paris. Le garde-fou v12.22 de update.yml garantit que le run declenche
-          # s arrete proprement si l edition + la newsletter du matin sont deja parties.
-          # BUG v1 (cause de l echec du 05/11) : sans la variable GH_REPO, la commande gh ne sait
-          # pas dans quel depot travailler (aucun checkout dans ce workflow) -> echec immediat.
-          # v2 : GH_REPO ajoute + garde-fou horaire (un repli utile seulement avant 12h UTC).
+          # === FILET ULTIME (05/11/2026, GO Tony) — v3 du 06/11 ===
+          # v2 : GH_REPO ajoute (sans lui, gh ne sait pas dans quel depot travailler :
+          # cause de l echec du repli du 05/11) + garde-fou horaire avant 12h UTC.
+          # v3 : correction coquille jq de la v2 (== et non =).
           HEURE=$(date -u +%-H)
           echo "Heure UTC : ${HEURE}h"
           if [ "$HEURE" -ge 11 ]; then
-            echo "Trop tard pour une edition du matin utile : le repli ne fait rien (le cron du soir prendra le relais a 16h07 Paris)."
+            echo "Trop tard pour une edition du matin utile : le repli ne fait rien."
             exit 0
           fi
-          ACTIFS=$(gh run list --workflow update.yml --json status --limit 8 --jq '[.[] | select(.status == "in_progress" or .status = "queued" or .status == "waiting")] | length')
+          ACTIFS=$(gh run list --workflow update.yml --json status --limit 8 --jq '[.[] | select(.status == "in_progress" or .status == "queued" or .status == "waiting")] | length')
           echo "Runs actifs de update.yml : $ACTIFS"
           if [ "$ACTIFS" != "0" ]; then
             echo "Un run de update.yml est deja en cours ou en attente : le repli ne fait rien (anti double envoi)."
             exit 0
           fi
-          echo "Aucun run actif : declenchement manuel de l edition du matin (le garde-fou v12.22 arrete proprement le run si tout est deja parti)."
+          echo "Aucun run actif : declenchement de l edition du matin (le garde-fou v12.22 arrete proprement le run si tout est deja parti)."
           gh workflow run update.yml
