@@ -1,17 +1,22 @@
 {
-  "date": "2026-11-06T20:54:46.361Z",
-  "edition": "17 h",
+  "date": "2026-11-07T07:24:51.391Z",
+  "edition": "7 h",
   "fluxTotal": 106,
-  "fluxActifs": 101,
+  "fluxActifs": 100,
   "fluxMorts": [
+    "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
     "https://www.sciencesetavenir.com/rss.xml",
     "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec"
   ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 32,
+  "nouveauxArticles": 12,
+  "articlesTotal": 36,
   "rubriquesVides": [],
-  "raison": "IA sans article exploitable (242 titres collectes)"
+  "newsletter": {
+    "envoisOk": 23,
+    "envoisTentes": 23,
+    "erreurs": []
+  }
 }
