@@ -1,20 +1,5 @@
 [
   {
-    "ts": 1793511655881,
-    "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxONjl5X3FzYjJfV1BxdXQtYWtoNUZHNmVsREYzUGlpRjBLaVMxNkg4dGFJeGRvbHVQU2N1OFlzdWxLeVRsQmEzOXZZVkpyMk1SODBNcXFGTjJDWWEtc3dmbHNjYUlzYUxOUktMT2JDS0RWWXdyLVhIdUF3YlFmZWxGeFFoUlNOM24yb3dwSEtaSFpTSGMwVHVXb0FrNlRVWDFIdWh1ZjlkMDhEd1ZYcTMwRnZOSjJqV28?oc=5",
-    "texte": "Une IA transforme vos souvenirs de famille en livres à Paris Une start-up parisienne propose un service innovant : transformer vos souvenirs de famille en livres grâce à l’intelligence artificielle."
-  },
-  {
-    "ts": 1793511655881,
-    "url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxOMWFuVE5UOXpMaTIzZGZBSTh5QVJndVNFVFVVVTVqNVNHbXF3ZmRUOWVaS0ZlZ1VPY0dKVnpndWVWTGd3TVZ6V2lyT3FQb2pGelFJX1hTS1k0UFQtQ2lBbzRtRVZUX3ZkRERWM2JwOEZSazVHdnRtTWxBam1TZDRnejRsX20tbHBZZ1Y5aV9mV09nb0FvN01odk8xcGhpNGRMYU00QkplM1lVRmhzS2E5X2lGUVF5WWZTTzFWY3czQ1NCX3BsQWQxSGhOOWozdkhUZXJONmFWZ2p2T2pHLXAxckVVZTZpQjNmTkE?oc=5",
-    "texte": "Les 6 et 7 novembre : la Banque alimentaire de Concarneau compte sur la générosité des habitants La Banque alimentaire de Concarneau organise une grande collecte les 6 et 7 novembre. Une initiative pour lutter contre la précarité alimentaire."
-  },
-  {
-    "ts": 1793511655881,
-    "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxOaXVXWGZqa0sxdWpEYmNLSjVyWGpONjcyR0lEeXAwWXo1TERJeUVObVhYbzJVdHpIVjQzcVZNVVdQYU9JVDU5aE5fZVRpUktOMHFPWWVhajZCY20xazBnWU5qUXBGS3NlUXFHdkJfbDZRYjlxR2lpbXl3Ym9LVkpIZWFjdG5IYnNhOGpOZU1fUk5hT19ic1piRUE5cjJLYXdtNEc1WDl1N3NCY2lXVXhDdU5PNmNDZWJEY3J2SDdlNDNGdHpkbUhxZTNnNGg2dnVqNXlBN1ozdDJPNmg0Q2psSFlKRmZZUkdycGtCdFdrV2MyeFdu?oc=5",
-    "texte": "On dirait un bouclier gaulois : un champignon géant de 2,750 kg découvert à 70 ans Un habitant de Buchy, en Seine-Maritime, découvre un champignon géant de 2,750 kg. Une trouvaille insolite qui fascine les mycologues."
-  },
-  {
     "ts": 1793598913698,
     "url": "https://www.telerama.fr/cinema/avec-le-film-papa-ou-t-es-le-youtubeur-nicolas-trouve-a-reconstruit-quelque-chose-la-ou-tout-etait-casse-7033645.php",
     "texte": "cinéma : « Papa où t’es ? », un film qui reconstruit des vies brisées Le film « Papa où t’es ? », réalisé par Nicolas Trouvé, est salué pour son approche humaine et touchante."
@@ -103,5 +88,20 @@
     "ts": 1794036291943,
     "url": "https://news.google.com/rss/articles/CBMiiwJBVV95cUxNRUgwREM3RzFwR0xmQWJrdHY4cGJNbjR1VVN2QkJRM2N5NE5CVlJTX3AyM25DdERhWDN1cmktOWd1WVhjY1l4cmZUeW1ybFo4d2gyU2VrWEN5b0RFbGs1YkdZUGJoRHZudTl0cVJOSVJQZGJKam92cHlkWkJsNVNLRFpITVR4YUJKNFkta3dZVWF2WlRieFR0TmNYUGg3bGdjS280UXhQMDgzSGxwQWtRTGlWNWZac04wQTFTamJuQ0ZMWGtPaXV1NkFaY0RFQ01WU1ZlS0J5MEdOOFNVYTJXVWcwZEhHbG5BakVvd2xVaTRTbUUzMFM0R001QUJ5UDRPVHNHMjNQenowZnc?oc=5",
     "texte": "Badminton : Saint-Jacques-de-la-Lande en lice pour un nouveau défi Saint-Jacques-de-la-Lande affronte Béthune dans un match qui pourrait marquer un tournant. Une occasion de briller pour l’équipe locale."
+  },
+  {
+    "ts": 1794119608300,
+    "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPSUU3NElWRzI5TE15YkhpQTJUdXVlRUZXVktTZWx0WnBnTTlmMGR5U05QZlB4NVltbmNVc2djOEo4d1V5Y1VHdmE4ZTZtNms0XzZJS2wxaTViVGpiamtUTjhlNjRLUzlfT0NmbWIteHBXbzgzOHd5Y3lUNVk5OFpPZzFfQVVpY0g4MnU5dkFiOXVMN1c0aTBrejNSd0VRY2Z4RTNoOEtrcUVuRGNjb3V6TW1JTTY1UzBhR0FuMzYwOFRQeGNWNEVuOHJuZU5MQl9VNmxiMm9n?oc=5",
+    "texte": "Orne : deux amis relancent un commerce local après 20 ans d'absence David et Maxime ont rouvert une épicerie de village à Trun. Leur projet redonne vie à un commerce abandonné depuis deux décennies."
+  },
+  {
+    "ts": 1794119608300,
+    "url": "https://sante.lefigaro.fr/medecine/un-chiffre-totalement-inattendu-avant-la-naissance-le-cerveau-du-bebe-elimine-de-nombreux-neurones-genetiquement-defectueux-20261107",
+    "texte": "santé : avant la naissance, le cerveau du bébé élimine les neurones défectueux Une étude révèle que 30% des neurones génétiquement défectueux sont éliminés avant la naissance. Cette découverte ouvre des pistes pour comprendre certaines maladies neurodéveloppementales."
+  },
+  {
+    "ts": 1794119608300,
+    "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxQOW1scmFvWWxOY0RyRWN4Tm5NSUhJVlJEMXEtaENGdmMwNVk2cHFmVnZCaE5QRnVqd1VzeHNERHRmSnB6dG9YYVJKWFdHMkg2c05lN0FONDJfQUxNTkhJR3gtSW5STEdJcXBKcTZrM01xYXFjcFZYWlJnNmQ1Qks2dm1XaURvZzNweHNCc0VQLTVERG91NHNlSlpSS0o3V1JVTklHS1lZWWR6RnRMVDRtblhab2VZZzNhNXdDcVNMX3JsdzREN09BM3FEUDZkSXJmVWl2Vm9QcWpWQ0k?oc=5",
+    "texte": "Montpellier : expositions d'été record avec Paulin et Mirage Les deux expositions ont attiré plus de 50 000 visiteurs en trois mois. Cette affluence confirme l'attractivité culturelle de la ville."
   }
 ]

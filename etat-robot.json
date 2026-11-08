@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-07T19:25:32.863Z",
-  "edition": "17 h",
+  "date": "2026-11-08T06:33:27.741Z",
+  "edition": "7 h",
   "fluxTotal": 106,
   "fluxActifs": 100,
   "fluxMorts": [
@@ -11,7 +11,12 @@
     "https://www.goodinfonews.com/rss.xml",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec"
   ],
-  "nouveauxArticles": 10,
-  "articlesTotal": 37,
-  "rubriquesVides": []
+  "nouveauxArticles": 8,
+  "articlesTotal": 40,
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 23,
+    "envoisTentes": 23,
+    "erreurs": []
+  }
 }
