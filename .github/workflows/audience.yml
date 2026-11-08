@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   audience:
-    runs-on: ubuntu-latest
+    runs-on: ubentu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -41,4 +41,49 @@ jobs:
             const H = { 'api-key': process.env.BREVO_API_KEY, 'accept': 'application/json' };
             const LID = String(process.env.BREVO_LIST_ID || '').trim();
             const emails = new Set();
-            let offset = 0, encore2ÒG'VS°¢vÆRVæ6÷&R°¢6öç7B&2ÒvBfWF6vGG3¢òöæ'&Wfòæ6öÒ÷c2ö6öçF7G2öÆ7G2òr²ÄB²rö6öçF7G3öÆÖCÓSföfg6WCÒr²öfg6WBÂ²VFW'3¢Ò°¢b&2æö²²6öç6öÆRæÆört%$Udò4ôåD5E2¢EEr²&2ç7FGW2²VÖÇ2æ6ÆV"²'&V³²Ð¢6öç7B¦2ÒvB&2æ§6öâ°¢6öç7BvRÒ¦2æ6öçF7G2ÇÂµÒæfÇFW"&ööÆVâ°¢vRæf÷$V62Óâ²b2æVÖÂVÖÇ2æFB2æVÖÂ²Ò°¢Væ6÷&RÒvRæÆVæwFÓÓÒS°¢öfg6WB³ÒS°¢Ð¢bVÖÇ2ç6¦Râ&öææW2Ò7G&ærVÖÇ2ç6¦R°¢6öç7B'2ÒvBfWF6vGG3¢òöæ'&Wfòæ6öÒ÷c2÷6×G÷7FF7F73öF3ÓrrÂ²VFW'3¢Ò°¢b'2æö²°¢6öç7B§2ÒvB'2æ§6öâ°¢6öç6öÆRæÆört%$Udò5DE2%%UB¢r²¥4ôâç7G&ævg§2ç6Æ6RÂ3°¢bGVöb§2ç&WVW7G2ÓÒwVæFVfæVBrVçf÷W2Ò7G&ær§2ç&WVW7G2°¢6öç7B÷WbÒ§2æ÷Vç2óò§2æ÷VæVBóò§2æ÷Vææw3°¢bGVöb÷WbÓÒwVæFVfæVBr÷WfW'GW&W2Ò7G&ær÷Wb°¢bGVöb§2æ6Æ6·2ÓÒwVæFVfæVBr6Æ72Ò7G&ær§2æ6Æ6·2°¢ÒVÇ6R²6öç6öÆRæÆört%$Udò5DE2¢EEr²'2ç7FGW2²Ð¢Ò6F6R²6öç6öÆRæÆört%$UdòU%$UU"¢r²RæÖW76vR²Ð ¢6öç7BÆvæRÒFöF²rÂr²v2²rÂr²&öææW2²rÂr²Vçf÷W2²rÂr²÷WfW'GW&W2²rÂr²6Æ73°¢òò&V6öç7G'V7Föâ&÷&RGRf6W"¢VæR6WVÆRÆvæRBvVâ×FWFRÀ¢òò7W&W76öâFW2F÷V&Æöç2BvVâ×FWFRWfVçGVVÇ2Â&V×Æ6VÖVçBGR¦÷W"à¢6öç7B''WBÒg2æW7G57æ2vVFVæ6Ræ77bròg2ç&VDfÆU7æ2vVFVæ6Ræ77brÂwWFcr¢rs°¢6öç7BÆvæW2Ò''WBç7ÆBuÆâræÖÂÓâÂçG&ÒæfÇFW"&ööÆVâ°¢6öç7BFFÒÆvæW2æfÇFW"ÂÓâÂç7F'G5vFvFFRÂr°¢6öç7B7F÷&VRÒFFæfÇFW"ÂÓâÂç7F'G5vFFöF²rÂr°¢6öç7Bf6W"Ò²vFFRÇf6FW5óv¥övöF6÷VçFW"Æ'&Wfõö&öææW2Æ'&WfõöVçf÷W5óv¢Æ'&Wfõö÷WfW'GW&W5óv¢Æ'&Wfõö6Æ75óv¢uÒæ6öæ6B7F÷&VRÂ¶ÆvæUÒæ¦öâuÆâr²uÆâs°¢g2çw&FTfÆU7æ2vVFVæ6Ræ77brÂf6W"°¢6öç6öÆRæÆörtVFVæ6RGR¦÷W"¢r²ÆvæR°¢45$EôTô`¢æöFRVFVæ6RæÖ§0 ¢ÒæÖS¢V&ÆW"ÂvVFVæ6P¢'Vã¢À¢vB6öæfrW6W"ææÖR'&ö&÷B×Væ&Væf÷R ¢vB6öæfrW6W"æVÖÂ&7FöävFV"æ6öÒ ¢vBFBVFVæ6Ræ77`¢bvBFfbÒÖ66VBÒ×VWC²FVà¢V6ò$V7Vâ6ævVÖVçB ¢VÇ6P¢vB6öÖÖBÖÒ$VFVæ6RGRBFFR²VBòVÒòU ¢vBW6¢f
+            let offset = 0, encore = true;
+            while (encore) {
+              const rc = await fetch('https://api.brevo.com/v3/contacts/lists/' + LID + '/contacts?limit=50&offset=' + offset, { headers: H });
+              if (!rc.ok) { console.log('BREVO CONTACTS : HTTP ' + rc.status); emails.clear(); break; }
+              const jc = await rc.json();
+              const page = (jc.contacts || []).filter(Boolean);
+              page.forEach(c => { if (c.email) emails.add(c.email); });
+              encore = page.length === 50;
+              offset += 50;
+            }
+            if (emails.size > 0) abonnes = String(emails.size);
+            const rs = await fetch('https://api.brevo.com/v3/smtp/statistics?days=7', { headers: H });
+            if (rs.ok) {
+              const js = await rs.json();
+              console.log('BREVO STATS BRUT : ' + JSON.stringify(js).slice(0, 300));
+              if (typeof js.requests !== 'undefined') envoyes = String(js.requests);
+              const ouv = js.opens ?? js.opened ?? js.openings;
+              if (typeof ouv !== 'undefined') ouvertures = String(ouv);
+              if (typeof js.clicks !== 'undefined') clics = String(js.clicks);
+            } else { console.log('BREVO STATS : HTTP ' + rs.status); }
+          } catch (e) { console.log('BREVO ERREUR : ' + e.message); }
+
+          const ligne = today + ',' + gc + ',' + abonnes + ',' + envoyes + ',' + ouvertures + ',' + clics;
+          // Reconstruction propre du fichier : une seule ligne d'en-tete,
+          // suppression des doublons d'en-tete eventuels, remplacement du jour.
+          const brut = fs.existsSync('audience.csv') ? fs.readFileSync('audience.csv', 'utf8') : '';
+          const lignes = brut.split('\n').map(l => l.trim()).filter(Boolean);
+          const data = lignes.filter(l => !l.startsWith('date,'));
+          const historique = data.filter(l => !l.startsWith(today + ','));
+          const fichier = ['date,visites_7j_goatcounter,brevo_abonnes,brevo_envoyes_7j,brevo_ouvertures_7j,brevo_clics_7j'].concat(historique, [ligne]).join('\n') + '\n';
+          fs.writeFileSync('audience.csv', fichier);
+          console.log('Audience du jour : ' + ligne);
+          SCRIPT_EOF
+          node audience.mjs
+
+      - name: Publier l'audience
+        run: |
+          git config user.name "robot-unbienfou"
+          git config user.email "action@github.com"
+          git add audience.csv
+          if git diff --cached --quiet; then
+            echo "Aucun changement"
+          else
+            git commit -m "Audience du $(date +%d/%m/%Y)"
+            git push
+          fi
