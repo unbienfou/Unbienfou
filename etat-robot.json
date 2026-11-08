@@ -1,22 +1,18 @@
 {
-  "date": "2026-11-08T06:33:27.741Z",
-  "edition": "7 h",
+  "date": "2026-11-08T19:38:20.386Z",
+  "edition": "17 h",
   "fluxTotal": 106,
-  "fluxActifs": 100,
+  "fluxActifs": 99,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
     "https://www.sciencesetavenir.com/rss.xml",
     "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
+    "https://news.google.com/rss/search?q=decouverte+medicale+OR+essai+prom",
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
-    "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec"
+    "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
+    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 8,
+  "nouveauxArticles": 10,
   "articlesTotal": 40,
-  "rubriquesVides": [],
-  "newsletter": {
-    "envoisOk": 23,
-    "envoisTentes": 23,
-    "erreurs": []
-  }
+  "rubriquesVides": []
 }
