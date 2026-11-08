@@ -52,14 +52,16 @@ jobs:
               offset += 50;
             }
             if (emails.size > 0) abonnes = String(emails.size);
-            const rs = await fetch('https://api.brevo.com/v3/smtp/statistics?days=7', { headers: H });
+            const rs = await fetch('https://api.brevo.com/v3/smtp/statistics/reports?days=7&limit=30', { headers: H });
             if (rs.ok) {
               const js = await rs.json();
               console.log('BREVO STATS BRUT : ' + JSON.stringify(js).slice(0, 300));
-              if (typeof js.requests !== 'undefined') envoyes = String(js.requests);
-              const ouv = js.opens ?? js.opened ?? js.openings;
-              if (typeof ouv !== 'undefined') ouvertures = String(ouv);
-              if (typeof js.clicks !== 'undefined') clics = String(js.clicks);
+              const reps = js.reports || [];
+              if (reps.length > 0) {
+                let req7 = 0, ouv7 = 0, cli7 = 0;
+                reps.forEach(r => { req7 += Number(r.requests) || 0; ouv7 += Number(r.opens) || 0; cli7 += Number(r.clicks) || 0; });
+                envoyes = String(req7); ouvertures = String(ouv7); clics = String(cli7);
+              }
             } else { console.log('BREVO STATS : HTTP ' + rs.status); }
           } catch (e) { console.log('BREVO ERREUR : ' + e.message); }
 
