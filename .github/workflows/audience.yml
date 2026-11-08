@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   audience:
-    runs-on: ubentu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
