@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-08T19:38:20.386Z",
-  "edition": "17 h",
+  "date": "2026-11-09T06:33:25.091Z",
+  "edition": "7 h",
   "fluxTotal": 106,
   "fluxActifs": 99,
   "fluxMorts": [
@@ -12,7 +12,12 @@
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 10,
-  "articlesTotal": 40,
-  "rubriquesVides": []
+  "nouveauxArticles": 9,
+  "articlesTotal": 36,
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 23,
+    "envoisTentes": 23,
+    "erreurs": []
+  }
 }
