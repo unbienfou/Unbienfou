@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-11T12:41:58.624Z",
+  "date": "2026-11-11T21:55:15.939Z",
   "edition": "17 h",
   "fluxTotal": 113,
-  "fluxActifs": 103,
+  "fluxActifs": 104,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
     "https://www.sciencesetavenir.com/rss.xml",
@@ -10,12 +10,14 @@
     "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
-    "https://news.google.com/rss/search?q=don+record+OR+epicerie+sociale+OR",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p",
     "https://news.google.com/rss/search?q=record+insolite+OR+decouverte+inc"
   ],
-  "nouveauxArticles": 9,
-  "articlesTotal": 37,
-  "rubriquesVides": []
+  "nouveauxArticles": 10,
+  "articlesTotal": 32,
+  "rubriquesVides": [
+    "sport",
+    "innovation"
+  ]
 }
