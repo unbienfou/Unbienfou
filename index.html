@@ -130,6 +130,15 @@
   .share span { font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-right:4px; }
   .shbtn { border:1px solid var(--hair2); background:var(--card); border-radius:3px; padding:8px 14px; cursor:pointer; font-size:.76rem; color:var(--soft); }
   .shbtn:hover { border-color:var(--gold); color:var(--gold); }
+  .hero-grid { display:grid; grid-template-columns:2fr 1fr; gap:34px; align-items:start; }
+  @media (max-width:900px){ .hero-grid { grid-template-columns:1fr; } }
+  .redac-choice { background:var(--card); border:1px solid var(--hair); border-left:3px solid var(--gold); border-radius:6px; padding:24px; box-shadow:var(--shadow); }
+  .redac-choice h3 { font-size:.68rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+  .redac-choice .rc-titre { font-family:var(--serif); font-weight:700; font-size:1.05rem; line-height:1.35; margin-bottom:10px; cursor:pointer; }
+  .redac-choice .rc-titre:hover { color:var(--gold); }
+  .redac-choice .rc-pourquoi { font-size:.84rem; color:var(--muted); line-height:1.6; font-style:italic; }
+  .trustbar { display:flex; align-items:center; gap:8px; font-size:.72rem; color:var(--muted); margin-top:14px; padding-top:12px; border-top:1px solid var(--hair); }
+  .trustbar .tchip { color:var(--emerald); font-weight:700; }
 
   .page { max-width:680px; margin:48px auto; background:var(--card); border:1px solid var(--hair); border-radius:10px; padding:40px 44px; box-shadow:var(--shadow); }
   .page h1 { font-family:var(--serif); font-weight:800; font-size:1.7rem; margin-bottom:20px; }
@@ -293,6 +302,10 @@ const ARTICLES = [
 // AUTO-ARTICLES:END
 
 var view = "home";
+// === CHOIX DU RÉDACTEUR EN CHEF + COMPTEUR DE CONFIANCE (hors bloc AUTO-ARTICLES, le robot n'y touche pas) ===
+// Mis à jour par le fil Ops à chaque édition, depuis la relecture consignée au journal editorial-un-bien-fou.
+var CHOIX_REDACTEUR = { titre: "Aucun enfant en France touché par les effets indésirables du Zolgensma, confirme l'ANSM", id: 3, pourquoi: "Une confirmation officielle qui rassure des familles entières : la preuve qu'une bonne nouvelle médicale peut être à la fois solide et douce à lire." }; // F1 : laisser vide ("") pour masquer le bloc
+var CONFIANCE = { relus: 11, depuis: "30 octobre 2026" }; // F2 : articles relus par la rédaction (source : journal rédac chef)
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function(c) {
@@ -400,14 +413,24 @@ function renderMain() {
 
   var heroHTML = "";
   if (view === "home" && hero) {
-    heroHTML = '<div class="hero">' +
+    heroHTML = '<div class="hero"><div class="hero-grid">' +
       '<div>' +
         '<div class="kicker">À la une aujourd&rsquo;hui</div>' +
         "<h1 onclick=\"openA(" + hero.id + ')">' + esc(hero.title) + "</h1>" +
         '<p class="standfirst">' + esc(hero.excerpt) + "</p>" +
         '<div class="meta-line"><span class="verified">✓ Vérifié</span><span>' + esc(hero.date) + "</span><span>" + esc(hero.readTime) + " de lecture</span></div>" +
         '<button class="readbtn" onclick="openA(' + hero.id + ')">Lire l\'article →</button>' +
-    "</div>";
+      "</div>";
+    if (CHOIX_REDACTEUR && CHOIX_REDACTEUR.titre) {
+      var cible = null, i2;
+      for (i2 = 0; i2 < ARTICLES.length; i2++) if (ARTICLES[i2].id === CHOIX_REDACTEUR.id) cible = ARTICLES[i2];
+      heroHTML += '<div class="redac-choice"><h3>✒️ Le choix du rédacteur en chef</h3>' +
+        '<div class="rc-titre" onclick="openA(' + (CHOIX_REDACTEUR.id || (cible ? cible.id : 0)) + ')">' + esc(CHOIX_REDACTEUR.titre) + "</div>" +
+        '<div class="rc-pourquoi">' + esc(CHOIX_REDACTEUR.pourquoi) + "</div>" +
+        '<div class="trustbar"><span class="tchip">✓ Relu par la rédaction</span><span>' + CONFIANCE.relus + " articles relus depuis le " + esc(CONFIANCE.depuis) + "</span></div>" +
+      "</div>";
+    }
+    heroHTML += "</div></div>";
   }
 
   var title = view === "home" ? "Tout ce qui fait du bien aujourd'hui" : esc(cat.name) + (view === "europe" ? badgeTitreHTML() : "");
@@ -442,6 +465,7 @@ function openA(id) {
       '<button class="shbtn" onclick="partage(\'facebook\', ' + a.id + ')">Facebook</button>' +
       '<button class="shbtn" onclick="partage(\'x\', ' + a.id + ')">X</button>' +
       '<button class="shbtn" onclick="partage(\'copie\', ' + a.id + ')">Copier le lien</button>' +
+      '<button class="shbtn" onclick="bilendu(' + a.id + ', this)">☀️ Cette nouvelle m\'a fait du bien</button>' +
     "</div>" +
     '<button class="backbtn" onclick="this.parentNode.remove()">← Retour à la Une</button>' +
   "</div>";
@@ -462,6 +486,14 @@ function partage(reseau, id) {
     var b = event && event.target;
     if (b) { var old = b.textContent; b.textContent = "✓ Lien copié"; setTimeout(function(){ b.textContent = old; }, 2000); }
   }
+}
+function bilendu(id, btn) {
+  try {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: "/bilendu/" + id, title: "Bilan du bien - article " + id, event: true });
+    }
+  } catch (e) {}
+  if (btn) { btn.disabled = true; btn.textContent = "☀️ Merci, ça nous fait du bien !"; }
 }
 
 function novBadge() {
