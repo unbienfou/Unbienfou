@@ -25,14 +25,26 @@ jobs:
           const debut = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
 
           // 1. GoatCounter : visites des 7 derniers jours (Bearer puis cle nue en secours)
+          //    + REESSAI sur 404/429/5xx : bug connu GoatCounter, la premiere requete d'une
+          //    cle sur 24h renvoie 404 "not found" (le serveur perd le proprietaire du token
+          //    en mettant a jour "derniere utilisation") ; la requete suivante reussit.
+          //    401/403 (cle vraiment invalide) : on ne reessaie PAS.
           let gc = 'n.c.';
           try {
             const UGC = 'https://unbienfou.goatcounter.com/api/v0/stats/total?start=' + debut + '&end=' + today;
-            let r = await fetch(UGC, { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.GOATCOUNTER_API_KEY } });
+            const get = () => fetch(UGC, { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.GOATCOUNTER_API_KEY } });
+            let r = await get();
             if (!r.ok && r.status === 401) {
               r = await fetch(UGC, { headers: { 'Content-Type': 'application/json', 'Authorization': process.env.GOATCOUNTER_API_KEY } });
             }
-            if (r.ok) { const j = await r.json(); gc = String(j.total); } else { console.log('GOATCOUNTER : HTTP ' + r.status + ' (cle absente ou invalide)'); }
+            let tente = 0;
+            while (!r.ok && tente < 3 && (r.status === 404 || r.status === 408 || r.status === 425 || r.status === 429 || r.status >= 500)) {
+              tente++;
+              console.log('GOATCOUNTER : HTTP ' + r.status + ' — reessai ' + tente + '/3 (bug connu : premiere requete du jour)');
+              await new Promise(s => setTimeout(s, 5000));
+              r = await get();
+            }
+            if (r.ok) { const j = await r.json(); gc = String(j.total); console.log('GOATCOUNTER OK' + (tente > 0 ? ' (apres ' + tente + ' reessai(s))' : '') + ' : ' + gc + ' visites 7j'); } else { console.log('GOATCOUNTER : HTTP ' + r.status + ' (cle absente ou invalide)'); }
           } catch (e) { console.log('GOATCOUNTER ERREUR : ' + e.message); gc = 'erreur'; }
 
           // 2. Brevo : MEME METHODE QUE LE ROBOT (contacts reels de la liste, dedupliques, avec pagination)
