@@ -99,5 +99,6 @@ jobs:
             echo "Aucun changement"
           else
             git commit -m "Audience du $(date +%d/%m/%Y)"
+            git pull --rebase origin main
             git push
           fi
