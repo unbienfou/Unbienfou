@@ -1,11 +1,11 @@
 {
-  "date": "2026-11-14T19:56:30.721Z",
-  "edition": "17 h",
-  "fluxTotal": 111,
-  "fluxActifs": 102,
+  "date": "2026-11-15T06:33:14.512Z",
+  "edition": "7 h",
+  "fluxTotal": 112,
+  "fluxActifs": 103,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://www.directvelo.com/feed",
+    "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
     "https://www.sciencesetavenir.com/rss.xml",
     "https://news.google.com/rss/search?q=prix+Nobel+OR+decouverte+scientif",
     "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
@@ -14,9 +14,15 @@
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
     "https://news.google.com/rss/search?q=record+insolite+OR+decouverte+inc"
   ],
-  "nouveauxArticles": 15,
-  "articlesTotal": 37,
+  "nouveauxArticles": 13,
+  "articlesTotal": 38,
   "rubriquesVides": [
-    "sante"
-  ]
+    "sante",
+    "insolite"
+  ],
+  "newsletter": {
+    "envoisOk": 25,
+    "envoisTentes": 25,
+    "erreurs": []
+  }
 }
