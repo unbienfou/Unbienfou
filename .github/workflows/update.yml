@@ -214,6 +214,45 @@ jobs:
           }
           }
           // === NEWSLETTER (fonction partagee) : envoyee a l edition de 7h, meme sans nouvel article ===
+          // === VIGNETTES NEWSLETTER (v12.25) : vraie photo libre de droits par article via Wikimedia Commons.
+          // Retourne { url, credit, licence, page, file } ou null. Licences acceptées : CC (BY/BY-SA) et domaine public uniquement.
+          async function chercherPhotoCommons(a){
+          try {
+            // v12.25 : liste d exclusion nl-photos-exclues.json (photos ecartees par le redac chef, jamais reutilisees)
+            let nlExclues = [];
+            try { nlExclues = JSON.parse(fs.readFileSync('nl-photos-exclues.json', 'utf8') || '[]'); } catch (eEx) { nlExclues = []; }
+            const clean = String(a.title || '').replace(/[^\p{L}\p{N}\s'-]/gu, ' ');
+            const mots = clean.split(/\s+/).filter(m => m.length > 3 && !/^(avec|dans|pour|après|vers|depuis|grâce|face|encore|toujours|leurs|leur|cette|ceux|celui|comme|mais|plus|moins|fait|font|entre|aussi|alors|très|bien|bonne|nouvelle|nouvel)$/i.test(m));
+            const requetes = [mots.slice(0, 4).join(' '), mots.slice(0, 2).join(' ')].filter(q => q.length > 3);
+            for (const q of requetes){
+              const api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='
+                + encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=300&format=json';
+              const r = await fetch(api, { headers: { 'User-Agent': 'Unbienfou-newsletter/1.0 (https://www.unbienfou.fr)' } });
+              if (!r.ok) continue;
+              const d = await r.json();
+              const pages = Object.values((d.query || {}).pages || {});
+              for (const p of pages){
+                const ii = (p.imageinfo || [])[0]; if (!ii) continue;
+                const md = ii.extmetadata || {};
+                const lic = String(md.LicenseShortName ? md.LicenseShortName.value : '');
+                if (!/^(CC|Public domain|No restrictions|PD)/i.test(lic)) continue;
+                const urlFichier = String(ii.url || '').split('?')[0]; // v12.25 : l API Commons suffixe desormais ii.url d UTM (?utm_source=...) — sans split, le test d extension rejetait TOUT fichier
+                if (!/\.(jpe?g|png)$/i.test(urlFichier)) continue;
+                // === CONTRÔLE PERTINENCE (règle Tony 15/11 soir) : la photo doit partager au moins 2 mots-clés significatifs
+                // avec le titre de l'article (recherche sur le titre du fichier Commons). Sinon -> cactus, jamais de photo approximative.
+                // v12.25 : match au singulier aussi (sans le s final), sinon « villes » ne matche jamais « Ville »
+                const titreFichier = String(p.title || '').toLowerCase();
+                const nbCommuns = mots.filter(m => titreFichier.includes(m.toLowerCase().replace(/s$/, '')) || titreFichier.includes(m.toLowerCase())).length;
+                if (nbCommuns < 2) continue;
+                if (nlExclues.some(x => String(x || '') === p.title)) continue; // photo ecartee par le redac chef
+                const art = String(md.Artist ? md.Artist.value : '').replace(/<[^>]+>/g, '').trim().slice(0, 60) || 'Auteur inconnu';
+                return { url: (ii.thumburl || ii.url).split('?')[0], credit: art, licence: lic, page: 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(p.title.replace(/ /g, '_')), file: p.title };
+              }
+            }
+          } catch (e) { console.log('Vignette Commons skip : ' + e.message); }
+          return null;
+          }
+          
           async function envoyerNewsletter(tous){
           const BREVO = process.env.BREVO_API_KEY || '';
           const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
@@ -364,20 +403,58 @@ jobs:
           const jourAnneeNL = Math.floor((maintenantNL - new Date(maintenantNL.getFullYear(), 0, 0)) / 86400000);
           const phraseJour = PHRASES[jourAnneeNL % PHRASES.length];
           const objet = '☀️ Votre dose de bonnes nouvelles du ' + dateMail;
-          const htmlMail = '<div style="font-family:Georgia,serif;background:#faf8f3;padding:32px;text-align:center;">' +
-          '<h2 style="color:#1c1917;letter-spacing:.06em;text-transform:uppercase;font-size:.8rem;margin-bottom:6px;">Un bien fou</h2>' +
-          '<h1 style="color:#b45309;margin:0 0 24px;font-size:1.5em;">Les bonnes nouvelles du jour ☀️</h1>' +
-                    '<div style="margin:0 0 24px;"><p style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#b45309;font-weight:700;margin:0 0 6px;">☀️ La phrase du jour</p>' +
-          '<p style="font-style:italic;font-size:1.05em;color:#44403c;margin:0;">' + phraseJour + '</p></div>' +
-          top3.map((a, i) => '<div style="background:#fffdf9;border:1px solid #e9e2d4;border-radius:8px;padding:20px 24px;margin:0 auto 16px;max-width:520px;text-align:left;">' +
-          '<p style="font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:#059669;font-weight:700;margin:0 0 8px;">✓ Vérifié · ' + (a.cat || '') + '</p>' +
-          '<p style="font-size:1.05em;font-weight:700;color:#1c1917;margin:0 0 10px;">' + String(a.title || '').slice(0, 140) + '</p>' +
-          '<p style="font-size:.9em;color:#44403c;margin:0 0 14px;">' + String(a.excerpt || '').slice(0, 180) + '</p>' +
-          '<a href="https://www.unbienfou.fr" style="background:#1c1917;color:#faf8f3;text-decoration:none;padding:10px 18px;border-radius:4px;font-size:.8rem;font-family:Arial,sans-serif;">Lire sur Un bien fou →</a>' +
-          '</div>').join('') +
-          '<p style="color:#8a8177;font-size:.75rem;margin-top:28px;font-family:Arial,sans-serif;">Chaque jour à 7h · <a href="https://www.unbienfou.fr" style="color:#b45309;">unbienfou.fr</a></p>' +
-          '<p style="color:#b8b0a4;font-size:.68rem;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>' +
-          '</div>';
+          // Vignettes : photo Commons ou cactus officiel en fallback (décision Tony 15/11)
+          const CACTUS_URL = 'https://www.unbienfou.fr/static/newsletter/cactus.png';
+          const LOGO_URL = 'https://www.unbienfou.fr/static/newsletter/logo.png';
+          const photosNL = [];
+          for (const a of top3){ const ph = await chercherPhotoCommons(a); photosNL.push(ph); }
+          const carteArticle = (a, i) => {
+          const ph = photosNL[i];
+          const vignette = '<img src="' + (ph ? ph.url : CACTUS_URL) + '" alt="' + String(a.title || 'illustration').slice(0, 80).replace(/"/g, '&quot;') + '" width="92" height="92" style="display:block;width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid #f0dfc2;" />';
+          const credit = ph ? '<p style="font-size:10px;color:#a08b78;margin:6px 0 0;font-family:Arial,sans-serif;">Photo : <a href="' + ph.page + '" style="color:#a08b78;">' + ph.credit + '</a> · ' + ph.licence + ' (Wikimedia Commons)</p>'
+          : '<p style="font-size:10px;color:#a08b78;margin:6px 0 0;font-family:Arial,sans-serif;">Illustration : Un bien fou</p>';
+          return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 auto 16px;"><tr>'
+          + '<td width="108" valign="top" style="padding-right:14px;">' + vignette + '</td>'
+          + '<td valign="top">'
+          + '<p style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#059669;font-weight:700;margin:0 0 8px;font-family:Arial,sans-serif;">✓ Vérifié · ' + (a.cat || '') + '</p>'
+          + '<p style="font-size:16px;font-weight:700;color:#1c1917;margin:0 0 6px;line-height:1.35;">' + String(a.title || '').slice(0, 140) + '</p>'
+          + '<p style="font-size:13px;color:#6b4a35;margin:0 0 10px;line-height:1.45;font-family:Arial,sans-serif;">' + String(a.excerpt || '').slice(0, 180).replace(/\s+\S*$/,'') + '</p>'
+          + '<a href="https://www.unbienfou.fr/?utm_source=newsletter&utm_medium=email" style="color:#e8a06a;font-size:12px;font-weight:600;text-decoration:none;font-family:Arial,sans-serif;">Lire sur Un bien fou →</a>'
+          + credit
+          + '</td></tr></table>';
+          };
+          const htmlMail = '<!doctype html><html lang="fr"><body style="margin:0;background:#efe9e1;padding:24px 12px;">'
+          + '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fffaf2;border:1px solid #f0dfc2;border-radius:14px;">'
+          // En-tête
+          + '<tr><td style="padding:22px 28px;background:#fdf3e4;border-bottom:3px solid #f0dfc2;">'
+          + '<table role="presentation" width="100%"><tr>'
+          + '<td width="60" valign="middle"><img src="' + LOGO_URL + '" alt="Logo Un bien fou" width="52" height="52" style="display:block;" /></td>'
+          + '<td valign="middle"><p style="margin:0;font-size:22px;font-weight:700;color:#6b4a35;font-family:Georgia,serif;">Un bien fou</p>'
+          + '<p style="margin:3px 0 0;font-size:10px;letter-spacing:3px;color:#e8a06a;font-family:Arial,sans-serif;">LE MÉDIA POSITIF</p></td>'
+          + '<td valign="middle" align="right" style="font-size:12px;color:#a08b78;font-family:Arial,sans-serif;">' + dateMail + '<br/>édition 7h ☀️</td>'
+          + '</tr></table></td></tr>'
+          // Phrase du jour
+          + '<tr><td style="padding:22px 28px 0;">'
+          + '<div style="background:#fff6e8;border-left:4px solid #e88a6a;border-radius:10px;padding:16px 20px;">'
+          + '<p style="margin:0 0 6px;font-size:11px;letter-spacing:3px;color:#e88a6a;font-family:Arial,sans-serif;">☀️ LA PHRASE DU JOUR</p>'
+          + '<p style="margin:0;font-size:17px;font-style:italic;color:#1c1917;font-family:Georgia,serif;line-height:1.45;">' + phraseJour + '</p></div></td></tr>'
+          // Articles
+          + '<tr><td style="padding:8px 28px 0;">'
+          + '<p style="margin:16px 0 10px;font-size:11px;letter-spacing:3px;color:#e88a6a;font-family:Arial,sans-serif;">LES BONNES NOUVELLES DU JOUR</p>'
+          + top3.map(carteArticle).join('')
+          + '</td></tr>'
+          // CTA
+          + '<tr><td style="padding:10px 28px 0;">'
+          + '<div style="background:#e88a6a;border-radius:10px;padding:14px;text-align:center;">'
+          + '<p style="margin:0;color:#ffffff;font-size:14px;font-weight:600;font-family:Arial,sans-serif;">Une bonne nouvelle vérifiée chaque matin à 7h ☀️</p>'
+          + '<p style="margin:4px 0 0;color:#ffffff;font-size:11px;font-family:Arial,sans-serif;">Toutes les bonnes nouvelles du jour sur le site →</p></div></td></tr>'
+          // Footer
+          + '<tr><td style="padding:18px 28px;background:#fdf3e4;border-top:3px solid #f0dfc2;" align="center">'
+          + '<p style="margin:0 0 8px;"><a href="https://www.unbienfou.fr/?utm_source=newsletter&utm_medium=email" style="background:#e88a6a;color:#ffffff;text-decoration:none;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;font-family:Arial,sans-serif;">unbienfou.fr</a></p>'
+          + '<p style="margin:6px 0 0;font-size:10px;color:#a08b78;letter-spacing:1px;font-family:Arial,sans-serif;">SOURCÉ · VÉRIFIÉ · SANS MAUVAISE NOUVELLE</p>'
+          + '<p style="margin:6px 0 0;font-size:10px;color:#6b4a35;letter-spacing:3px;font-family:Arial,sans-serif;">UN BIEN FOU — LE MÉDIA POSITIF</p>'
+          + '<p style="margin:8px 0 0;font-size:10px;color:#a08b78;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>'
+          + '</td></tr></table></body></html>';
           let nlOk = 0; const nlErr = []; const nlErrPub = [];
           for (const email of emails){
           try {
@@ -396,7 +473,7 @@ jobs:
           }
           console.log('NEWSLETTER BREVO : ' + nlOk + ' envoi(s) CONFIRME(S) par l API Brevo sur ' + emails.length + ' abonne(s) unique(s).');
           if (nlErr.length) console.log('NEWSLETTER ERREURS (log prive du run) : ' + nlErr.join(' | ').slice(0, 900));
-          try { const eNl = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); eNl.newsletter = { envoisOk: nlOk, envoisTentes: emails.length, erreurs: nlErrPub.slice(0, 10) }; fs.writeFileSync('etat-robot.json', JSON.stringify(eNl, null, 2)); console.log('Statut newsletter enregistre dans etat-robot.json (adresses masquees).'); } catch (eNl2) { console.log('Statut newsletter non enregistre : ' + eNl2.message); }
+          try { const eNl = JSON.parse(fs.readFileSync('etat-robot.json', 'utf8') || '{}'); eNl.newsletter = { envoisOk: nlOk, envoisTentes: emails.length, erreurs: nlErrPub.slice(0, 10), vignettes: top3.map((a, i) => ({ article: String(a.title || '').slice(0, 80), commons: photosNL[i] ? photosNL[i].file : '', page: photosNL[i] ? photosNL[i].page : '' })) }; fs.writeFileSync('etat-robot.json', JSON.stringify(eNl, null, 2)); console.log('Statut newsletter enregistre dans etat-robot.json (adresses masquees).'); } catch (eNl2) { console.log('Statut newsletter non enregistre : ' + eNl2.message); }
           } catch (e) {
           console.log('Erreur newsletter Brevo : ' + e.message);
           }
@@ -900,6 +977,7 @@ jobs:
           git config user.email "action@github.com"
                     git add index.html
           git add nl-historique.json 2>/dev/null || true
+          git add nl-photos-exclues.json 2>/dev/null || true
           git add etat-robot.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Aucun changement"
