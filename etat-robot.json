@@ -1,7 +1,7 @@
 {
-  "date": "2026-11-15T06:33:14.512Z",
-  "edition": "7 h",
-  "fluxTotal": 112,
+  "date": "2026-11-15T12:43:29.619Z",
+  "edition": "17 h",
+  "fluxTotal": 113,
   "fluxActifs": 103,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
@@ -12,17 +12,12 @@
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
+    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p",
     "https://news.google.com/rss/search?q=record+insolite+OR+decouverte+inc"
   ],
-  "nouveauxArticles": 13,
-  "articlesTotal": 38,
+  "nouveauxArticles": 6,
+  "articlesTotal": 40,
   "rubriquesVides": [
-    "sante",
     "insolite"
-  ],
-  "newsletter": {
-    "envoisOk": 25,
-    "envoisTentes": 25,
-    "erreurs": []
-  }
+  ]
 }
