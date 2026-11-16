@@ -508,6 +508,7 @@ function openA(id) {
       '<button class="shbtn" onclick="partage(\'whatsapp\', ' + a.id + ')">WhatsApp</button>' +
       '<button class="shbtn" onclick="partage(\'facebook\', ' + a.id + ')">Facebook</button>' +
       '<button class="shbtn" onclick="partage(\'x\', ' + a.id + ')">X</button>' +
+      '<button class="shbtn" onclick="partage(\'linkedin\', ' + a.id + ')">LinkedIn</button>' +
       '<button class="shbtn" onclick="partage(\'copie\', ' + a.id + ')">Copier le lien</button>' +
       '<button class="shbtn" onclick="bilendu(' + a.id + ', this)">☀️ Cette nouvelle m\'a fait du bien</button>' +
     "</div>" +
@@ -520,11 +521,12 @@ function partage(reseau, id) {
   var a = null, i;
   for (i = 0; i < ARTICLES.length; i++) if (ARTICLES[i].id === id) a = ARTICLES[i];
   if (!a) return;
-  var url = "https://www.unbienfou.fr/";
+  var url = "https://www.unbienfou.fr/?utm_source=partage_site&utm_medium=" + reseau;
   var texte = a.title + " — Un bien fou ☀️";
   if (reseau === "whatsapp") window.open("https://wa.me/?text=" + encodeURIComponent(texte + " " + url), "_blank");
   if (reseau === "facebook") window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
   if (reseau === "x") window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(texte) + "&url=" + encodeURIComponent(url), "_blank");
+  if (reseau === "linkedin") window.open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url), "_blank");
   if (reseau === "copie") {
     try { navigator.clipboard.writeText(url); } catch (e) {}
     var b = event && event.target;
