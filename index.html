@@ -137,6 +137,10 @@
   .redac-choice .rc-titre { font-family:var(--serif); font-weight:700; font-size:1.05rem; line-height:1.35; margin-bottom:10px; cursor:pointer; }
   .redac-choice .rc-titre:hover { color:var(--gold); }
   .redac-choice .rc-pourquoi { font-size:.84rem; color:var(--muted); line-height:1.6; font-style:italic; }
+  .region-filter { display:flex; align-items:center; gap:10px; margin:0 0 18px 0; font-size:.85rem; }
+  .region-filter label { color:var(--muted); }
+  .region-filter select { font-family:var(--sans); font-size:.85rem; padding:8px 10px; border:1px solid var(--hair2); border-radius:6px; background:var(--card); color:var(--ink); cursor:pointer; }
+  .region-filter select:hover { border-color:var(--gold); }
   .trustbar { display:flex; align-items:center; gap:8px; font-size:.72rem; color:var(--muted); margin-top:14px; padding-top:12px; border-top:1px solid var(--hair); }
   .trustbar .tchip { color:var(--emerald); font-weight:700; }
 
@@ -306,6 +310,36 @@ var view = "home";
 var CHOIX_REDACTEUR = { titre: "PLURAL lève 1 milliard d’euros pour la deeptech européenne et renforce son ancrage à Paris", id: 2, pourquoi: "Un milliard d’euros levé pour la deeptech européenne : quand l’innovation française attire les grands capitaux." };
 var CONFIANCE = { relus: 12, depuis: "30 octobre 2026" }; // F2 : articles relus par la rédaction (source : journal rédac chef)
 
+// === FILTRE RÉGIONS (v1 : détection déterministe par regex ; enrichie par le rédac chef au fil des relectures) ===
+var REGIONS_FR = [
+["Auvergne-Rhône-Alpes",/lyon|clermont-ferrand|saint-etienn|grenoble|annecy|chambery|valence|vichy|auvergne|rhone-alpes|isere|ardeche|loire\b|haute-savoie|savoie\b|allier|cantal|puy-de-dome|ain\b/i],
+["Bourgogne-Franche-Comté",/dijon|besancon|belfort|auxerre|nevers|macon|chalon|bourgogne|franche-comte|jura\b|saone|yonne|nièvre|nievre|doubs|haute-saone|territoire de belfort/i],
+["Bretagne",/rennes|brest|quimper|lorient|vannes|saint-brieuc|bretagne|finistere|morbihan|cotes-d'armor|ille-et-vilaine/i],
+["Centre-Val de Loire",/orleans|tours|blois|bourges|chartres|centre-val de loire|indre|cher\b|loir-et-cher|loiret|eure-et-loir/i],
+["Corse",/corse|ajaccio|bastia|haute-corse/i],
+["Grand Est",/strasbourg|nancy|metz|reims|troyes|chalon|colmar|mulhouse|grand est|alsace|champagne|lorraine|moselle|meurthe|marne\b|aube\b|vosges|haut-rhin|bas-rhin|meuse|ardennes/i],
+["Hauts-de-France",/lille|amiens|roubaix|dunkerque|calais|beauvais|hauts-de-france|nord\b|pas-de-calais|oise\b|somme\b|aisne\b/i],
+["Île-de-France",/paris|versailles|boulogne|saint-denis|nanterre|creteil|evry|ile-de-france|essonne|hauts-de-seine|yvelines|val-de-marne|seine-saint-denis|val-d'oise/i],
+["Normandie",/rouen|le havre|caen|cherbourg|honfleur|deauville|normandie|eure\b|seine-maritime|calvados|manche\b|orne\b|avre/i],
+["Nouvelle-Aquitaine",/bordeaux|limoges|poitiers|la rochelle|bayonne|biarritz|perigueux|agen|nouvelle-aquitaine|gironde|landes\b|pyrenees-atlantiques|charente|vienne\b|deux-sevres|dordogne|haute-vienne|creuse|correze/i],
+["Occitanie",/toulouse|montpellier|nimes|perpignan|beziers|albi|carcassonne|foix|occitanie|haute-garonne|aude\b|gard\b|herault|aveyron|lot\b|gers\b|hautes-pyrenees|tarn\b|lozere|ariege/i],
+["Pays de la Loire",/nantes|angers|le mans|saint-nazaire|la roche-sur-yon|cholet|pays de la loire|loire-atlantique|maine-et-loire|mayenne|sarthe|vendee/i],
+["Provence-Alpes-Côte d'Azur",/marseille|nice|toulon|aix-en-provence|cannes|avignon|paca|provence|cote d'azur|alpes-maritimes|var\b|bouches-du-rhone|vaucluse|hautes-alpes|alpes-de-haute-provence|haute-provence/i],
+["Guadeloupe",/guadeloupe|pointe-a-pitre|pointe-à-pitre|basse-terre|les abymes|sainte-anne|marie-galante|les saintes/i],
+["Martinique",/martinique|fort-de-france|le lamentin|le diamant|trinite/i],
+["Guyane",/guyane|cayenne|kourou|saint-laurent-du-maroni/i],
+["La Réunion",/reunion|saint-denis.*reunion|saint-paul.*reunion|saint-pierre.*reunion|le port.*reunion/i],
+["Mayotte",/mayotte|mamoudzou|dzaoudzi/i],
+["Polynésie française",/polynesi|tahiti|papeete|bora bora|moorea|marquises/i],
+["Nouvelle-Calédonie",/nouvelle-caledonie|noumea|nouméa|lifou/i]
+];
+var filtreRegion = "";
+function regionDe(a) {
+  var t = String(a.title || "") + " " + String(a.excerpt || "");
+  for (var ri = 0; ri < REGIONS_FR.length; ri++) { if (REGIONS_FR[ri][1].test(t)) return REGIONS_FR[ri][0]; }
+  return "";
+}
+
 function esc(s) {
   return String(s).replace(/[&<>"']/g, function(c) {
     return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
@@ -433,6 +467,15 @@ function renderMain() {
   }
 
   var title = view === "home" ? "Tout ce qui fait du bien aujourd'hui" : esc(cat.name) + (view === "europe" ? badgeTitreHTML() : "");
+  var regionFilterHTML = "";
+  if (view === "regions") {
+    var parReg = {};
+    list.forEach(function(a){ var r = regionDe(a); if (r) parReg[r] = (parReg[r] || 0) + 1; });
+    var optionsReg = '<option value="">Toutes les régions</option>';
+    Object.keys(parReg).sort().forEach(function(r){ optionsReg += '<option value="' + r + '"' + (filtreRegion === r ? ' selected' : '') + '>' + r + ' (' + parReg[r] + ')</option>'; });
+    if (filtreRegion) list = list.filter(function(a){ return regionDe(a) === filtreRegion; });
+    regionFilterHTML = '<div class="region-filter"><label for="selfilter">Filtrer par région :</label><select id="selfilter" onchange="filtreRegion = this.value; renderMain();">' + optionsReg + '</select></div>';
+  }
   var cards = "";
   list.forEach(function(a) { cards += cardHTML(a); });
 
@@ -440,7 +483,9 @@ function renderMain() {
     heroHTML +
     newsletterHTML() +
     '<div class="sec-title"><h2>' + title + '</h2><span class="count">' + list.length + " article(s) · deux éditions, 7h & 17h</span></div>" +
-    '<div class="grid">' + cards + "</div>";
+    regionFilterHTML +
+    '<div class="grid">' + cards + "</div>" +
+    ((view === "regions" && filtreRegion && list.length === 0) ? '<p style="text-align:center;color:var(--muted);padding:34px 0;font-size:.92rem;">Aucun article dans cette région pour l\'instant.</p>' : "");
 }
 
 function openA(id) {
