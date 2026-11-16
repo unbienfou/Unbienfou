@@ -27,6 +27,15 @@
   .etape .num{display:inline-block;background:var(--corail);color:#fff;border-radius:999px;width:1.7rem;height:1.7rem;line-height:1.7rem;text-align:center;font-family:Verdana,Arial,sans-serif;font-weight:bold;font-size:.85rem;margin-bottom:.4rem}
   .etape h3{margin-top:.2rem}
   .filet{height:1px;background:var(--filet);margin:2rem 0;opacity:.5}
+  .gaspard{display:flex;gap:1rem;align-items:flex-start;background:var(--creme2);border:1px solid var(--filet);border-radius:10px;padding:1rem 1.2rem;margin:1.2rem 0}
+  .gaspard img{width:92px;height:92px;border-radius:50%;border:3px solid var(--corail);object-fit:cover;flex:0 0 auto}
+  .gaspard .gnom{font-family:Verdana,Arial,sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--corail);margin-bottom:.2rem}
+  .gquote{margin:.9rem 0 0;padding:.7rem 1rem;background:#fff;border-left:3px solid var(--sauge);border-radius:6px;font-style:italic;color:var(--cacao2);font-size:.92rem}
+  .gquote .qui{font-style:normal;font-size:.75rem;color:var(--corail)}
+  .cactus-etape{display:flex;gap:1rem;align-items:center;margin-top:.8rem}
+  .cactus-etape img{width:74px;height:100px;object-fit:contain;flex:0 0 auto}
+  .cactus-etape p{margin:0;font-size:.85rem;color:var(--cacao2);font-style:italic}
+  .trustline{display:inline-block;background:#fff;border:1px solid var(--filet);border-radius:999px;padding:.4rem 1rem;font-size:.85rem;color:var(--cacao2);margin:.6rem 0 1rem}
   footer{text-align:center;padding:1.4rem;font-size:.8rem;color:var(--cacao2);background:var(--creme2);border-top:3px solid var(--filet)}
   footer a{color:var(--corail)}
   @media(max-width:520px){h1{font-size:1.35rem}.baseline{letter-spacing:.25em}}
@@ -40,55 +49,75 @@
 </header>
 <main>
 
-<h2>Notre méthode : pourquoi « vérifié, sourcé » n'est pas un slogan</h2>
-<p>Internet regorge de « bonnes nouvelles » inventées, déformées ou sorties de leur contexte. <strong>Un bien fou</strong> a été construit pour faire l'inverse : chaque information publiée ici provient d'un article de presse réel, identifié, daté et vérifiable par vous, lecteur, en un clic.</p>
-<p>Voici, étape par étape, le chemin qu'une bonne nouvelle parcourt avant d'apparaître sur le site.</p>
+<h2>Notre méthode : le parcours d'une bonne nouvelle</h2>
+<p>Tout le monde promet des bonnes nouvelles. <strong>Nous, nous montrons comment elles sont fabriquées.</strong> Chaque article publié sur Un bien fou suit le même chemin, en six étapes. Aucune n'est sautée, y compris quand la nouvelle est belle.</p>
+
+<div class="gaspard">
+  <img src="/kiosque/gaspard.jpg.JPG" alt="Gaspard, le kiosquier d'Un bien fou, tenant le journal unbienfou.fr">
+  <div>
+    <div class="gnom">Gaspard, kiosquier</div>
+    <p style="margin:0">Bonjour ! Je m'appelle Gaspard, kiosquier de métier. Chaque bonne nouvelle que je vous tends au kiosque a été contrôlée avant d'arriver entre vos mains. Suivez-moi, je vous montre le chemin.</p>
+  </div>
+</div>
+
+<span class="trustline">✓ 12 articles relus par la rédaction depuis le 30 octobre 2026</span>
 
 <div class="etape">
   <span class="num">1</span>
-  <h3>La collecte : plus de 110 sources de presse, deux fois par jour</h3>
-  <p>Notre système de veille parcourt chaque matin à 7 h et chaque soir à 17 h plus de <strong>110 flux RSS</strong> de médias français vérifiés — presse nationale (<em>Franceinfo, 20 Minutes, France 24, RFI, L'Équipe…</em>), presse régionale (<em>Sud Ouest, Ouest-France, La Voix du Nord, La Dépêche, Midi Libre, La Montagne…</em>) — complétés par des recherches Google News ciblées par rubrique (solidarité, santé, écologie, sport, innovation, insolite) et par région, Antilles et outre-mer compris. Seuls des médias établis sont collectés : pas de réseaux sociaux, pas de blogs anonymes, pas de contenu non identifié.</p>
+  <h3>Nous écoutons plus de 110 sources</h3>
+  <p>Chaque jour, notre veille parcourt la presse nationale (<em>franceinfo, RFI, France 24, 20 Minutes, L'Équipe…</em>), la presse régionale (<em>Ouest-France, Sud Ouest, L'Est Républicain, Nice-Matin, La Voix du Nord, La Dépêche…</em>) et les médias d'outre-mer (<em>la 1re Guadeloupe, Martinique, Réunion…</em>), ainsi que les institutions. Une bonne nouvelle n'existe que si une source sérieuse l'a d'abord racontée.</p>
 </div>
 
 <div class="etape">
   <span class="num">2</span>
-  <h3>La sélection et la rédaction : une IA supervisée, jamais livrée à elle-même</h3>
-  <p>Un agent de sélection choisit, parmi les centaines de titres collectés, ceux qui racontent un fait positif réel. La rédaction est assistée par intelligence artificielle, mais <strong>encadrée par des règles strictes</strong> : ne jamais inventer un nom, un chiffre, une date ou un lieu absent de la source ; ne jamais sélectionner deux articles racontant la même information ; ne jamais traiter un sujet dramatique, même sous un angle positif. Tout article qui ne respecte pas ces règles est refusé avant publication.</p>
+  <h3>Nous écartons tout ce qui ne fait pas du bien</h3>
+  <p>Faits divers sombres, conflits, catastrophes, registre militaire : notre filtre anti-morosité les exclut automatiquement, avant même l'écriture. Puis la relecture humaine chasse les rescapés déguisés en bonnes nouvelles. Un article « positif » qui a besoin d'un drame pour exister n'entre pas.</p>
+  <div class="cactus-etape">
+    <img src="/static/newsletter/cactus.png" alt="Le cactus d'Un bien fou">
+    <p>Notre cactus, lui, pique ce qui ne fait pas du bien : c'est notre gardien du seuil.</p>
+  </div>
 </div>
 
 <div class="etape">
   <span class="num">3</span>
-  <h3>La vérification : plusieurs filets successifs</h3>
-  <p>Chaque article passe une chaîne de contrôles automatisés :</p>
-  <ul>
-  <li><strong>Filtre de véracité :</strong> un article n'est publié que si son URL source figure parmi les flux réellement collectés — impossible de publier un lien fabriqué.</li>
-  <li><strong>Vérification des liens :</strong> l'adresse de la source est testée ; un lien mort ou inexistant entraîne le rejet.</li>
-  <li><strong>Audit des noms, dates et chiffres :</strong> chaque nom propre, chaque date et chaque chiffre cité est confronté au texte de l'article de presse d'origine ; toute incohérence entraîne le rejet de l'article.</li>
-  <li><strong>Filtres éditoriaux :</strong> pas de politique, pas de sujet sombre (faits divers tragiques, conflits, catastrophes), même à angle positif.</li>
-  </ul>
-  <p>Enfin, une <strong>relecture humaine</strong> du rédacteur en chef contrôle les éditions publiées : les erreurs signalées sont corrigées, et chaque incident constaté sert à durcir les contrôles de l'édition suivante.</p>
+  <h3>Nous vérifions chaque date, chaque chiffre, chaque nom</h3>
+  <p>Avant publication, tout élément factuel est comparé à la source originale. Un âge inventé, une date approximative, un montant non confirmé : l'article est corrigé ou ne sort pas. C'est notre règle absolue, sans exception.</p>
+  <p style="margin-bottom:0"><em>Exemple vrai : un matin, notre rédaction a relevé un âge erroné dans un article sportif — « 25 ans » alors que le champion en avait 20. Corrigé avant la mise en ligne.</em></p>
+  <div class="gquote">« Un âge inventé, une date fausse : ça ne passe pas mon kiosque. » <span class="qui">— Gaspard</span></div>
 </div>
 
 <div class="etape">
   <span class="num">4</span>
-  <h3>La transparence : la source visible sur chaque article</h3>
-  <p>Chaque article publié affiche un bouton <strong>« 📖 Voir la source »</strong> qui renvoie directement à l'article de presse d'origine. Nous ne vous demandons pas de nous croire sur parole : vous pouvez vérifier vous-même, à tout moment, que l'information existe, qu'elle dit bien ce que nous écrivons, et qu'elle vient d'un média identifiable.</p>
+  <h3>Une relecture humaine, chaque jour</h3>
+  <p>Les éditions de 7 h et 17 h sont relues par la rédaction : cohérence titre/source, catégorie juste, doublons chassés. Le compteur « articles relus » que vous voyez sur le site n'est pas un slogan : il correspond à des relectures réelles, comptées une par une.</p>
 </div>
 
 <div class="etape">
   <span class="num">5</span>
-  <h3>La conformité : signalement des contenus générés par IA</h3>
-  <p>Conformément à l'article 50 du règlement (UE) 2024/1689 sur l'intelligence artificielle, applicable depuis le 2 août 2026, nous signalons clairement que nos articles sont rédigés avec l'aide d'outils d'IA, sous le contrôle et la responsabilité du directeur de la publication. Le détail figure dans nos <a href="mentions-legales.html">mentions légales</a> et sur la page « Transparence IA » du site.</p>
+  <h3>L'IA écrit, l'humain décide</h3>
+  <p>Nous utilisons l'intelligence artificielle pour chercher, rassembler et rédiger plus vite. Mais elle ne décide jamais seule de ce qui est vrai. La véracité est contrôlée par des règles automatiques et par la relecture humaine. Conformément à l'article 50 du règlement européen sur l'IA, applicable depuis le 2 août 2026, nous signalons clairement que nos articles sont rédigés avec l'aide d'outils d'IA, sous le contrôle et la responsabilité du directeur de la publication. Le détail figure dans nos <a href="mentions-legales.html">mentions légales</a> et sur la page « Transparence IA » du site.</p>
+</div>
+
+<div class="etape">
+  <span class="num">6</span>
+  <h3>Et quand nous nous trompons, on vous le dit</h3>
+  <p>Personne n'est infaillible. Quand une erreur nous échappe, nous corrigeons vite, dans la journée, et sans la cacher. Notre crédibilité ne repose pas sur l'absence d'erreurs : elle repose sur ce que nous faisons quand il y en a une.</p>
+  <div class="gquote">« Une erreur avouée vite, c'est une confiance qui reste. » <span class="qui">— Gaspard</span></div>
 </div>
 
 <div class="carte">
-<p><strong>En résumé :</strong> une source de presse réelle et identifiée, une rédaction encadrée par des règles anti-invention, des contrôles automatiques sur chaque nom, date, chiffre et lien, une relecture humaine, et un lien de vérification sur chaque article. C'est notre définition d'une bonne nouvelle que l'on peut lire en confiance.</p>
+<p><strong>En résumé :</strong> une source de presse réelle et identifiée, un filtre anti-morosité sans pitié, des contrôles sur chaque nom, date, chiffre et lien, une relecture humaine, un lien de vérification sur chaque article, et des erreurs corrigées au grand jour. C'est notre définition d'une bonne nouvelle que l'on peut lire en confiance.</p>
+</div>
+
+<div class="carte" style="text-align:center">
+<p><strong>Recevez les bonnes nouvelles vérifiées, chaque matin.</strong><br>Une sélection des articles les plus rassurants de l'édition de 7 h, avec leurs photos. 100 % gratuit, sans spam, désinscription en un clic.</p>
+<p style="margin-bottom:0"><a class="retour" href="https://unbienfou.fr" style="margin-top:0">☀️ S'abonner à la newsletter</a></p>
 </div>
 
 <p>Une question, une remarque, une bonne nouvelle à nous signaler ? Écrivez-nous : <strong>unbienfou.media@gmail.com</strong> — nous lisons tout.</p>
 
 <div class="filet"></div>
-<p style="text-align:center;font-size:.85rem">Dernière mise à jour : 15 novembre 2026</p>
+<p style="text-align:center;font-size:.85rem">Dernière mise à jour : 16 novembre 2026</p>
 
 </main>
 <footer>
