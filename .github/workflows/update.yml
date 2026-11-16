@@ -214,20 +214,22 @@ jobs:
           }
           }
           // === NEWSLETTER (fonction partagee) : envoyee a l edition de 7h, meme sans nouvel article ===
-          // === VIGNETTES NEWSLETTER (v12.26) : vraie photo libre de droits par article via Wikimedia Commons.
+          // === VIGNETTES NEWSLETTER (v12.27) : vraie photo libre de droits par article via Wikimedia Commons,
+          // avec verification IA automatique de la correspondance article/photo (regle credibilite Tony 16/11).
           async function chercherPhotoCommons(a){
           try {
-              // v12.26 : liste d exclusion nl-photos-exclues.json (photos ecartees par le redac chef, jamais reutilisees)
+              // v12.27 : liste d exclusion nl-photos-exclues.json (photos ecartees par le redac chef OU bannies par la verification IA — apprentissage automatique)
               let nlExclues = [];
               try { nlExclues = JSON.parse(fs.readFileSync('nl-photos-exclues.json', 'utf8') || '[]'); } catch (eEx) { nlExclues = []; }
+              const exclurePhoto = (fichier) => {
+                try {
+                  if (!nlExclues.includes(fichier)){ nlExclues.push(fichier); fs.writeFileSync('nl-photos-exclues.json', JSON.stringify(nlExclues, null, 2)); }
+                } catch (eW) { console.log('Vignette : impossible de sauver l exclusion ' + fichier); }
+              };
               const titreOrigine = String(a.title || '');
               const clean = titreOrigine.replace(/[^\p{L}\p{N}\s'-]/gu, ' ');
-              // v12.26 : stoplist elargie — verbes polluants des titres en plus de l ancienne liste
               const STOP = /^(avec|dans|pour|après|vers|depuis|grâce|face|encore|toujours|leurs|leur|cette|ceux|celui|comme|mais|plus|moins|fait|font|entre|aussi|alors|très|bien|bonne|nouvelle|nouvel|récupère|récupèrent|récolte|récoltent|réduit|réduisent|attire|attirent|célèbre|célèbrent|propose|proposent|offre|offrent|ouvre|rouvre|lance|annoncent|annonce|obtient|obtiennent|signe|battent|bat|dépasse|recueille|recueillent|collecte|collectent|égale|franchit|franchissent|atteint|remporte|gagne|sauvent|sauve|accueille|accueillent|reçoit|reçoivent|devient|élisent|élit|prime|première|premier|fois|dernière|dernier)$/i;
               const motsBruts = clean.split(/\s+/).filter(m => m.length > 3 && !STOP.test(m));
-              // v12.26 : NOMS PROPRES — forces (le deux-points est cherche sur le TITRE ORIGINAL, clean l efface) :
-              //   FORT (poids 2, suffit seul) : majuscule interne (SpaceX), sigle (ARN), ou mot du sujet avant « : » (Concarneau, Grèce, Ault).
-              //   CAP (capitalise en milieu de titre, Starship, Rencontres) : poids 1, mais prioritaire dans la requete.
               const posDeuxPoints = titreOrigine.indexOf(':');
               const avantDeuxPoints = posDeuxPoints >= 0 ? titreOrigine.slice(0, posDeuxPoints).toLowerCase() : '';
               const estFort = (m) => {
@@ -239,7 +241,6 @@ jobs:
               const forts = motsBruts.filter(m => estFort(m));
               const caps = motsBruts.filter((m, i) => i > 0 && /^[A-ZÀ-Þ]/.test(m) && !forts.includes(m));
               const autres = motsBruts.filter(m => !forts.includes(m) && !caps.includes(m));
-              // v12.26 : requetes — noms propres (forts + capitalises) d abord, puis mots dans l ordre (filet)
               const noyau = [...new Set([...forts, ...caps])];
               const requetes = [];
               if (noyau.length){
@@ -249,6 +250,11 @@ jobs:
               requetes.push(motsBruts.slice(0, 4).join(' '));
               requetes.push(motsBruts.slice(0, 2).join(' '));
               const requetesFinales = [...new Set(requetes)].filter(q => q.length > 3).slice(0, 4);
+              // v12.27 : VERIFICATION IA AUTOMATIQUE — un max de 3 candidats par article, questionnee via mistral() :
+              // la photo doit correspondre au sujet ET ne pas etre crue/choquante (close-up medical, plaie...).
+              // Si l IA refuse : exclusion apprise dans nl-photos-exclues.json, passage au candidat suivant.
+              // Si l IA est indisponible : cactus (jamais de photo non verifiee — credibilite des abonnes, regle Tony).
+              let iaVerifs = 0;
               for (const q of requetesFinales){
                 const api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='
                   + encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=300&format=json';
@@ -261,24 +267,39 @@ jobs:
                   const md = ii.extmetadata || {};
                   const lic = String(md.LicenseShortName ? md.LicenseShortName.value : '');
                   if (!/^(CC|Public domain|No restrictions|PD)/i.test(lic)) continue;
-                  const urlFichier = String(ii.url || '').split('?')[0]; // v12.25 : l API Commons suffixe ii.url d UTM — split obligatoire
+                  const urlFichier = String(ii.url || '').split('?')[0];
                   if (!/\.(jpe?g|png)$/i.test(urlFichier)) continue;
-                  // v12.26 : PERTINENCE PONDEREE — nom propre fort : 2 points (suffit seul), autres mots : 1 (il en faut 2).
-                  // Garde-fou Tony : jamais de photo approximative.
                   const titreFichier = String(p.title || '').toLowerCase();
                   const score = motsBruts.reduce((s, m) => {
                     const match = titreFichier.includes(m.toLowerCase().replace(/s$/, '')) || titreFichier.includes(m.toLowerCase());
                     return s + (match ? (forts.includes(m) ? 2 : 1) : 0);
                   }, 0);
                   if (score < 2) continue;
-                  if (nlExclues.some(x => String(x || '') === p.title)) continue; // photo ecartee par le redac chef
+                  if (nlExclues.some(x => String(x || '') === p.title)) continue;
+                  // === v12.27 : CONTROLE IA AUTOMATIQUE (creditibilite, decision Tony 16/11 : "tout automatique") ===
+                  // JAMAIS de photo non verifiee : budget IA = 3 candidats max par article, ensuite cactus.
+                  if (typeof mistral === 'function'){
+                    if (iaVerifs >= 3){ console.log('Vignette : budget IA epuise pour cet article, cactus.'); return null; }
+                    iaVerifs++;
+                    try {
+                      const verdict = await mistral('Tu es le controle qualite photo d un media de bonnes nouvelles. Article : « ' + titreOrigine.slice(0, 200) + ' » (rubrique ' + String(a.cat || '') + '). Photo candidate de Wikimedia Commons : « ' + String(p.title || '') + ' ». Cette photo correspond-elle clairement au sujet de l article (personne, lieu ou objet precis) ET est-elle presentable a des lecteurs au petit matin (refuse les images crues : plaies, close-ups medicaux, organs, violence) ? Reponds en JSON : {"ok": true|false, "raison": "..."}');
+                      if (verdict && verdict.ok === false){
+                        exclurePhoto(p.title);
+                        console.log('VIGNETTE IA : ' + p.title.slice(0, 60) + ' refusee (' + String(verdict.raison || '?').slice(0, 60) + ') — exclue pour les prochains envois.');
+                        continue;
+                      }
+                    } catch (eIA) {
+                      console.log('Vignette IA indisponible (' + eIA.message.slice(0, 80) + ') : cactus par securite, photo non verifiee jamais envoyee.');
+                      return null;
+                    }
+                  }
                   const art = String(md.Artist ? md.Artist.value : '').replace(/<[^>]+>/g, '').trim().slice(0, 60) || 'Auteur inconnu';
                   return { url: (ii.thumburl || ii.url).split('?')[0], credit: art, licence: lic, page: 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(p.title.replace(/ /g, '_')), file: p.title };
                 }
               }
           } catch (e) { console.log('Vignette Commons skip : ' + e.message); }
           return null;
-          }          
+          }
           async function envoyerNewsletter(tous){
           const BREVO = process.env.BREVO_API_KEY || '';
           const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
@@ -1034,6 +1055,9 @@ jobs:
             if [ "$NL_ED" = "7 h" ] && [ "$NL_OK" = "X" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter : statut d envoi ABSENT du rapport de l edition du matin (envoi non confirme par Brevo)."; fi
             if [ "$NL_OK" != "X" ] && [ "$NL_OK" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter en ECHEC : 0 envoi confirme par Brevo sur $NL_TOT abonne(s). $NL_ERR"; fi
             if [ "$NL_OK" != "X" ] && [ "$NL_OK" != "0" ] && [ "$NL_OK" != "$NL_TOT" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter PARTIELLE : $NL_OK envoi(s) confirme(s) sur $NL_TOT abonne(s). $NL_ERR"; fi
+            # --- v12.27 : la newsletter du matin contient-elle au moins une vraie photo ? ---
+            NL_PHOTOS=$(node -e "const e=require('./etat-robot.json'); console.log(e.newsletter && e.newsletter.vignettes ? e.newsletter.vignettes.filter(v => v.commons).length : 'X')" 2>/dev/null)
+            if [ "$NL_ED" = "7 h" ] && [ "$NL_PHOTOS" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter sans AUCUNE vraie photo (100% cactus) : verifier la recherche Commons dans les logs du run."; fi
           else
             PROBLEMES="$PROBLEMES"$'\n'"- Le robot n'a pas produit son rapport etat-robot.json : possible crash de l'edition (voir logs du run)."
           fi
