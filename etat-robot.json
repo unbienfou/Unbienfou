@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-15T20:23:50.590Z",
-  "edition": "17 h",
-  "fluxTotal": 113,
-  "fluxActifs": 104,
+  "date": "2026-11-16T06:33:08.412Z",
+  "edition": "7 h",
+  "fluxTotal": 112,
+  "fluxActifs": 103,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
     "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
@@ -14,9 +14,31 @@
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 15,
-  "articlesTotal": 38,
+  "nouveauxArticles": 11,
+  "articlesTotal": 37,
   "rubriquesVides": [
     "insolite"
-  ]
+  ],
+  "newsletter": {
+    "envoisOk": 26,
+    "envoisTentes": 26,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "SpaceX récupère pour la première fois l’étage supérieur de sa mégafusée Starship",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "Grèce : des moines récoltent plus de 20 000 euros grâce à la vente de leurs prod",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "cancer de la peau : un vaccin ARN sur mesure réduit de 42 % le risque de rechute",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
