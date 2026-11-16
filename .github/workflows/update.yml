@@ -214,45 +214,71 @@ jobs:
           }
           }
           // === NEWSLETTER (fonction partagee) : envoyee a l edition de 7h, meme sans nouvel article ===
-          // === VIGNETTES NEWSLETTER (v12.25) : vraie photo libre de droits par article via Wikimedia Commons.
-          // Retourne { url, credit, licence, page, file } ou null. Licences acceptées : CC (BY/BY-SA) et domaine public uniquement.
+          // === VIGNETTES NEWSLETTER (v12.26) : vraie photo libre de droits par article via Wikimedia Commons.
           async function chercherPhotoCommons(a){
           try {
-            // v12.25 : liste d exclusion nl-photos-exclues.json (photos ecartees par le redac chef, jamais reutilisees)
-            let nlExclues = [];
-            try { nlExclues = JSON.parse(fs.readFileSync('nl-photos-exclues.json', 'utf8') || '[]'); } catch (eEx) { nlExclues = []; }
-            const clean = String(a.title || '').replace(/[^\p{L}\p{N}\s'-]/gu, ' ');
-            const mots = clean.split(/\s+/).filter(m => m.length > 3 && !/^(avec|dans|pour|après|vers|depuis|grâce|face|encore|toujours|leurs|leur|cette|ceux|celui|comme|mais|plus|moins|fait|font|entre|aussi|alors|très|bien|bonne|nouvelle|nouvel)$/i.test(m));
-            const requetes = [mots.slice(0, 4).join(' '), mots.slice(0, 2).join(' ')].filter(q => q.length > 3);
-            for (const q of requetes){
-              const api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='
-                + encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=300&format=json';
-              const r = await fetch(api, { headers: { 'User-Agent': 'Unbienfou-newsletter/1.0 (https://www.unbienfou.fr)' } });
-              if (!r.ok) continue;
-              const d = await r.json();
-              const pages = Object.values((d.query || {}).pages || {});
-              for (const p of pages){
-                const ii = (p.imageinfo || [])[0]; if (!ii) continue;
-                const md = ii.extmetadata || {};
-                const lic = String(md.LicenseShortName ? md.LicenseShortName.value : '');
-                if (!/^(CC|Public domain|No restrictions|PD)/i.test(lic)) continue;
-                const urlFichier = String(ii.url || '').split('?')[0]; // v12.25 : l API Commons suffixe desormais ii.url d UTM (?utm_source=...) — sans split, le test d extension rejetait TOUT fichier
-                if (!/\.(jpe?g|png)$/i.test(urlFichier)) continue;
-                // === CONTRÔLE PERTINENCE (règle Tony 15/11 soir) : la photo doit partager au moins 2 mots-clés significatifs
-                // avec le titre de l'article (recherche sur le titre du fichier Commons). Sinon -> cactus, jamais de photo approximative.
-                // v12.25 : match au singulier aussi (sans le s final), sinon « villes » ne matche jamais « Ville »
-                const titreFichier = String(p.title || '').toLowerCase();
-                const nbCommuns = mots.filter(m => titreFichier.includes(m.toLowerCase().replace(/s$/, '')) || titreFichier.includes(m.toLowerCase())).length;
-                if (nbCommuns < 2) continue;
-                if (nlExclues.some(x => String(x || '') === p.title)) continue; // photo ecartee par le redac chef
-                const art = String(md.Artist ? md.Artist.value : '').replace(/<[^>]+>/g, '').trim().slice(0, 60) || 'Auteur inconnu';
-                return { url: (ii.thumburl || ii.url).split('?')[0], credit: art, licence: lic, page: 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(p.title.replace(/ /g, '_')), file: p.title };
+              // v12.26 : liste d exclusion nl-photos-exclues.json (photos ecartees par le redac chef, jamais reutilisees)
+              let nlExclues = [];
+              try { nlExclues = JSON.parse(fs.readFileSync('nl-photos-exclues.json', 'utf8') || '[]'); } catch (eEx) { nlExclues = []; }
+              const titreOrigine = String(a.title || '');
+              const clean = titreOrigine.replace(/[^\p{L}\p{N}\s'-]/gu, ' ');
+              // v12.26 : stoplist elargie — verbes polluants des titres en plus de l ancienne liste
+              const STOP = /^(avec|dans|pour|après|vers|depuis|grâce|face|encore|toujours|leurs|leur|cette|ceux|celui|comme|mais|plus|moins|fait|font|entre|aussi|alors|très|bien|bonne|nouvelle|nouvel|récupère|récupèrent|récolte|récoltent|réduit|réduisent|attire|attirent|célèbre|célèbrent|propose|proposent|offre|offrent|ouvre|rouvre|lance|annoncent|annonce|obtient|obtiennent|signe|battent|bat|dépasse|recueille|recueillent|collecte|collectent|égale|franchit|franchissent|atteint|remporte|gagne|sauvent|sauve|accueille|accueillent|reçoit|reçoivent|devient|élisent|élit|prime|première|premier|fois|dernière|dernier)$/i;
+              const motsBruts = clean.split(/\s+/).filter(m => m.length > 3 && !STOP.test(m));
+              // v12.26 : NOMS PROPRES — forces (le deux-points est cherche sur le TITRE ORIGINAL, clean l efface) :
+              //   FORT (poids 2, suffit seul) : majuscule interne (SpaceX), sigle (ARN), ou mot du sujet avant « : » (Concarneau, Grèce, Ault).
+              //   CAP (capitalise en milieu de titre, Starship, Rencontres) : poids 1, mais prioritaire dans la requete.
+              const posDeuxPoints = titreOrigine.indexOf(':');
+              const avantDeuxPoints = posDeuxPoints >= 0 ? titreOrigine.slice(0, posDeuxPoints).toLowerCase() : '';
+              const estFort = (m) => {
+                if (/[a-zà-ÿ]/.test(m) && /[A-ZÀ-Þ]/.test(m.slice(1))) return true;
+                if (m.length > 1 && m === m.toUpperCase() && /[A-ZÀ-Þ]{2,}/.test(m)) return true;
+                if (posDeuxPoints >= 0 && avantDeuxPoints.includes(m.toLowerCase())) return true;
+                return false;
+              };
+              const forts = motsBruts.filter(m => estFort(m));
+              const caps = motsBruts.filter((m, i) => i > 0 && /^[A-ZÀ-Þ]/.test(m) && !forts.includes(m));
+              const autres = motsBruts.filter(m => !forts.includes(m) && !caps.includes(m));
+              // v12.26 : requetes — noms propres (forts + capitalises) d abord, puis mots dans l ordre (filet)
+              const noyau = [...new Set([...forts, ...caps])];
+              const requetes = [];
+              if (noyau.length){
+                requetes.push(noyau.slice(0, 4).join(' '));
+                if (autres.length) requetes.push(noyau.slice(0, 2).join(' ') + ' ' + autres.slice(0, 2).join(' '));
               }
-            }
+              requetes.push(motsBruts.slice(0, 4).join(' '));
+              requetes.push(motsBruts.slice(0, 2).join(' '));
+              const requetesFinales = [...new Set(requetes)].filter(q => q.length > 3).slice(0, 4);
+              for (const q of requetesFinales){
+                const api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='
+                  + encodeURIComponent(q) + '&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=300&format=json';
+                const r = await fetch(api, { headers: { 'User-Agent': 'Unbienfou-newsletter/1.0 (https://www.unbienfou.fr)' } });
+                if (!r.ok) continue;
+                const d = await r.json();
+                const pages = Object.values((d.query || {}).pages || {});
+                for (const p of pages){
+                  const ii = (p.imageinfo || [])[0]; if (!ii) continue;
+                  const md = ii.extmetadata || {};
+                  const lic = String(md.LicenseShortName ? md.LicenseShortName.value : '');
+                  if (!/^(CC|Public domain|No restrictions|PD)/i.test(lic)) continue;
+                  const urlFichier = String(ii.url || '').split('?')[0]; // v12.25 : l API Commons suffixe ii.url d UTM — split obligatoire
+                  if (!/\.(jpe?g|png)$/i.test(urlFichier)) continue;
+                  // v12.26 : PERTINENCE PONDEREE — nom propre fort : 2 points (suffit seul), autres mots : 1 (il en faut 2).
+                  // Garde-fou Tony : jamais de photo approximative.
+                  const titreFichier = String(p.title || '').toLowerCase();
+                  const score = motsBruts.reduce((s, m) => {
+                    const match = titreFichier.includes(m.toLowerCase().replace(/s$/, '')) || titreFichier.includes(m.toLowerCase());
+                    return s + (match ? (forts.includes(m) ? 2 : 1) : 0);
+                  }, 0);
+                  if (score < 2) continue;
+                  if (nlExclues.some(x => String(x || '') === p.title)) continue; // photo ecartee par le redac chef
+                  const art = String(md.Artist ? md.Artist.value : '').replace(/<[^>]+>/g, '').trim().slice(0, 60) || 'Auteur inconnu';
+                  return { url: (ii.thumburl || ii.url).split('?')[0], credit: art, licence: lic, page: 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(p.title.replace(/ /g, '_')), file: p.title };
+                }
+              }
           } catch (e) { console.log('Vignette Commons skip : ' + e.message); }
           return null;
-          }
-          
+          }          
           async function envoyerNewsletter(tous){
           const BREVO = process.env.BREVO_API_KEY || '';
           const LIST_ID = (process.env.BREVO_LIST_ID || '').trim();
