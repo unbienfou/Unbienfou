@@ -354,11 +354,25 @@ jobs:
           // Pool photo elargi : les articles prioritaires (prisNL) + autres articles non envoyes, jusqu'a 8 candidats.
           const poolPhoto = prisNL.slice();
           for (const a of tous){ if (poolPhoto.length >= 8) break; if (!poolPhoto.includes(a) && distinctDansMailNl(a) && !dejaEnvoyeNl(a)) poolPhoto.push(a); }
+          // === v12.30 (GO Tony 17/11) : PORTE EDITORIALE IA PRE-ENVOI ===
+          // Chaque candidat passe devant l IA editoriale AVANT la recherche photo : bonne nouvelle positive et rassurante ?
+          // Retoque (conflit social, politique, registre sombre, meme sous un angle positif) -> candidat suivant du pool.
+          // IA indisponible 2 fois -> mode degrade : envoi quand meme avec les verrous v12.29 (jamais bloquer le mail du matin).
+          let iaPorteKO = 0;
+          const passePorteIA = async (a) => {
+            if (typeof mistral !== 'function') return true;
+            if (iaPorteKO >= 2) return true;
+            try {
+              const v = await mistral('Tu es le redacteur en chef d un media de bonnes nouvelles. Ce candidat pour la newsletter du matin est-il une bonne nouvelle POSITIVE et rassurante, agreable a lire au petit matin ? Refuse tout ce qui touche au conflit social (greve, manifestation, revendication, syndicat), a la politique, aux drames ou a tout registre sombre, meme sous un angle positif. Article : « ' + String(a.title || '').slice(0, 120) + ' — ' + String(a.excerpt || '').slice(0, 200) + ' ». Reponds en JSON : {"ok": true|false, "raison": "..."}');
+              if (v && v.ok === false){ console.log('PORTE EDITORIALE : ' + String(a.title || '').slice(0, 60) + ' retoque (' + String(v.raison || '?').slice(0, 60) + ') — candidat suivant.'); return false; }
+              return true;
+            } catch (eP){ iaPorteKO++; console.log('Porte editoriale IA indisponible (' + String(eP.message || '').slice(0, 60) + ') : envoi quand meme avec les verrous existants.'); return true; }
+          };
           let top3 = []; let photosNL = [];
-          for (const a of poolPhoto){ if (top3.length >= 3) break; const ph = await chercherPhotoCommons(a); if (ph){ top3.push(a); photosNL.push(ph); } }
-          // Secours (GO Tony 17/11) : si moins de 3 photos, completer par les prioritaires puis le pool — cactus assume, alerte garde NL_PHOTOS.
-          for (const a of prisNL){ if (top3.length >= 3) break; if (!top3.includes(a)){ top3.push(a); photosNL.push(null); } }
-          for (const a of poolPhoto){ if (top3.length >= 3) break; if (!top3.includes(a)){ top3.push(a); photosNL.push(null); } }
+          for (const a of poolPhoto){ if (top3.length >= 3) break; if (!(await passePorteIA(a))) continue; const ph = await chercherPhotoCommons(a); if (ph){ top3.push(a); photosNL.push(ph); } }
+          // Secours (GO Tony 17/11) : si moins de 3 photos, completer par les prioritaires puis le pool — cactus assume, alerte garde NL_PHOTOS. Porte editoriale appliquee aussi ici.
+          for (const a of prisNL){ if (top3.length >= 3) break; if (!top3.includes(a)){ if (!(await passePorteIA(a))) continue; top3.push(a); photosNL.push(null); } }
+          for (const a of poolPhoto){ if (top3.length >= 3) break; if (!top3.includes(a)){ if (!(await passePorteIA(a))) continue; top3.push(a); photosNL.push(null); } }
           const aujNl = Date.now();
           const histNet = nlHist.filter(h => aujNl - h.ts < 7 * 24 * 3600 * 1000);
           for (const a of top3) histNet.push({ ts: aujNl, url: urlNl(a), texte: texteArticle(a) });
