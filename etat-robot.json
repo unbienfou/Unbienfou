@@ -1,18 +1,38 @@
 {
-  "date": "2026-11-16T23:45:45.954Z",
-  "edition": "17 h",
-  "fluxTotal": 102,
-  "fluxActifs": 95,
+  "date": "2026-11-17T06:33:29.275Z",
+  "edition": "7 h",
+  "fluxTotal": 94,
+  "fluxActifs": 89,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
     "https://www.sciencesetavenir.com/rss.xml",
     "https://news.google.com/rss/search?q=prix+Nobel+OR+decouverte+scientif",
-    "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
     "https://www.goodinfonews.com/rss.xml",
-    "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec"
+    "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
+    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 11,
+  "nouveauxArticles": 8,
   "articlesTotal": 40,
-  "rubriquesVides": []
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 27,
+    "envoisTentes": 27,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "Football : les Voltigeurs de Châteaubriant en route vers les seizièmes de finale",
+        "commons": "File:Kit body VoltigeursChâteaubriant2425h.png",
+        "page": "https://commons.wikimedia.org/wiki/File%3AKit_body_VoltigeursCh%C3%A2teaubriant2425h.png"
+      },
+      {
+        "article": "Mobilisation sociale : une journée de dialogue et de revendications",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "innovation : DeeeMines transforme les déchets plastiques en ressources stratégiq",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
