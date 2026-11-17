@@ -1,23 +1,19 @@
 {
-  "date": "2026-11-17T14:23:06.235Z",
+  "date": "2026-11-17T22:55:28.309Z",
   "edition": "17 h",
   "fluxTotal": 118,
-  "fluxActifs": 107,
+  "fluxActifs": 110,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
     "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
     "https://www.sciencesetavenir.com/rss.xml",
     "https://news.google.com/rss/search?q=prix+Nobel+OR+decouverte+scientif",
-    "https://www.bonpote.com/feed/",
     "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
-    "https://www.bonpote.com/feed/",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 39,
-  "rubriquesVides": [],
-  "raison": "IA sans article exploitable (240 titres collectes)"
+  "nouveauxArticles": 9,
+  "articlesTotal": 40,
+  "rubriquesVides": []
 }
