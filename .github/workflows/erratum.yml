@@ -1,0 +1,199 @@
+name: Erratum newsletter 17/11
+
+# Envoi unique de l'erratum + 3 vraies bonnes nouvelles.
+# Garde 1 : la date Paris doit etre 2026-11-17.
+# Garde 2 : erratum-envoi.json deja present => arret immediat.
+# Apres envoi confirme, supprimer ce fichier.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "50 8 17 11 *"  # 09h50 Paris le 17/11/2026
+
+permissions:
+  contents: write
+
+jobs:
+  envoi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Envoi erratum + 3 bonnes nouvelles
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_LIST_ID: ${{ secrets.BREVO_LIST_ID }}
+        run: |
+          cat > erratum.mjs <<'SCRIPT_EOF'
+          import fs from 'fs';
+          import { execSync } from 'child_process';
+
+          // ---------- Garde 1 : date Paris ----------
+          const dateParis = new Intl.DateTimeFormat('fr-CA', {
+            timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit'
+          }).format(new Date());
+          if (dateParis !== '2026-11-17') {
+            console.log('Date Paris = ' + dateParis + ' != 2026-11-17 : rien a envoyer.');
+            process.exit(0);
+          }
+
+          // ---------- Garde 2 : anti double envoi ----------
+          try {
+            const prev = JSON.parse(fs.readFileSync('erratum-envoi.json', 'utf8'));
+            if (prev && prev.envoisOk > 0) {
+              console.log('erratum-envoi.json present avec envoisOk=' + prev.envoisOk + ' : envoi deja fait, arret.');
+              process.exit(0);
+            }
+          } catch (e) { /* absent : normal, on continue */ }
+
+          const BREVO_API_KEY = process.env.BREVO_API_KEY;
+          const BREVO_LIST_ID = process.env.BREVO_LIST_ID;
+          if (!BREVO_API_KEY || !BREVO_LIST_ID) {
+            console.log('Secrets Brevo manquants.'); process.exit(1);
+          }
+
+          // ---------- Recuperation des contacts (pagine + dedoublonne) ----------
+          let contacts = [];
+          let offset = 0;
+          while (true) {
+            const url = 'https://api.brevo.com/v3/contacts/lists/' + BREVO_LIST_ID + '/contacts?limit=50&offset=' + offset;
+            const res = await fetch(url, { headers: { 'api-key': BREVO_API_KEY } });
+            if (!res.ok) { console.log('Erreur Brevo contacts HTTP ' + res.status); process.exit(1); }
+            const data = await res.json();
+            const page = data.contacts || [];
+            contacts = contacts.concat(page);
+            if (page.length === 0 || contacts.length >= (data.count || 0)) break;
+            offset += 50;
+          }
+          const vus = new Set();
+          const emails = contacts.map(c => c.email).filter(Boolean)
+            .filter(e => { const k = e.toLowerCase(); if (vus.has(k)) return false; vus.add(k); return true; });
+          console.log('Destinataires apres dedoublonnage : ' + emails.length);
+
+          // ---------- Contenu ----------
+          const commons = (titre) => 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(titre.replace(/ /g, '_'));
+
+          const carte = (photo, alt, titre, extrait, lienSite, lienSource, sourceNom, credit, licence, fichierCommons) => (
+            '<tr><td style="padding:0 0 18px 0;">' +
+            '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffdf9;border:1px solid #f0dfc2;border-radius:10px;">' +
+            '<tr>' +
+            '<td width="92" valign="top" style="padding:12px 0 12px 12px;">' +
+            '<img src="' + photo + '" alt="' + alt + '" width="92" height="92" style="width:92px;height:92px;object-fit:cover;border-radius:8px;display:block;">' +
+            '</td>' +
+            '<td valign="top" style="padding:12px 14px 12px 14px;">' +
+            '<div style="font-family:Georgia,serif;font-size:16px;line-height:1.35;color:#3f2d1d;font-weight:bold;margin:0 0 6px 0;">' + titre + '</div>' +
+            '<div style="font-family:Georgia,serif;font-size:13.5px;line-height:1.45;color:#6b5b47;margin:0 0 8px 0;">' + extrait + '</div>' +
+            '<div style="font-family:Georgia,serif;font-size:13px;line-height:1.4;">' +
+            '<a href="' + lienSite + '" style="color:#e88a6a;font-weight:bold;text-decoration:none;">Lire sur unbienfou.fr &rarr;</a>' +
+            ' &nbsp;<a href="' + lienSource + '" style="color:#b45309;text-decoration:none;">Voir la source (' + sourceNom + ')</a>' +
+            '</div>' +
+            '<div style="font-family:Georgia,serif;font-size:11px;color:#a08e77;margin-top:6px;">Photo : ' + credit + ', ' + licence + ' — <a href="' + commons(fichierCommons) + '" style="color:#a08e77;">Wikimedia Commons</a></div>' +
+            '</td></tr></table></td></tr>'
+          );
+
+          const htmlContent =
+            '<!DOCTYPE html><html lang="fr"><body style="margin:0;padding:0;background:#fffaf2;">' +
+            '<div style="background:#fffaf2;padding:18px 10px;">' +
+            '<table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;margin:0 auto;background:#fffdf9;border:1px solid #f0dfc2;border-radius:12px;">' +
+            // En-tete
+            '<tr><td style="padding:22px 28px 6px 28px;border-bottom:1px solid #f0dfc2;">' +
+            '<div style="font-family:Georgia,serif;font-size:24px;color:#3f2d1d;font-weight:bold;">Un bien fou</div>' +
+            '<div style="font-family:Georgia,serif;font-size:13px;color:#a08e77;">Le journal des nouvelles qui font du bien</div>' +
+            '</td></tr>' +
+            // Mot du redacteur en chef
+            '<tr><td style="padding:18px 28px 4px 28px;">' +
+            '<div style="font-family:Georgia,serif;font-size:14.5px;line-height:1.55;color:#3f2d1d;">' +
+            '<p style="margin:0 0 10px 0;"><b>Un mot du r&eacute;dacteur en chef.</b></p>' +
+            '<p style="margin:0 0 10px 0;">Ce matin, notre premi&egrave;re newsletter illustr&eacute;e m&eacute;ritait mieux : une photo inadapt&eacute;e, une nouvelle qui n\'avait pas sa place ici, et trop peu de vraies photos. Vous lisez <i>Un bien fou</i> pour vous sentir mieux, pas pour &ccedil;a. Toutes nos excuses.</p>' +
+            '<p style="margin:0 0 10px 0;">Nous avons corrig&eacute; dans la journ&eacute;e : les r&egrave;gles du robot ont &eacute;t&eacute; durcies et chaque envoi passera d&eacute;sormais un contr&ocirc;le avant de partir.</p>' +
+            '<p style="margin:0 0 14px 0;">Pour nous rattraper, voici <b>trois vraies bonnes nouvelles d\'aujourd\'hui, avec trois vraies photos</b>.</p>' +
+            '<p style="margin:0 0 0 0;font-style:italic;color:#6b5b47;">&mdash; Le r&eacute;dacteur en chef</p>' +
+            '</div></td></tr>' +
+            // Cartes
+            '<tr><td style="padding:10px 22px 6px 22px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
+
+            carte(
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Champ_de_tulipes%2C_Tronoen.jpg/330px-Champ_de_tulipes%2C_Tronoen.jpg',
+              'Champ de tulipes',
+              'Vend&eacute;e : 35 000 tulipes plant&eacute;es pour lutter contre le cancer',
+              'En Vend&eacute;e, des b&eacute;n&eacute;voles ont plant&eacute; 35 000 tulipes pour soutenir la recherche contre le cancer. Plus de 500 personnes ont particip&eacute; aux plantations, et les fleurs seront vendues au profit de la Ligue contre le cancer.',
+              'https://www.unbienfou.fr/',
+              'https://news.google.com/rss/articles/CBMikgFBVV95cUxOZHJpNHA0VXc0X3RYX25MaW5SSXlZY3Qya2twZTVEbkRCV3dRWHNVZHd4TlFEc1hsU3lfT3pDV1I5WTk5UXhlMzRwSFZLSEY2OWplNjVhN1ZqUURkZm4zWVNxTHBsQ0owUFFRZXZFTnEydkdvSzNYV1dRWHpYSWYzY3RoanpFNHpISTJjV0FuWlJ4UQ?oc=5',
+              'Ouest-France',
+              '10ego wiki', 'CC BY-SA 4.0', 'Champ de tulipes, Tronoen.jpg'
+            ) +
+
+            carte(
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/2023_CIAV_Meisenthal.jpg/330px-2023_CIAV_Meisenthal.jpg',
+              'Centre international d\'art verrier de Meisenthal',
+              'Meisenthal d&eacute;voile sa 37e boule de No&euml;l, &laquo; Alma &raquo;, une cr&eacute;ation aux mille reflets',
+              'Le centre d\'art verrier de Meisenthal a pr&eacute;sent&eacute; sa 37e boule de No&euml;l, &laquo; Alma &raquo;, une rosace aux reflets changeants d&eacute;voil&eacute;e dimanche. Une pi&egrave;ce unique, souffl&eacute;e dans la tradition verri&egrave;re mosellane.',
+              'https://www.unbienfou.fr/',
+              'https://www.dna.fr/culture-loisirs/2026/11/16/une-rosace-aux-mille-reflets-voici-alma-la-nouvelle-boule-de-noel-de-meisenthal',
+              'DNA',
+              'Stefan Oemisch', 'CC BY-SA 4.0', '2023 CIAV Meisenthal.jpg'
+            ) +
+
+            carte(
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Defay_%2828592452346%29.jpg/330px-Defay_%2828592452346%29.jpg',
+              'Johanne Defay',
+              'Surf : Johanne Defay d&eacute;croche l\'argent mondial',
+              'La surfeuse r&eacute;unionnaise Johanne Defay devient vice-championne du monde aux World Surfing Games. Une performance historique qui confirme son statut parmi les meilleures surfeuses mondiales.',
+              'https://www.unbienfou.fr/',
+              'https://www.franceinfo.fr/sports/surf/la-reunionnaise-johanne-defay-devient-vice-championne-du-monde-de-surf_8285201.html',
+              'franceinfo',
+              'troy_williams', 'CC BY 2.0', 'Defay (28592452346).jpg'
+            ) +
+
+            '</table></td></tr>' +
+            // CTA + pied
+            '<tr><td style="padding:8px 28px 18px 28px;border-top:1px solid #f0dfc2;">' +
+            '<div style="font-family:Georgia,serif;font-size:13.5px;line-height:1.5;color:#6b5b47;">' +
+            'Notre m&eacute;thode : nous ne publions que des nouvelles v&eacute;rifi&eacute;es, positives et rassurantes. <a href="https://www.unbienfou.fr/" style="color:#b45309;">Relire notre d&eacute;marche</a>.' +
+            '</div>' +
+            '<div style="font-family:Georgia,serif;font-size:11px;color:#a08e77;margin-top:10px;">' +
+            'Vous recevez cet email car vous &ecirc;tes abonn&eacute;(e) &agrave; la newsletter d\'Un bien fou. Pour vous d&eacute;sabonner, r&eacute;pondez &agrave; ce message.</div>' +
+            '</td></tr>' +
+            '</table></div></body></html>';
+
+          const subject = 'Nos excuses — et trois vraies bonnes nouvelles ☀️';
+
+          // ---------- Envoi ----------
+          let envoisOk = 0, tentes = 0;
+          for (const email of emails) {
+            tentes++;
+            const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+              method: 'POST',
+              headers: { 'api-key': BREVO_API_KEY, 'content-type': 'application/json', 'accept': 'application/json' },
+              body: JSON.stringify({
+                sender: { name: 'Un bien fou', email: 'unbienfou.media@gmail.com' },
+                to: [{ email: email }],
+                subject: subject,
+                htmlContent: htmlContent
+              })
+            });
+            if (res.ok) { envoisOk++; } else {
+              console.log('Echec pour ' + email.slice(0, 2) + '*** : HTTP ' + res.status);
+            }
+          }
+          console.log('Envois OK : ' + envoisOk + ' / ' + tentes + ' tentes.');
+
+          // ---------- Journal d envoi + commit ----------
+          const masque = (e) => e.slice(0, 2) + '***' + e.slice(e.indexOf('@'));
+          const journal = {
+            date: new Date().toISOString(),
+            envoisOk: envoisOk,
+            tentes: tentes,
+            destinatairesMasques: emails.map(masque)
+          };
+          fs.writeFileSync('erratum-envoi.json', JSON.stringify(journal, null, 2) + '\n');
+          execSync('git config user.name "robot-unbienfou"');
+          execSync('git config user.email "unbienfou.media@gmail.com"');
+          execSync('git add erratum-envoi.json');
+          execSync('git commit -m "Journal envoi erratum 17/11"');
+          execSync('git push');
+          console.log('Journal erratum-envoi.json commit et pousse.');
+          SCRIPT_EOF
+          node erratum.mjs
