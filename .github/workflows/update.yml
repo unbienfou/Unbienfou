@@ -188,7 +188,7 @@ jobs:
           console.log('BILAN : ' + headlines.length + ' titres collectes dans les flux.');
           // === FILTRE POLITIQUE (v12) : aucun titre politique n entre dans le journal ===
           const RE_POLITIQUE = /([eé]lection|pr[eé]sidentielle|l[eé]gislative|municipales|r[eé]gionales|s[eé]nat(eur)?|assembl[eé]e nationale|d[eé]put[eé]|ministre|minist[eè]re|gouvernement|candidat|scrutin|urnes|[eé]lys[eé]e|matignon|palais bourbon|sondage|parti |parti,|politique)/i;
-          const RE_SOMBRE = /(violen|saccag|pillage|pill[eé]|eacute|emeute|[eé]meute|riot|morte? tu[eé]e?|assassin|attentat|otage|fusill|homicide|noy[eé]e?|d[eé]c[eè]s de|accident mortel|bless[eé]e? grave|incendie ravage|cambriolag|agression|kidnapping|enlevement|drame|trag[eé]die|deuil|deces |d[eé]c[eè]s \b|corps retrouv|disparition inqui|[uU]kraine|guerre|conflit|crise migratoire|soldat|combattant|missile|frappe militaire|invasion|s[eé]isme|censure|fermeture d.?un m[eé]dia|r[eé]pression|contraint[es]?.{0,4}l[’' ]?exil|libert[eé] d[’' ]?expression|bless[eé]e? par|drone|d[eé]fense|militaire|survol|alerte|fronti[eè]re)/i; // v12.28 : durcissement defense/militaire (recidive Lituanie drones passee en Europe)
+          const RE_SOMBRE = /(violen|saccag|pillage|pill[eé]|eacute|emeute|[eé]meute|riot|morte? tu[eé]e?|assassin|attentat|otage|fusill|homicide|noy[eé]e?|d[eé]c[eè]s de|accident mortel|bless[eé]e? grave|incendie ravage|cambriolag|agression|kidnapping|enlevement|drame|trag[eé]die|deuil|deces |d[eé]c[eè]s \b|corps retrouv|disparition inqui|[uU]kraine|guerre|conflit|crise migratoire|soldat|combattant|missile|frappe militaire|invasion|s[eé]isme|censure|fermeture d.?un m[eé]dia|r[eé]pression|contraint[es]?.{0,4}l[’' ]?exil|libert[eé] d[’' ]?expression|bless[eé]e? par|drone|d[eé]fense|militaire|survol|alerte|fronti[eè]re|revendication|syndicat|gr[eè]ve|pr[eé]carit[eé])/i; // v12.29 : durcissement conflit social (incident newsletter 17/11 : mobilisation etudiants vendue en positif) ; v12.28 : defense/militaire
           const estSombre = t => RE_SOMBRE.test(String(t || ''));
           const estPolitique = t => RE_POLITIQUE.test(String(t || ''));
           const nbPolCollecte = headlines.length;
@@ -255,6 +255,7 @@ jobs:
               // la photo doit correspondre au sujet ET ne pas etre crue/choquante (close-up medical, plaie...).
               // Si l IA refuse : exclusion apprise dans nl-photos-exclues.json, passage au candidat suivant.
               // Si l IA est indisponible : cactus (jamais de photo non verifiee — credibilite des abonnes, regle Tony).
+              const RE_NON_PHOTO = /kit body|kit[_ -]|\bkit\b|logo|icon|icone|blason|coat of arms|crest|\bflag\b|\bmap\b|diagram|chart|graph|signature|seal|stub|placeholder/i; // v12.29 : verrou anti-gabarit (incident kit Voltigeurs 17/11) — maillots, logos, schemas, cartes : jamais de vraie photo
               let iaVerifs = 0;
               for (const q of requetesFinales){
                 const api = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='
@@ -270,6 +271,7 @@ jobs:
                   if (!/^(CC|Public domain|No restrictions|PD)/i.test(lic)) continue;
                   const urlFichier = String(ii.url || '').split('?')[0];
                   if (!/\.(jpe?g|png)$/i.test(urlFichier)) continue;
+                  if (RE_NON_PHOTO.test(String(p.title || '') + ' ' + urlFichier)){ continue; } // v12.29 : verrou anti-gabarit
                   const titreFichier = String(p.title || '').toLowerCase();
                   const score = motsBruts.reduce((s, m) => {
                     const match = titreFichier.includes(m.toLowerCase().replace(/s$/, '')) || titreFichier.includes(m.toLowerCase());
@@ -283,7 +285,7 @@ jobs:
                     if (iaVerifs >= 3){ console.log('Vignette : budget IA epuise pour cet article, cactus.'); return null; }
                     iaVerifs++;
                     try {
-                      const verdict = await mistral('Tu es le controle qualite photo d un media de bonnes nouvelles. Article : « ' + titreOrigine.slice(0, 200) + ' » (rubrique ' + String(a.cat || '') + '). Photo candidate de Wikimedia Commons : « ' + String(p.title || '') + ' ». Cette photo correspond-elle clairement au sujet de l article (personne, lieu ou objet precis) ET est-elle presentable a des lecteurs au petit matin (refuse les images crues : plaies, close-ups medicaux, organs, violence) ? Reponds en JSON : {"ok": true|false, "raison": "..."}');
+                      const verdict = await mistral('Tu es le controle qualite photo d un media de bonnes nouvelles. Article : « ' + titreOrigine.slice(0, 200) + ' » (rubrique ' + String(a.cat || '') + '). Photo candidate de Wikimedia Commons : « ' + String(p.title || '') + ' ». Est-ce une VRAIE photographie (pas un schema, un gabarit de maillot, un logo ni une carte) ? Cette photo correspond-elle clairement au sujet de l article (personne, lieu ou objet precis) ET est-elle presentable a des lecteurs au petit matin (refuse les images crues : plaies, close-ups medicaux, organs, violence) ? Reponds en JSON : {"ok": true|false, "raison": "..."}');
                       if (verdict && verdict.ok === false){
                         exclurePhoto(p.title);
                         console.log('VIGNETTE IA : ' + p.title.slice(0, 60) + ' refusee (' + String(verdict.raison || '?').slice(0, 60) + ') — exclue pour les prochains envois.');
@@ -348,7 +350,15 @@ jobs:
           const restants = tous.filter(a => !prisNL.includes(a) && distinctDansMailNl(a)).sort((x, y) => dernierEnvoiNl(x) - dernierEnvoiNl(y));
           for (const a of restants){ if (prisNL.length >= 3) break; prisNL.push(a); }
           }
-          const top3 = prisNL.slice(0, 3);
+          // === v12.29 (GO Tony 17/11) : TOP3 A PHOTOS GARANTIES ===
+          // Pool photo elargi : les articles prioritaires (prisNL) + autres articles non envoyes, jusqu'a 8 candidats.
+          const poolPhoto = prisNL.slice();
+          for (const a of tous){ if (poolPhoto.length >= 8) break; if (!poolPhoto.includes(a) && distinctDansMailNl(a) && !dejaEnvoyeNl(a)) poolPhoto.push(a); }
+          let top3 = []; let photosNL = [];
+          for (const a of poolPhoto){ if (top3.length >= 3) break; const ph = await chercherPhotoCommons(a); if (ph){ top3.push(a); photosNL.push(ph); } }
+          // Secours (GO Tony 17/11) : si moins de 3 photos, completer par les prioritaires puis le pool — cactus assume, alerte garde NL_PHOTOS.
+          for (const a of prisNL){ if (top3.length >= 3) break; if (!top3.includes(a)){ top3.push(a); photosNL.push(null); } }
+          for (const a of poolPhoto){ if (top3.length >= 3) break; if (!top3.includes(a)){ top3.push(a); photosNL.push(null); } }
           const aujNl = Date.now();
           const histNet = nlHist.filter(h => aujNl - h.ts < 7 * 24 * 3600 * 1000);
           for (const a of top3) histNet.push({ ts: aujNl, url: urlNl(a), texte: texteArticle(a) });
@@ -454,8 +464,7 @@ jobs:
           // Vignettes : photo Commons ou cactus officiel en fallback (décision Tony 15/11)
           const CACTUS_URL = 'https://www.unbienfou.fr/static/newsletter/cactus.png';
           const LOGO_URL = 'https://www.unbienfou.fr/static/newsletter/logo.png';
-          const photosNL = [];
-          for (const a of top3){ const ph = await chercherPhotoCommons(a); photosNL.push(ph); }
+          // v12.29 : photosNL desormais calculee avec top3 (photos garanties) plus haut dans le script.
           const carteArticle = (a, i) => {
           const ph = photosNL[i];
           const vignette = '<img src="' + (ph ? ph.url : CACTUS_URL) + '" alt="' + String(a.title || 'illustration').slice(0, 80).replace(/"/g, '&quot;') + '" width="92" height="92" style="display:block;width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid #f0dfc2;" />';
@@ -1058,7 +1067,7 @@ jobs:
             if [ "$NL_OK" != "X" ] && [ "$NL_OK" != "0" ] && [ "$NL_OK" != "$NL_TOT" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter PARTIELLE : $NL_OK envoi(s) confirme(s) sur $NL_TOT abonne(s). $NL_ERR"; fi
             # --- v12.27 : la newsletter du matin contient-elle au moins une vraie photo ? ---
             NL_PHOTOS=$(node -e "const e=require('./etat-robot.json'); console.log(e.newsletter && e.newsletter.vignettes ? e.newsletter.vignettes.filter(v => v.commons).length : 'X')" 2>/dev/null)
-            if [ "$NL_ED" = "7 h" ] && [ "$NL_PHOTOS" = "0" ]; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter sans AUCUNE vraie photo (100% cactus) : verifier la recherche Commons dans les logs du run."; fi
+            if [ "$NL_ED" = "7 h" ] && [ "$NL_PHOTOS" != "X" ] && [ "$NL_PHOTOS" -lt 3 ] 2>/dev/null; then PROBLEMES="$PROBLEMES"$'\n'"- Newsletter avec $NL_PHOTOS vraie(s) photo(s) sur 3 (cactus en secours) : verifier la recherche Commons dans les logs du run."; fi
           else
             PROBLEMES="$PROBLEMES"$'\n'"- Le robot n'a pas produit son rapport etat-robot.json : possible crash de l'edition (voir logs du run)."
           fi
