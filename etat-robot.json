@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-18T06:33:28.679Z",
-  "edition": "7 h",
-  "fluxTotal": 113,
-  "fluxActifs": 105,
+  "date": "2026-11-18T13:56:24.409Z",
+  "edition": "17 h",
+  "fluxTotal": 116,
+  "fluxActifs": 108,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
     "https://www.sciencesetavenir.com/rss.xml",
@@ -11,33 +11,12 @@
     "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
     "https://www.goodinfonews.com/rss.xml",
     "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
-    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
+    "https://news.google.com/rss/search?q=record+insolite+OR+decouverte+inc"
   ],
-  "nouveauxArticles": 2,
+  "nouveauxArticles": 0,
   "articlesTotal": 35,
   "rubriquesVides": [
     "regions"
   ],
-  "newsletter": {
-    "envoisOk": 28,
-    "envoisTentes": 28,
-    "erreurs": [],
-    "vignettes": [
-      {
-        "article": "L'Europe accélère sur le train, mode de transport préféré des Européens",
-        "commons": "File:Croix de l'Europe (Parlement européen).JPG",
-        "page": "https://commons.wikimedia.org/wiki/File%3ACroix_de_l'Europe_(Parlement_europ%C3%A9en).JPG"
-      },
-      {
-        "article": "Réunion : le Piton de la Fournaise redessine les paysages volcaniques",
-        "commons": "File:Au dessus du ciel (Piton de la Fournaise, Ile de la Réunion).jpg",
-        "page": "https://commons.wikimedia.org/wiki/File%3AAu_dessus_du_ciel_(Piton_de_la_Fournaise%2C_Ile_de_la_R%C3%A9union).jpg"
-      },
-      {
-        "article": "Apnée : Nataliia Zharkova établit un nouveau record du monde à 124 mètres",
-        "commons": "",
-        "page": ""
-      }
-    ]
-  }
+  "raison": "IA sans article exploitable (243 titres collectes)"
 }
