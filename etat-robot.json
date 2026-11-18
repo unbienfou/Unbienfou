@@ -1,22 +1,13 @@
 {
-  "date": "2026-11-18T13:56:24.409Z",
+  "date": "2026-11-18T22:38:27.078Z",
   "edition": "17 h",
-  "fluxTotal": 116,
-  "fluxActifs": 108,
+  "fluxTotal": 114,
+  "fluxActifs": 113,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=heros+du+quotidien+OR+sauve+OR+re",
-    "https://www.sciencesetavenir.com/rss.xml",
-    "https://news.google.com/rss/search?q=prix+Nobel+OR+decouverte+scientif",
-    "https://news.google.com/rss/search?q=animal+sauv%C3%A9+OR+r%C3%A9intro",
-    "https://news.google.com/rss/search?q=don+du+sang+OR+greffe+OR+hopital+",
-    "https://www.goodinfonews.com/rss.xml",
-    "https://news.google.com/rss/search?q=chaine+solidarite+OR+collecte+rec",
-    "https://news.google.com/rss/search?q=record+insolite+OR+decouverte+inc"
+    "https://news.google.com/rss/search?q=decouverte+medicale+OR+essai+prom"
   ],
   "nouveauxArticles": 0,
   "articlesTotal": 35,
-  "rubriquesVides": [
-    "regions"
-  ],
-  "raison": "IA sans article exploitable (243 titres collectes)"
+  "rubriquesVides": [],
+  "raison": "IA sans article exploitable (267 titres collectes)"
 }
