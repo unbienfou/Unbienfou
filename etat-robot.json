@@ -1,15 +1,14 @@
 {
-  "date": "2026-11-19T14:25:11.590Z",
+  "date": "2026-11-19T22:43:24.422Z",
   "edition": "17 h",
-  "fluxTotal": 112,
-  "fluxActifs": 109,
+  "fluxTotal": 114,
+  "fluxActifs": 113,
   "fluxMorts": [
-    "https://www.republicain-lorrain.fr/rss",
-    "https://news.google.com/rss/search?q=decouverte+medicale+OR+essai+prom",
     "https://news.google.com/rss/search?q=don+record+OR+epicerie+sociale+OR"
   ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 37,
-  "rubriquesVides": [],
-  "raison": "IA sans article exploitable (269 titres collectes)"
+  "nouveauxArticles": 12,
+  "articlesTotal": 38,
+  "rubriquesVides": [
+    "europe"
+  ]
 }
