@@ -1,36 +1,15 @@
 {
-  "date": "2026-11-19T06:34:08.262Z",
-  "edition": "7 h",
-  "fluxTotal": 107,
-  "fluxActifs": 104,
+  "date": "2026-11-19T14:25:11.590Z",
+  "edition": "17 h",
+  "fluxTotal": 112,
+  "fluxActifs": 109,
   "fluxMorts": [
+    "https://www.republicain-lorrain.fr/rss",
     "https://news.google.com/rss/search?q=decouverte+medicale+OR+essai+prom",
-    "https://www.telerama.fr/rss/television.xml",
-    "https://www.telerama.fr/rss/cinema.xml"
+    "https://news.google.com/rss/search?q=don+record+OR+epicerie+sociale+OR"
   ],
-  "nouveauxArticles": 12,
+  "nouveauxArticles": 0,
   "articlesTotal": 37,
   "rubriquesVides": [],
-  "newsletter": {
-    "envoisOk": 29,
-    "envoisTentes": 29,
-    "erreurs": [],
-    "vignettes": [
-      {
-        "article": "Nouvelle-Aquitaine : Cahors installe 424 panneaux solaires pour accélérer sa tra",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "réveillon : 300 bénévoles et 1 000 convives pour un Réveillon de l'amitié à Ange",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "cinéma : « Camembert », la comédie sur le Trivial Pursuit avec Kristin Scott Tho",
-        "commons": "",
-        "page": ""
-      }
-    ]
-  }
+  "raison": "IA sans article exploitable (269 titres collectes)"
 }
