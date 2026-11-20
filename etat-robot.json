@@ -1,15 +1,13 @@
 {
-  "date": "2026-11-20T13:58:32.485Z",
+  "date": "2026-11-20T22:16:33.582Z",
   "edition": "17 h",
   "fluxTotal": 114,
-  "fluxActifs": 113,
+  "fluxActifs": 112,
   "fluxMorts": [
+    "https://www.republicain-lorrain.fr/rss",
     "https://news.google.com/rss/search?q=don+record+OR+epicerie+sociale+OR"
   ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 39,
-  "rubriquesVides": [
-    "insolite"
-  ],
-  "raison": "IA sans article exploitable (259 titres collectes)"
+  "nouveauxArticles": 11,
+  "articlesTotal": 38,
+  "rubriquesVides": []
 }
