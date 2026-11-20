@@ -1,39 +1,15 @@
 {
-  "date": "2026-11-20T06:33:38.759Z",
-  "edition": "7 h",
-  "fluxTotal": 112,
-  "fluxActifs": 108,
+  "date": "2026-11-20T13:58:32.485Z",
+  "edition": "17 h",
+  "fluxTotal": 114,
+  "fluxActifs": 113,
   "fluxMorts": [
-    "https://www.estrepublicain.fr/rss",
-    "https://www.republicain-lorrain.fr/rss",
-    "https://www.bonpote.com/feed/",
     "https://news.google.com/rss/search?q=don+record+OR+epicerie+sociale+OR"
   ],
-  "nouveauxArticles": 18,
+  "nouveauxArticles": 0,
   "articlesTotal": 39,
   "rubriquesVides": [
     "insolite"
   ],
-  "newsletter": {
-    "envoisOk": 29,
-    "envoisTentes": 29,
-    "erreurs": [],
-    "vignettes": [
-      {
-        "article": "Cyclisme : un coureur rencontre le pape Léon XIV",
-        "commons": "File:3-9-11, Buffalo, Léon Georget (cyclisme) - btv1b53112217s.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File%3A3-9-11%2C_Buffalo%2C_L%C3%A9on_Georget_(cyclisme)_-_btv1b53112217s.jpg"
-      },
-      {
-        "article": "Val Thorens : la neige est au rendez-vous et les saisonniers s'activent pour pré",
-        "commons": "File:Thorens-130223-0001EC.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File%3AThorens-130223-0001EC.jpg"
-      },
-      {
-        "article": "Nice : l'Ironman et l'Ironman 70.3 sont confirmés jusqu'en 2029, les épreuves au",
-        "commons": "File:Ironman Nice 2009.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File%3AIronman_Nice_2009.jpg"
-      }
-    ]
-  }
+  "raison": "IA sans article exploitable (259 titres collectes)"
 }
