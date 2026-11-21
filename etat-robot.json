@@ -1,13 +1,36 @@
 {
-  "date": "2026-11-20T22:16:33.582Z",
-  "edition": "17 h",
-  "fluxTotal": 114,
-  "fluxActifs": 112,
+  "date": "2026-11-21T06:33:50.022Z",
+  "edition": "7 h",
+  "fluxTotal": 109,
+  "fluxActifs": 108,
   "fluxMorts": [
-    "https://www.republicain-lorrain.fr/rss",
-    "https://news.google.com/rss/search?q=don+record+OR+epicerie+sociale+OR"
+    "https://www.republicain-lorrain.fr/rss"
   ],
-  "nouveauxArticles": 11,
+  "nouveauxArticles": 10,
   "articlesTotal": 38,
-  "rubriquesVides": []
+  "rubriquesVides": [
+    "insolite"
+  ],
+  "newsletter": {
+    "envoisOk": 29,
+    "envoisTentes": 29,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "Bretagne : une association locale lance une grande collecte solidaire de jeux et",
+        "commons": "File:Bretagne mg 8087.jpeg",
+        "page": "https://commons.wikimedia.org/wiki/File%3ABretagne_mg_8087.jpeg"
+      },
+      {
+        "article": "Normandie : un train direct reliera Marseille à Disneyland Paris dès 2027",
+        "commons": "File:Regio2N Z 56600 Normandie 605XL.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File%3ARegio2N_Z_56600_Normandie_605XL.jpg"
+      },
+      {
+        "article": "Martinique : un jockey local enchaîne les victoires en course hipique à Doha",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }

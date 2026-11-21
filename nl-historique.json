@@ -1,20 +1,5 @@
 [
   {
-    "ts": 1794638008308,
-    "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOdFE5dmtFd29nZUVlRklfS1JmeTY0N1JTREtLb0NKT1E0bEl6NVhhNlB3Tkh4NzFaQlUwS2d0TUNiM2VhbExJNV96WFJuR2M2dE1sTHhBVk9tT1lFQTdVODVvRWNfbXBHZzBjN3lOcm1VbzBsaDh0cUE1SU5CYTNHRXlKSlVKbWtYN2VsdGFiVldGVUUxRktkbFBibEJTQjBmM01JNUYzRUFteVVQS0JTNkF4OUtTVjNSUkE?oc=5",
-    "texte": "Portugal : les autorités interdisent l’utilisation d’eau potable pour les data centers Le Portugal a adopté une loi interdisant aux data centers d’utiliser de l’eau potable pour leur refroidissement. Une mesure pionnière en Europe pour préserver les ressources."
-  },
-  {
-    "ts": 1794638008308,
-    "url": "https://www.20minutes.fr/monde/4262722-20261113-etats-unis-raton-laveur-retrouve-ivre-magasin-fait-gagner-290-000-dollars-refuge-animaux?at_medium=display&amp;at_campaign=149",
-    "texte": "États-Unis : un raton laveur ivre sauve un refuge animalier de la faillite Un raton laveur retrouvé ivre dans un magasin a attiré l’attention des médias et généré 290 000 dollars de dons pour un refuge animalier. Une histoire insolite qui a touché le pays."
-  },
-  {
-    "ts": 1794638008308,
-    "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxQdFVGSHREVDZDWTU0dVdLbVVzS0VoM1FtbnloX09QV0pqVXQxcXd1ekFGNktJdXUtLThyRG5mRktXYVUwdXJaYWJWX2lLMWFzaTdVNmVzR3JibkJzeFZEV2djNFRwN28ySzd2S0s0R1k4VjFpc2dqbFkyTWlGUFRqeUVIbEMzeEVGWUhvWDlTNHdVcV81QlktMnMxOTNueDhKX1BpZ1B0RFY1OUMtbkx4ZWwtX0VldzZyU2dUN1V2OXFBeW40Tnc3bkdMVXh3dmxibTlwODlLVXhnWURtWXc?oc=5",
-    "texte": "Belfort : le Mois givré promet des animations originales pour les fêtes de fin d’année La ville de Belfort organise un Mois givré avec des animations uniques : village givré, sapin géant et reconstitutions historiques. Une programmation festive pour tous les âges."
-  },
-  {
     "ts": 1794724394987,
     "url": "https://www.franceinfo.fr/economie/transports/l-autoroute-a14-vers-la-normandie-gratuite-a-partir-de-lundi-pour-compenser-la-fermeture-de-l-a13_8282435.html",
     "texte": "L'autoroute A14 vers la Normandie devient gratuite pour soutenir les usagers Une mesure exceptionnelle pour alléger la facture des automobilistes. Les conducteurs empruntant cet axe vers la Normandie bénéficieront d’un accès sans frais."
@@ -103,5 +88,20 @@
     "ts": 1795156438217,
     "url": "https://www.nicematin.com/sports/triathlon/l-ironman-et-l-ironman-70-3-sont-confirmes-a-nice-jusqu-en-2029-les-epreuves-auront-lieu-en-septembre-pour-eviter-les-fortes-chaleurs-10764153",
     "texte": "Nice : l'Ironman et l'Ironman 70.3 sont confirmés jusqu'en 2029, les épreuves auront lieu en septembre pour éviter les fortes chaleurs La ville de Nice a annoncé que les épreuves d'Ironman et d'Ironman 70.3 se dérouleront jusqu'en 2029, avec un calendrier adapté pour échapper aux canicules estivales."
+  },
+  {
+    "ts": 1795242863626,
+    "url": "https://news.google.com/rss/articles/CBMijAJBVV95cUxOY1NmTkJ1QVY2bHBkMEU4VGtEVFdRc2dfVDFWTmY4QmlEd202M2ZpVUFzWjFsY3oxU2lmaEhZNWNxM01TeS1lUUFIbHVzSG1zdVFNNHlYemM1alYtYngtZXIyV20zTnZlRkpRcF9Bc3F4VXFCUy1pbC1tdHp0QzZqTDI4NHdWYVBaWllZRERQQ2c0V1NrbEpOaGl5d2h5LW5XMUFLb3dTYUFBTHp6T3hsQmd2SUFNajRsNWlqWjFxQTg1ejhyS0NSR0pmVVd0dTRJZkdhak1ZdGRTbG4wblBGUnVlNTczRlQ3LVhHbExuN0kzcVFZZG8tLW4tZjkzR1htVUpvRE5STFY1bHlx?oc=5",
+    "texte": "Bretagne : une association locale lance une grande collecte solidaire de jeux et jouets L'association des Côtes-d'Armor organise une opération pour offrir des jouets en bon état aux enfants défavorisés de la région."
+  },
+  {
+    "ts": 1795242863626,
+    "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNaGczNUlKY3NyM0dLUmoxTzVPbThpWGdZV0o2YU5uemlIVU9MMl8zeFAtR0tDbnV3WjJTNU1oclFyX0RFNEJweHBGbmNnYzlFZkJqWVpqUUJxd19XUzQteG1pUkUxY1Q1OE8zN1VuZ183aW9zTjl4MzhPeVVpVkE4VGp3bjFBN2hOWlc1VDJfTXMyVHFsRk9EYXZJSWxHUElnUVFUR2t0MEljTlJHRThjNXVKdXRjeGs?oc=5",
+    "texte": "Normandie : un train direct reliera Marseille à Disneyland Paris dès 2027 La ligne directe entre Marseille et Disneyland Paris sera opérationnelle en 2027, réduisant le temps de trajet à 4h30. Une aubaine pour les familles et les touristes."
+  },
+  {
+    "ts": 1795242863626,
+    "url": "https://la1ere.franceinfo.fr/martinique/de-la-martinique-au-qatar-le-jockey-arnaud-de-lepine-enchaine-a-doha-1759938.html",
+    "texte": "Martinique : un jockey local enchaîne les victoires en course hipique à Doha Arnaud de Lépine, jockey martiniquais, brille sur les hippodromes internationaux. Il enchaîne les podiums à Doha, au Qatar."
   }
 ]
