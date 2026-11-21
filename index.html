@@ -545,11 +545,11 @@ function renderMain() {
 
   document.getElementById("main").innerHTML =
     heroHTML +
-    newsletterHTML() +
     '<div class="sec-title"><h2>' + title + '</h2><span class="count">' + list.length + " article(s) · deux éditions, 7h & 17h</span></div>" +
     regionFilterHTML +
     '<div class="grid">' + cards + "</div>" +
-    ((view === "regions" && filtreRegion && list.length === 0) ? '<p style="text-align:center;color:var(--muted);padding:34px 0;font-size:.92rem;">Aucun article dans cette région pour l\'instant.</p>' : "");
+    ((view === "regions" && filtreRegion && list.length === 0) ? '<p style="text-align:center;color:var(--muted);padding:34px 0;font-size:.92rem;">Aucun article dans cette région pour l\'instant.</p>' : "") +
+    newsletterHTML();
 }
 
 function openA(id) {
