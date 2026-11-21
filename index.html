@@ -111,6 +111,19 @@
   .nlform-head .dq-label { margin-bottom:4px; }
   .nlform-frame { width:100%; height:620px; border:none; display:block; }
   .nlfoot { text-align:center; font-size:.74rem; color:var(--muted); max-width:560px; margin:16px auto 60px; line-height:1.7; }
+  /* === BANDEAU CTA NEWSLETTER (fil comms 21/11/2026, hors bloc AUTO-ARTICLES) === */
+  .nlbanner { margin-top:22px; }
+  .nlb-inner { display:flex; align-items:center; gap:16px; background:var(--gold-soft); border:1.5px solid #e88a6a; border-radius:10px; padding:14px 20px; box-shadow:var(--shadow); flex-wrap:wrap; }
+  .nlb-emoji { font-size:1.5rem; line-height:1; }
+  .nlb-txt { flex:1 1 320px; display:flex; flex-direction:column; gap:3px; }
+  .nlb-txt strong { font-size:.92rem; font-weight:600; color:var(--ink); line-height:1.4; }
+  .nlb-txt em { font-family:var(--serif); font-style:italic; font-size:.82rem; color:var(--soft); }
+  .nlb-btn { border:none; background:var(--gold-bg); color:#fff; font-weight:700; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; border-radius:3px; padding:13px 24px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+  .nlb-btn:hover { background:var(--gold); }
+  @media (max-width:640px){ .nlb-inner { flex-direction:column; align-items:flex-start; gap:10px; } .nlb-btn { width:100%; } }
+  /* === BANNIÈRE BLACK FRIDAY (auto-affichée 26/11/2026 18h → 01/12/2026, retrait automatique) === */
+  .bfbanner { margin-top:22px; }
+  .bfbanner img { width:100%; display:block; border-radius:10px; border:1px solid var(--hair); box-shadow:var(--shadow); cursor:pointer; }
   .nl-ok { flex:1; min-width:270px; font-size:.95rem; line-height:1.6; color:#f5f1e8; background:#2f2a26; border:1px solid #3f3a35; border-radius:6px; padding:18px 22px; }
 
   .overlay { position:fixed; inset:0; background:rgba(28,25,23,.55); display:flex; align-items:flex-start; justify-content:center; padding:28px 14px; overflow-y:auto; z-index:100; }
@@ -201,6 +214,24 @@
   </div>
   <nav class="sections"><div class="secbar" id="nav"></div></nav>
 </header>
+
+<!-- === BANDEAU CTA NEWSLETTER (fil comms 21/11/2026, hors bloc AUTO-ARTICLES) === -->
+<div class="wrap nlbanner" id="nlBanner" role="region" aria-label="S'abonner à la newsletter">
+  <div class="nlb-inner">
+    <span class="nlb-emoji" aria-hidden="true">☀️</span>
+    <div class="nlb-txt">
+      <strong>Trois bonnes nouvelles et la phrase du jour, chaque matin à 7h30 dans votre boîte mail.</strong>
+      <em>100 % gratuit · sans spam · l&rsquo;abonnement prend 30 secondes</em>
+    </div>
+    <button class="nlb-btn" onclick="try{if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:'/cta_bandeau_home/',title:'Clic bandeau newsletter',event:true});}}catch(e){}go('newsletter')">☀️ S&rsquo;abonner gratuitement</button>
+  </div>
+</div>
+
+<!-- === BANNIÈRE BLACK FRIDAY (fil comms : auto-affichée du 26/11/2026 18h au 01/12/2026, retrait automatique) === -->
+<div class="wrap bfbanner" id="bfBanner" hidden>
+  <img src="static/bf-hero.svg" alt="Black Friday : notre produit est à 0 €. S'abonner gratuitement à la newsletter Un bien fou"
+    onclick="try{if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:'/cta_bf_banniere/',title:'Clic banniere Black Friday',event:true});}}catch(e){}go('newsletter')">
+</div>
 
 <div class="wrap dailyquote" id="phraseDuJour" role="note" aria-label="La phrase du jour">
   <div class="dq-inner">
@@ -577,6 +608,14 @@ function bilendu(id, btn) {
 function novBadge() {
   location.href = location.pathname + "?utm_source=badge-november";
 }
+
+// === BANNIÈRE BLACK FRIDAY : auto-affichage 26/11/2026 18h → 01/12/2026 00h Paris (retrait automatique, pas de 2e commit) ===
+try {
+  var nowMs = Date.now();
+  if (nowMs >= new Date("2026-11-26T18:00:00+01:00").getTime() && nowMs < new Date("2026-12-01T00:00:00+01:00").getTime()) {
+    document.getElementById("bfBanner").hidden = false;
+  }
+} catch (e) {}
 
 function go(v) { view = v; renderNav(); renderMain(); window.scrollTo(0, 0); }
 
