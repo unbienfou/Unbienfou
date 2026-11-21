@@ -230,6 +230,7 @@
 <!-- === BANNIÈRE BLACK FRIDAY (fil comms : auto-affichée du 26/11/2026 18h au 01/12/2026, retrait automatique) === -->
 <div class="wrap bfbanner" id="bfBanner" hidden>
   <img src="static/bf-hero.svg" alt="Black Friday : notre produit est à 0 €. S'abonner gratuitement à la newsletter Un bien fou"
+    onerror="this.parentNode.style.display='none'"
     onclick="try{if(window.goatcounter&&window.goatcounter.count){window.goatcounter.count({path:'/cta_bf_banniere/',title:'Clic banniere Black Friday',event:true});}}catch(e){}go('newsletter')">
 </div>
 
