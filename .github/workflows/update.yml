@@ -520,6 +520,7 @@ jobs:
           + '<p style="margin:0 0 8px;"><a href="https://www.unbienfou.fr/?utm_source=newsletter&utm_medium=email" style="background:#e88a6a;color:#ffffff;text-decoration:none;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;font-family:Arial,sans-serif;">unbienfou.fr</a></p>'
           + '<p style="margin:6px 0 0;font-size:10px;color:#a08b78;letter-spacing:1px;font-family:Arial,sans-serif;">SOURCÉ · VÉRIFIÉ · SANS MAUVAISE NOUVELLE</p>'
           + '<p style="margin:6px 0 0;font-size:10px;color:#6b4a35;letter-spacing:3px;font-family:Arial,sans-serif;">UN BIEN FOU — LE MÉDIA POSITIF</p>'
+          + '<p style="margin:10px 0 0;font-size:14px;color:#6b4a35;font-family:Georgia,serif;font-style:italic;">☀️ Ce mail vous a fait du bien ? Transmettez-le à quelqu’un à qui il en fera autant.</p>'
           + '<p style="margin:8px 0 0;font-size:10px;color:#a08b78;font-family:Arial,sans-serif;">Vous recevez cet e-mail car vous êtes abonné à Un bien fou.</p>'
           + '</td></tr></table></body></html>';
           let nlOk = 0; const nlErr = []; const nlErrPub = [];
