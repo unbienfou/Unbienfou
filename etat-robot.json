@@ -1,15 +1,13 @@
 {
-  "date": "2026-11-21T13:27:56.831Z",
+  "date": "2026-11-21T20:56:38.451Z",
   "edition": "17 h",
   "fluxTotal": 114,
-  "fluxActifs": 113,
+  "fluxActifs": 112,
   "fluxMorts": [
+    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 12,
-  "articlesTotal": 38,
-  "rubriquesVides": [
-    "france",
-    "insolite"
-  ]
+  "nouveauxArticles": 10,
+  "articlesTotal": 37,
+  "rubriquesVides": []
 }
