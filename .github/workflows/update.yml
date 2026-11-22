@@ -2,6 +2,7 @@ name: Mise a jour quotidienne des articles
 on:
   schedule:
     - cron: "7 5,15 * * *"   # 6h07 et 16h07 heure de Paris (hiver : UTC+1) — hors heure pleine, ou GitHub droppe des runs (docs.github.com)
+    - cron: "20 6 * * *"    # 7h20 Paris — NIVEAU 2 (22/11, GO Tony) : merge staging > main + newsletter du matin
   workflow_dispatch:
 
 # === VERROU ANTI-CONCURRENCE (05/11/2026, GO Tony) : un seul run d edition a la fois ===
@@ -21,6 +22,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # === NIVEAU 2 (22/11/2026, GO Tony) : edition du matin generee sur STAGING a 6h07, relecture redac chef
+      # 6h30-7h15, puis ce run de publication merge staging vers main a 7h20 et envoie la newsletter.
+      # REPLI : sans staging ou sans verdict redac chef, la gate NIVEAU 1 decide seule — jamais bloquer la publication.
+      - name: Niveau 2 - Determiner le mode du run
+        run: |
+          if [ "${{ github.event.schedule }}" = "20 6 * * *" ]; then
+            echo "MODE_EDITION=publication" >> "$GITHUB_ENV"
+            echo "Mode : publication (merge staging + newsletter)"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "MODE_EDITION=direct" >> "$GITHUB_ENV"
+            echo "Mode : direct (run manuel, comportement historique)"
+          else
+            echo "MODE_EDITION=edition" >> "$GITHUB_ENV"
+            echo "Mode : edition"
+          fi
+
+      - name: Niveau 2 - Publication matinale (merge staging vers main avant la newsletter)
+        if: env.MODE_EDITION == 'publication'
+        run: |
+          git fetch origin
+          if git rev-parse --verify origin/staging >/dev/null 2>&1; then
+            if git merge --ff-only origin/staging; then
+              git push origin main
+              echo "NIVEAU 2 : edition staging publiee sur main - envoi de la newsletter imminent."
+            else
+              git merge --abort 2>/dev/null || true
+              echo "NIVEAU 2 : merge ff-only impossible - publication de main en l etat (repli : gate Niveau 1 decide seule)."
+            fi
+          else
+            echo "NIVEAU 2 : pas de branche staging - publication de main en l etat (repli : gate Niveau 1 decide seule)."
+          fi
 
       - name: Generer et verifier les articles de l edition
         env:
@@ -116,7 +149,87 @@ jobs:
           const lignes = liste.map((a, i) => { const o = Object.assign({}, a); o.id = i + 1; if (i === 0) o.hero = true; else delete o.hero; return '  ' + JSON.stringify(o) + ','; }).join('\n');
           return '// AUTO-ARTICLES:START\nconst ARTICLES = [\n' + lignes + '\n];\n// AUTO-ARTICLES:END';
           }
+
+          // === GATES NIVEAU 1 (v12.33, 22/11/2026, GO Tony — decision "controle avant diffusion") ===
+          // Toute regle qui echoue : article ecarte (rejet) ou repris (prefixe relabelle/supprime).
+          // Aucun article delinquant ne passe : ni le site, ni la newsletter. Deterministe, sans IA.
+          const REGIONS_VALIDES = ["Auvergne-Rhône-Alpes","Bourgogne-Franche-Comté","Bretagne","Centre-Val de Loire","Corse","Grand Est","Hauts-de-France","Île-de-France","Normandie","Nouvelle-Aquitaine","Occitanie","Pays de la Loire","Provence-Alpes-Côte d'Azur","Guadeloupe","Martinique","Guyane","La Réunion","Mayotte"];
+          // table villes/departements -> region (memes reperes que le filtre regions du site, corrigee 22/11)
+          const VILLES_REGIONS = [
+          ["Auvergne-Rhône-Alpes", /lyon|clermont|saint-etienne|grenoble|annecy|chamber|valence|vichy|auvergne|rhone-alpes|isere|ardeche|haute-savoie|savoie|allier|cantal|puy de dome|villeurbanne|val thorens|saint-priest|aix-les-bains|thonon|annemasse/i],
+          ["Bourgogne-Franche-Comté", /dijon|besancon|belfort|auxerre|nevers|macon|chalon|vesoul|haute-saone|dole|poligny|bourgogne|franche-comte|jura|doubs|yonne|nievre|saone-et-loire|territoire de belfort|chablis/i],
+          ["Bretagne", /rennes|brest|quimper|lorient|vannes|saint-brieuc|bretagne|finistere|morbihan|cotes d armor|illes-et-vilaine|saint-malo|lannion|concarneau|landerneau|fouesnant/i],
+          ["Centre-Val de Loire", /orleans|tours|blois|bourges|chartres|centre-val de loire|touraine|indre-et-loire|loiret|loir-et-cher|eure-et-loir|romorantin|amboise|chenonceau/i],
+          ["Corse", /corse|ajaccio|bastia|porto-vecchio|calvi|propriano/i],
+          ["Grand Est", /strasbourg|nancy|metz|reims|troyes|colmar|mulhouse|grand est|alsace|champagne|lorraine|moselle|meurthe|marne|vosges|haut-rhin|bas-rhin|meuse|ardennes|epinal|bar-le-duc/i],
+          ["Hauts-de-France", /lille|amiens|roubaix|dunkerque|calais|beauvais|hauts-de-france|pas-de-calais|oise|somme|aisne|arras|valenciennes|creil|abbeville|compiegne/i],
+          ["Île-de-France", /paris|versailles|boulogne|nanterre|creteil|evry|ile-de-france|essonne|hauts-de-seine|yvelines|val-de-marne|seine-saint-denis|val d oise|pontoise|disneyland|saint-denis/i],
+          ["Normandie", /rouen|le havre|caen|cherbourg|honfleur|deauville|normandie|seine-maritime|calvados|manche|orne|alencon|dieppe|evreux|fecamp/i],
+          ["Nouvelle-Aquitaine", /bordeaux|limoges|poitiers|la rochelle|bayonne|biarritz|perigueux|agen|angouleme|niort|nouvelle-aquitaine|gironde|landes|charente|vienne|deux-sevres|dordogne|haute-vienne|creuse|correze|pyrenees-atlantiques/i],
+          ["Occitanie", /toulouse|toulousain|montpellier|nimes|perpignan|beziers|albi|carcassonne|foix|occitanie|midi-pyrenees|languedoc|haute-garonne|aude|gard|herault|aveyron|lot|gers|hautes-pyrenees|tarn|lozere|ariege|montauban|oncle|seix/i],
+          ["Pays de la Loire", /nantes|angers|le mans|saint-nazaire|la roche-sur-yon|cholet|pays de la loire|loire-atlantique|maine-et-loire|mayenne|sarthe|vendee|conlie|laval|saumur|les sables/i],
+          ["Provence-Alpes-Côte d'Azur", /marseille|nice|toulon|aix-en-provence|cannes|avignon|provence|cote d azur|alpes-maritimes|var|bouches-du-rhone|vaucluse|manosque|arles|hyeres|toulon/i],
+          ["Guadeloupe", /guadeloupe|pointe-a-pitre|pointe-a-pitre|basse-terre|abymes|sainte-anne|marie-galante|les saintes/i],
+          ["Martinique", /martinique|fort-de-france|lamentin|le diamant|schoelcher/i],
+          ["Guyane", /guyane|cayenne|kourou|maroni|kaw/i],
+          ["La Réunion", /reunionnais|fournaise|clicanoo|imaz press|de la reunion|saint-denis.*reunion|saint-paul.*reunion|le port.*reunion/i],
+          ["Mayotte", /mayotte|mamoudzou|dzaoudzi/i]
+          ];
+          const normalise = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\s'’–-]+/g, ' ').trim();
+          const EQUIV_REGIONS = {};
+          REGIONS_VALIDES.forEach(r => { EQUIV_REGIONS[normalise(r)] = r; });
+          // anciens noms ou genriques : traites comme prefixe regional a valider par detection (liste blanche : noms ACTUELS uniquement)
+          const PREFIXES_ANCIENS = ['auvergne','rhone alpes','bourgogne','franche comte','alsace','lorraine','champagne ardenne','nord pas de calais','picardie','haute normandie','basse normandie','aquitaine','limousin','poitou charentes','midi pyrenees','languedoc roussillon','centre','paris','ile de france','nord','corse','guadeloupe','martinique','guyane','reunion','la reunion','mayotte','polynesie','polynesie francaise','nouvelle caledonie','normandie'];
+          function regionDetected(a){
+          const s = normalise(String(a.title || '') + ' ' + String(a.excerpt || '') + ' ' + String(a.body || ''));
+          for (const vr of VILLES_REGIONS){ if (vr[1].test(s)) return vr[0]; }
+          return '';
+          }
+          const RE_DISCIPLINES = /basket|badminton|tennis de table|tennis|ping-pong|pongiste|football|foot-|rugby|handball|cyclisme|velo|natation|athleti|athletisme|voile|escrime|golf|judo|karate|boxe|triathlon|ski|skieur|patinage|hockey|volley|water-polo|escalade|hippisme|hippique|courses hippiques|aviron|canoe|kayak|taekwondo|lutte|tir a l arc|equitation|equestre|marathon|trail|gymnastique|surf|skateboard|breakdance|f1|formule 1|motocyclisme|rallye|automobile|halterophilie|petanque|baseball|basket-ball/i;
+          let GATES_RAPPORT = [];
+          function portesNiveau1(liste){
+          const gardes = [];
+          GATES_RAPPORT = [];
+          for (const a of liste){
+          const raisons = [];
+          // (6) statut verified exige avant mise en ligne
+          if (a.verified === false) raisons.push('statut verified manquant');
+          let titre = String(a.title || '');
+          // (1)+(2) prefixe regional : valide PAR LA TABLE villes->regions + liste blanche des regions actuelles
+          const mP = titre.match(/^(.{2,60}?) : /);
+          if (mP){
+          const pNorm = normalise(mP[1]);
+          const estRegion = !!EQUIV_REGIONS[pNorm] || PREFIXES_ANCIENS.includes(pNorm);
+          if (estRegion){
+          const reste = titre.slice(mP[0].length);
+          const det = regionDetected(Object.assign({}, a, { title: reste })); // detection SANS le prefixe : il ne doit pas se confirmer lui-meme
+          if (det && EQUIV_REGIONS[pNorm] === det){
+          // prefixe confirme par la detection : rien a faire
+          } else if (det){
+          console.log('GATES NIVEAU 1 : prefixe « ' + mP[1] + ' » remplace par « ' + det + ' » (region detectee dans le texte) : ' + titre.slice(0, 60));
+          titre = det + ' : ' + reste;
+          } else {
+          console.log('GATES NIVEAU 1 : prefixe « ' + mP[1] + ' » sans ville ni region detectee : prefixe retire : ' + titre.slice(0, 60));
+          titre = reste;
+          }
+          }
+          }
+          a.title = titre;
+          // (3) anti-doublon par similarite de titre/fait, TOUTES rubriques confondues (lecons A13/A14)
+          const ta = texteArticle(a);
+          const uA = String(a.sourceUrl || '').split('#')[0];
+          if (uA && gardes.some(g => String(g.sourceUrl || '').split('#')[0] === uA)) raisons.push('doublon inter-rubriques (meme source)');
+          else if (gardes.some(g => similaires(texteArticle(g), ta))) raisons.push('doublon inter-rubriques (fait similaire)');
+          // (4) titre sportif : discipline nommee obligatoire (regle Tony 18/11)
+          if (a.cat === 'sport' && !RE_DISCIPLINES.test(titre)) raisons.push('titre sportif sans discipline nommee');
+          if (raisons.length){ GATES_RAPPORT.push({ titre: titre.slice(0, 90), raisons: raisons.join('; ') }); continue; }
+          gardes.push(a);
+          }
+          return { gardes, rejets: GATES_RAPPORT };
+          }
           async function getHeadlines(){
+          // NIVEAU 2 : en mode publication (7h20), aucune generation — juste la newsletter depuis main.
+          if ((process.env.MODE_EDITION || '') === 'publication') return [];
           let news = [];
           for (const cat of Object.keys(FEEDS)){
           for (const url of FEEDS[cat]){
@@ -224,6 +337,7 @@ jobs:
                 } catch (eW) { console.log('Vignette : impossible de sauver l exclusion ' + fichier); }
               };
               const titreOrigine = String(a.title || '');
+              const lieuDetect = regionDetected(a) || ''; // v12.33 Niveau 1 : le lieu DOIT entrer dans la requete Commons
               const clean = titreOrigine.replace(/[^\p{L}\p{N}\s'-]/gu, ' ');
               const STOP = /^(avec|dans|pour|après|vers|depuis|grâce|face|encore|toujours|leurs|leur|cette|ceux|celui|comme|mais|plus|moins|fait|font|entre|aussi|alors|très|bien|bonne|nouvelle|nouvel|récupère|récupèrent|récolte|récoltent|réduit|réduisent|attire|attirent|célèbre|célèbrent|propose|proposent|offre|offrent|ouvre|rouvre|lance|annoncent|annonce|obtient|obtiennent|signe|battent|bat|dépasse|recueille|recueillent|collecte|collectent|égale|franchit|franchissent|atteint|remporte|gagne|sauvent|sauve|accueille|accueillent|reçoit|reçoivent|devient|élisent|élit|prime|première|premier|fois|dernière|dernier)$/i;
               const motsBruts = clean.split(/\s+/).filter(m => m.length > 3 && !STOP.test(m));
@@ -246,7 +360,10 @@ jobs:
               }
               requetes.push(motsBruts.slice(0, 4).join(' '));
               requetes.push(motsBruts.slice(0, 2).join(' '));
-              const requetesFinales = [...new Set(requetes)].filter(q => q.length > 3).slice(0, 4);
+              // v12.33 NIVEAU 1 : la requete DOIT combiner le lieu detecte + le sujet (incident bateau/neige 22/11)
+              const reqBase = [...new Set(requetes)].filter(q => q.length > 3);
+              const reqLieu = lieuDetect ? [String(lieuDetect + ' ' + (noyau.slice(0, 2).join(' ') || motsBruts.slice(0, 2).join(' '))).trim()].filter(q => q.length > lieuDetect.length + 4) : [];
+              const requetesFinales = [...new Set([...reqLieu, ...reqBase])].slice(0, 4);
               // v12.27 : VERIFICATION IA AUTOMATIQUE — un max de 3 candidats par article, questionnee via mistral() :
               // la photo doit correspondre au sujet ET ne pas etre crue/choquante (close-up medical, plaie...).
               // Si l IA refuse : exclusion apprise dans nl-photos-exclues.json, passage au candidat suivant.
@@ -281,10 +398,11 @@ jobs:
                     if (iaVerifs >= 3){ console.log('Vignette : budget IA epuise pour cet article, cactus.'); return null; }
                     iaVerifs++;
                     try {
-                      const verdict = await mistral('Tu es le controle qualite photo d un media de bonnes nouvelles. Article : « ' + titreOrigine.slice(0, 200) + ' » (rubrique ' + String(a.cat || '') + '). Photo candidate de Wikimedia Commons : « ' + String(p.title || '') + ' ». Est-ce une VRAIE photographie (pas un schema, un gabarit de maillot, un logo ni une carte) ? Cette photo correspond-elle clairement au sujet de l article (personne, lieu ou objet precis) ET est-elle presentable a des lecteurs au petit matin (refuse les images crues : plaies, close-ups medicaux, organs, violence) ? Reponds en JSON : {"ok": true|false, "raison": "..."}');
-                      if (verdict && verdict.ok === false){
+                      const verdict = await mistral('Tu es le controle qualite photo d un media de bonnes nouvelles. Article : « ' + titreOrigine.slice(0, 200) + ' » (rubrique ' + String(a.cat || '') + ', lieu detecte : ' + (lieuDetect || 'non identifie') + '). Photo candidate de Wikimedia Commons : « ' + String(p.title || '') + ' ». (1) VRAIE photographie (pas un schema, un gabarit de maillot, un logo ni une carte) ? (2) Correspond-elle EXACTEMENT au sujet de l article — la personne, le lieu ou l objet precis du texte, jamais une photo approximative ni un autre lieu ? (3) Presentable a des lecteurs au petit matin (pas d image crue) ? Attribue un score strict de correspondance. Reponds en JSON : {"ok": true|false, "score": entier de 0 a 10, "raison": "..."');
+                      const scoreIA = Number(verdict && verdict.score);
+                      if (verdict && (verdict.ok === false || !(scoreIA >= 7))){
                         exclurePhoto(p.title);
-                        console.log('VIGNETTE IA : ' + p.title.slice(0, 60) + ' refusee (' + String(verdict.raison || '?').slice(0, 60) + ') — exclue pour les prochains envois.');
+                        console.log('VIGNETTE IA : ' + p.title.slice(0, 60) + ' refusee (score ' + (isNaN(scoreIA) ? '?' : scoreIA) + '/10, ' + String(verdict.raison || '?').slice(0, 60) + ') — sous le seuil 7/10 : candidat suivant ou cactus.');
                         continue;
                       }
                     } catch (eIA) {
@@ -548,6 +666,22 @@ jobs:
           }
           const heureEdition = new Date().getUTCHours() + 2; // heure de Paris
           const editionCourante = heureEdition >= 14 ? '17 h' : '7 h';
+          // === NIVEAU 2 (22/11/2026, GO Tony) : PUBLICATION MATINALE (run 7h20 Paris) ===
+          // L edition du matin a ete generee a 6h07 sur la branche staging (gates Niveau 1 appliquees),
+          // la relecture redac chef a eu sa fenetre 6h30-7h15, le merge staging > main est fait par l etape
+          // bash precedente. Ce run n envoie QUE la newsletter, depuis les articles publies sur main.
+          // REPLI : sans staging ou sans verdict redac chef, on publie quand meme — gate Niveau 1 seule.
+          if ((process.env.MODE_EDITION || '') === 'publication'){
+          let artsPub = [];
+          try {
+          const hp = fs.readFileSync('index.html', 'utf8');
+          const mp = hp.match(/const ARTICLES = (\[[\s\S]*?\]);/);
+          if (mp) artsPub = JSON.parse(mp[1].replace(/,\s*\]/g, ']'));
+          } catch (ePub) { console.log('PUBLICATION : lecture des articles impossible : ' + ePub.message); }
+          console.log('PUBLICATION NIVEAU 2 : ' + artsPub.length + ' article(s) sur main — envoi de la newsletter du matin.');
+          if (artsPub.length){ await envoyerNewsletter(artsPub); } else { console.log('PUBLICATION : aucun article lisible, newsletter non envoyee.'); }
+          process.exit(0);
+          }
           if (!articles.length){
           console.log('Pas de nouvelles pour cette edition : on garde les articles existants.');
           // === RAPPORT quand meme : la veille saura exactement pourquoi ===
@@ -562,7 +696,9 @@ jobs:
           if (mExit) anciensExit = JSON.parse(mExit[1].replace(/,\s*\]/g, ']'));
           } catch (e) { console.log('Lecture des anciens articles impossible pour le rapport.'); }
           // === NETTOYAGE MEME SANS NOUVELLE : le site se debarrasse de ses doublons quand meme ===
-          const anciensExitNet = nettoyerDoublons(anciensExit);
+          let anciensExitNet = nettoyerDoublons(anciensExit);
+          const gExitN1 = portesNiveau1(anciensExitNet); // GATES NIVEAU 1 aussi sur cette branche
+          if (gExitN1.gardes.length < anciensExitNet.length){ console.log('GATES NIVEAU 1 : ' + (anciensExitNet.length - gExitN1.gardes.length) + ' ancien(s) article(s) ecarte(s) : ' + gExitN1.rejets.map(r => r.titre.slice(0, 45) + ' (' + r.raisons + ')').join(' | ').slice(0, 500)); anciensExitNet = gExitN1.gardes; }
           if (anciensExitNet.length < anciensExit.length){
           console.log('NETTOYAGE : ' + (anciensExit.length - anciensExitNet.length) + ' ancien(s) article(s) en double supprime(s) du site.');
           try {
@@ -582,9 +718,9 @@ jobs:
           if (anciensExit.length < nbPolExit) console.log('POLITIQUE ANCIENS : ' + (nbPolExit - anciensExit.length) + ' ancien(s) article(s) politique(s) retire(s) du site.');
           const catsPresentesExit = new Set(anciensExit.map(a => a.cat));
           const videsExit = CATS.filter(c => !catsPresentesExit.has(c));
-          fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: editionCourante, fluxTotal: feedHealth.length, fluxActifs: vivantsExit.length, fluxMorts: mortsExit, nouveauxArticles: 0, articlesTotal: anciensExit.length, rubriquesVides: videsExit, raison: KEY ? 'IA sans article exploitable (' + headlines.length + ' titres collectes)' : 'cle MISTRAL_API_KEY absente' }, null, 2));
+          fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: editionCourante, fluxTotal: feedHealth.length, fluxActifs: vivantsExit.length, fluxMorts: mortsExit, nouveauxArticles: 0, articlesTotal: anciensExit.length, rubriquesVides: videsExit, gatesNiveau1: GATES_RAPPORT, raison: KEY ? 'IA sans article exploitable (' + headlines.length + ' titres collectes)' : 'cle MISTRAL_API_KEY absente' }, null, 2));
           console.log('Rapport etat-robot.json ecrit (edition sans nouvel article).');
-          if (editionCourante === '7 h' && anciensExit.length){
+          if (editionCourante === '7 h' && anciensExit.length && (process.env.MODE_EDITION || '') !== 'edition'){
           await envoyerNewsletter(anciensExit);
           }
           process.exit(0);
@@ -988,6 +1124,12 @@ jobs:
           }
           } catch (e) { console.log('Erreur anti-doublon global (etape IA ignoree) : ' + e.message); }
           }
+          // === GATES NIVEAU 1 : application AVANT ecriture de index.html et AVANT newsletter (22/11, GO Tony) ===
+          const nbTousAvantGates = tous.length;
+          const gN1 = portesNiveau1(tous);
+          tous = gN1.gardes;
+          if (tous.length < nbTousAvantGates){ console.log('GATES NIVEAU 1 : ' + (nbTousAvantGates - tous.length) + ' article(s) ecarte(s) ou repris. Rejets : ' + gN1.rejets.map(r => r.titre.slice(0, 45) + ' (' + r.raisons + ')').join(' | ').slice(0, 600)); }
+          if (tous.length < 16){ console.log('GATES NIVEAU 1 : ATTENTION, il ne reste que ' + tous.length + ' articles — verifier le garde-fou site non vide.'); }
           const entries = tous.slice(0, 40).map((a, i) => {
           const cat = CATS.includes(a.cat) ? a.cat : 'france';
           const obj = {
@@ -1027,11 +1169,12 @@ jobs:
           console.log('Couverture complete : les ' + CATS.length + ' rubriques ont au moins un article.');
           }
           // === RAPPORT D'ETAT pour la veille (lu par l'etape suivante du workflow) ===
-          fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: edition, fluxTotal: feedHealth.length, fluxActifs: vivants.length, fluxMorts: morts, nouveauxArticles: nouveaux.length, articlesTotal: tous.length, rubriquesVides: manquantes }, null, 2));
+          fs.writeFileSync('etat-robot.json', JSON.stringify({ date: new Date().toISOString(), edition: edition, fluxTotal: feedHealth.length, fluxActifs: vivants.length, fluxMorts: morts, nouveauxArticles: nouveaux.length, articlesTotal: tous.length, gatesNiveau1: GATES_RAPPORT, rubriquesVides: manquantes }, null, 2));
           console.log('Rapport etat-robot.json ecrit.');
 
           // === NEWSLETTER : envoi du meilleur de l edition a 7h ===
-          if (edition === '7 h'){
+          // NIVEAU 2 : en mode edition programme du matin, la newsletter part au run de publication 7h20
+          if (edition === '7 h' && (process.env.MODE_EDITION || '') !== 'edition'){
           await envoyerNewsletter(tous);
           } else {
           console.log('Edition du soir : pas de newsletter (envoi uniquement a 7h).');
@@ -1043,12 +1186,22 @@ jobs:
         run: |
           git config user.name "robot-unbienfou"
           git config user.email "action@github.com"
-                    git add index.html
+          git add index.html
           git add nl-historique.json 2>/dev/null || true
           git add nl-photos-exclues.json 2>/dev/null || true
           git add etat-robot.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "Aucun changement"
+            exit 0
+          fi
+          if [ "${MODE_EDITION}" = "publication" ]; then
+            git commit -m "Newsletter du matin + rapport du $(date +%d/%m/%Y)"
+            git push
+            echo "NIVEAU 2 : newsletter et rapports publies sur main."
+          elif [ "${MODE_EDITION}" = "edition" ] && [ "$(TZ=Europe/Paris date +%H)" -lt 14 ]; then
+            git commit -m "Edition $(date +%H)h du $(date +%d/%m/%Y) (staging - en attente de relecture)"
+            git push --force origin HEAD:refs/heads/staging
+            echo "NIVEAU 2 : edition du matin sur la branche staging — relecture redac chef 6h30-7h15, merge + newsletter a 7h20."
           else
             git commit -m "Edition $(date +%H)h du $(date +%d/%m/%Y)"
             git push
