@@ -1,20 +1,5 @@
 [
   {
-    "ts": 1794724394987,
-    "url": "https://www.franceinfo.fr/economie/transports/l-autoroute-a14-vers-la-normandie-gratuite-a-partir-de-lundi-pour-compenser-la-fermeture-de-l-a13_8282435.html",
-    "texte": "L'autoroute A14 vers la Normandie devient gratuite pour soutenir les usagers Une mesure exceptionnelle pour alléger la facture des automobilistes. Les conducteurs empruntant cet axe vers la Normandie bénéficieront d’un accès sans frais."
-  },
-  {
-    "ts": 1794724394987,
-    "url": "https://actu.fr/hauts-de-france/ault_80039/depuis-cinq-ans-les-rencontres-poetiques-donnent-rendez-vous-chaque-mois-aux-amoureux-des-mots-a-ault_65053997.html",
-    "texte": "Ault : les Rencontres poétiques célèbrent les mots depuis cinq ans Chaque mois, une centaine d’amoureux des mots se retrouvent à Ault pour partager leur passion lors des Rencontres poétiques. Ce rendez-vous culturel gratuit permet de découvrir des textes inédits et de discuter avec des auteurs locaux."
-  },
-  {
-    "ts": 1794724394987,
-    "url": "https://rmcsport.bfmtv.com/tennis/atp/atp-finals-une-qualification-vraiment-miraculeuse-pour-arthur-fils_AV-202611140316.html",
-    "texte": "tennis : Arthur Fils qualifié de justesse pour les ATP Finals Le jeune Français Arthur Fils a réussi à se qualifier pour les ATP Finals, un exploit pour un joueur de son âge. Sa performance en fin de saison lui ouvre les portes du prestigieux tournoi."
-  },
-  {
     "ts": 1794810788854,
     "url": "https://www.franceinfo.fr/sciences/espace/spacex-parvient-pour-la-premiere-fois-a-recuperer-l-etage-superieur-de-sa-megafusee-starship_8283233.html",
     "texte": "SpaceX récupère pour la première fois l’étage supérieur de sa mégafusée Starship SpaceX a réussi à récupérer l’étage supérieur de sa fusée Starship lors d’un vol d’essai. Une étape majeure pour la réutilisabilité des lanceurs spatiaux, réduisant ainsi les coûts des missions futures."
@@ -103,5 +88,20 @@
     "ts": 1795242863626,
     "url": "https://la1ere.franceinfo.fr/martinique/de-la-martinique-au-qatar-le-jockey-arnaud-de-lepine-enchaine-a-doha-1759938.html",
     "texte": "Martinique : un jockey local enchaîne les victoires en course hipique à Doha Arnaud de Lépine, jockey martiniquais, brille sur les hippodromes internationaux. Il enchaîne les podiums à Doha, au Qatar."
+  },
+  {
+    "ts": 1795329338133,
+    "url": "https://www.franceinfo.fr/environnement/meteo/neige/c-est-completement-une-autre-saison-en-savoie-des-villages-deja-a-l-heure-des-premieres-neiges_8294165.html",
+    "texte": "Savoie : les premières neiges tombent déjà, un spectacle magique pour les villages Les habitants de plusieurs communes savoyardes ont découvert un paysage hivernal dès le mois de novembre. Les routes de montagne se parent de blanc, offrant un décor féerique."
+  },
+  {
+    "ts": 1795329338133,
+    "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPUnVlVUMzcnVadHg4MWRiZGVleUd1X0hYRndoYnEzd01YM1ZPeF8xSlplR0tEOEE0TU55X1hUX1VDXzlZZUVycnV6bnVBSVZJd3BZZlQ2VHdxZDFGaGtjVDQ4QnpiWFdlVXowdjQ3dzFiZ1pGMlRCTlhjeXNuVFlIV1JJeVY2c1FHbWVkbHZTLVJQLUUzQjZaenZPMDFjR3pwa2hhQ1VGWmM4QUtFbGt4WW45WGxqS3ZlMXE0?oc=5",
+    "texte": "Alsace : deux étangs supprimés pour redonner vie au ruisseau du Soultzbach La suppression de deux étangs en Haut-Soultzbach permet de restaurer l’écosystème du ruisseau local. Une opération écologique qui améliore la biodiversité et la qualité de l’eau."
+  },
+  {
+    "ts": 1795329338133,
+    "url": "https://www.franceinfo.fr/france/auvergne-rhone-alpes/loire/saint-etienne/ca-va-nous-permettre-de-rebondir-a-saint-etienne-des-cheques-cadeaux-pour-relancer-le-commerce-avant-noel_8294129.html",
+    "texte": "solidarité : des chèques-cadeaux pour relancer le commerce à Saint-Étienne La ville de Saint-Étienne distribue des chèques-cadeaux aux commerçants pour soutenir l’activité économique avant les fêtes de fin d’année."
   }
 ]

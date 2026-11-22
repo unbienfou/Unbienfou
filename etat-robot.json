@@ -1,13 +1,34 @@
 {
-  "date": "2026-11-21T20:56:38.451Z",
-  "edition": "17 h",
-  "fluxTotal": 114,
-  "fluxActifs": 112,
-  "fluxMorts": [
-    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
+  "date": "2026-11-22T06:35:00.857Z",
+  "edition": "7 h",
+  "fluxTotal": 113,
+  "fluxActifs": 113,
+  "fluxMorts": [],
+  "nouveauxArticles": 11,
+  "articlesTotal": 38,
+  "rubriquesVides": [
+    "europe"
   ],
-  "nouveauxArticles": 10,
-  "articlesTotal": 37,
-  "rubriquesVides": []
+  "newsletter": {
+    "envoisOk": 29,
+    "envoisTentes": 29,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "Savoie : les premières neiges tombent déjà, un spectacle magique pour les villag",
+        "commons": "File:Savoie-Versoix-2019.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File%3ASavoie-Versoix-2019.jpg"
+      },
+      {
+        "article": "Alsace : deux étangs supprimés pour redonner vie au ruisseau du Soultzbach",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "solidarité : des chèques-cadeaux pour relancer le commerce à Saint-Étienne",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
