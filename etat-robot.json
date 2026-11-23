@@ -1,31 +1,45 @@
 {
-  "date": "2026-11-22T06:35:00.857Z",
+  "date": "2026-11-23T06:56:14.715Z",
   "edition": "7 h",
-  "fluxTotal": 113,
-  "fluxActifs": 113,
-  "fluxMorts": [],
-  "nouveauxArticles": 11,
-  "articlesTotal": 38,
-  "rubriquesVides": [
-    "europe"
+  "fluxTotal": 115,
+  "fluxActifs": 110,
+  "fluxMorts": [
+    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
+    "https://www.directvelo.com/feed",
+    "https://trustmyscience.com/feed/",
+    "https://www.actu-environnement.com/rss/flux.xml",
+    "https://www.notre-planete.info/rss.xml"
   ],
+  "nouveauxArticles": 14,
+  "articlesTotal": 38,
+  "gatesNiveau1": [
+    {
+      "titre": "régions : championne de WNBA, Janelle Salaün partage son expérience avec les jeunes du CRE",
+      "raisons": "titre sportif sans discipline nommee"
+    },
+    {
+      "titre": "Échecs : un fan des Spurs défie Victor Wembanyama",
+      "raisons": "titre sportif sans discipline nommee"
+    }
+  ],
+  "rubriquesVides": [],
   "newsletter": {
     "envoisOk": 29,
     "envoisTentes": 29,
     "erreurs": [],
     "vignettes": [
       {
-        "article": "Savoie : les premières neiges tombent déjà, un spectacle magique pour les villag",
-        "commons": "File:Savoie-Versoix-2019.jpg",
-        "page": "https://commons.wikimedia.org/wiki/File%3ASavoie-Versoix-2019.jpg"
+        "article": "Badminton : un tournoi solidaire dans l'obscurité pour le Téléthon",
+        "commons": "File:Tournoi badminton 280913 13.JPG",
+        "page": "https://commons.wikimedia.org/wiki/File%3ATournoi_badminton_280913_13.JPG"
       },
       {
-        "article": "Alsace : deux étangs supprimés pour redonner vie au ruisseau du Soultzbach",
-        "commons": "",
-        "page": ""
+        "article": "Limoges : le marché de Noël s’installe pour un mois en centre-ville",
+        "commons": "File:Mairie de Limoges Noël.JPG",
+        "page": "https://commons.wikimedia.org/wiki/File%3AMairie_de_Limoges_No%C3%ABl.JPG"
       },
       {
-        "article": "solidarité : des chèques-cadeaux pour relancer le commerce à Saint-Étienne",
+        "article": "tennis : Théo Arribagé et Albano Olivetti sacrés champions au Masters ATP en dou",
         "commons": "",
         "page": ""
       }
