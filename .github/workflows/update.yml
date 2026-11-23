@@ -156,22 +156,22 @@ jobs:
           const REGIONS_VALIDES = ["Auvergne-Rhône-Alpes","Bourgogne-Franche-Comté","Bretagne","Centre-Val de Loire","Corse","Grand Est","Hauts-de-France","Île-de-France","Normandie","Nouvelle-Aquitaine","Occitanie","Pays de la Loire","Provence-Alpes-Côte d'Azur","Guadeloupe","Martinique","Guyane","La Réunion","Mayotte"];
           // table villes/departements -> region (memes reperes que le filtre regions du site, corrigee 22/11)
           const VILLES_REGIONS = [
-          ["Auvergne-Rhône-Alpes", /lyon|clermont|saint-etienne|grenoble|annecy|chamber|valence|vichy|auvergne|rhone-alpes|isere|ardeche|haute-savoie|savoie|allier|cantal|puy de dome|villeurbanne|val thorens|saint-priest|aix-les-bains|thonon|annemasse/i],
-          ["Bourgogne-Franche-Comté", /dijon|besancon|belfort|auxerre|nevers|macon|chalon|vesoul|haute-saone|dole|poligny|bourgogne|franche-comte|jura|doubs|yonne|nievre|saone-et-loire|territoire de belfort|chablis/i],
+          ["Auvergne-Rhône-Alpes", /lyon|clermont|saint-etienne|grenoble|annecy|chamber|valence|vichy|auvergne|rhone-alpes|isere|ardeche|haute-savoie|\bsavoie\b|allier|cantal|puy de dome|villeurbanne|val thorens|saint-priest|aix-les-bains|thonon|annemasse/i],
+          ["Bourgogne-Franche-Comté", /dijon|besancon|belfort|auxerre|nevers|macon|chalon|vesoul|haute-saone|\bdole\b|poligny|bourgogne|franche-comte|jura|\bdoubs\b|yonne|nievre|saone-et-loire|territoire de belfort|chablis/i],
           ["Bretagne", /rennes|brest|quimper|lorient|vannes|saint-brieuc|bretagne|finistere|morbihan|cotes d armor|illes-et-vilaine|saint-malo|lannion|concarneau|landerneau|fouesnant/i],
           ["Centre-Val de Loire", /orleans|tours|blois|bourges|chartres|centre-val de loire|touraine|indre-et-loire|loiret|loir-et-cher|eure-et-loir|romorantin|amboise|chenonceau/i],
           ["Corse", /corse|ajaccio|bastia|porto-vecchio|calvi|propriano/i],
-          ["Grand Est", /strasbourg|nancy|metz|reims|troyes|colmar|mulhouse|grand est|alsace|champagne|lorraine|moselle|meurthe|marne|vosges|haut-rhin|bas-rhin|meuse|ardennes|epinal|bar-le-duc/i],
-          ["Hauts-de-France", /lille|amiens|roubaix|dunkerque|calais|beauvais|hauts-de-france|pas-de-calais|oise|somme|aisne|arras|valenciennes|creil|abbeville|compiegne/i],
-          ["Île-de-France", /paris|versailles|boulogne|nanterre|creteil|evry|ile-de-france|essonne|hauts-de-seine|yvelines|val-de-marne|seine-saint-denis|val d oise|pontoise|disneyland|saint-denis/i],
-          ["Normandie", /rouen|le havre|caen|cherbourg|honfleur|deauville|normandie|seine-maritime|calvados|manche|orne|alencon|dieppe|evreux|fecamp/i],
-          ["Nouvelle-Aquitaine", /bordeaux|limoges|poitiers|la rochelle|bayonne|biarritz|perigueux|agen|angouleme|niort|nouvelle-aquitaine|gironde|landes|charente|vienne|deux-sevres|dordogne|haute-vienne|creuse|correze|pyrenees-atlantiques/i],
-          ["Occitanie", /toulouse|toulousain|montpellier|nimes|perpignan|beziers|albi|carcassonne|foix|occitanie|midi-pyrenees|languedoc|haute-garonne|aude|gard|herault|aveyron|lot|gers|hautes-pyrenees|tarn|lozere|ariege|montauban|oncle|seix/i],
-          ["Pays de la Loire", /nantes|angers|le mans|saint-nazaire|la roche-sur-yon|cholet|pays de la loire|loire-atlantique|maine-et-loire|mayenne|sarthe|vendee|conlie|laval|saumur|les sables/i],
-          ["Provence-Alpes-Côte d'Azur", /marseille|nice|toulon|aix-en-provence|cannes|avignon|provence|cote d azur|alpes-maritimes|var|bouches-du-rhone|vaucluse|manosque|arles|hyeres|toulon/i],
+          ["Grand Est", /strasbourg|nancy|metz|reims|troyes|colmar|mulhouse|grand est|alsace|champagne|lorraine|moselle|meurthe|marne|\bvosges\b|haut-rhin|bas-rhin|meuse|ardennes|epinal|bar-le-duc/i],
+          ["Hauts-de-France", /lille|amiens|roubaix|dunkerque|calais|beauvais|hauts-de-france|pas-de-calais|\boise\b|\bsomme\b|aisne|arras|valenciennes|creil|abbeville|compiegne/i],
+          ["Île-de-France", /\bparis\b|versailles|boulogne|nanterre|creteil|evry|ile-de-france|essonne|hauts-de-seine|yvelines|val-de-marne|seine-saint-denis|val d oise|pontoise|disneyland|saint-denis\b/i],
+          ["Normandie", /rouen|le havre|\bcaen\b|cherbourg|honfleur|deauville|normandie|seine-maritime|calvados|\bmanche\b|\borne\b|alencon|dieppe|evreux|fecamp/i],
+          ["Nouvelle-Aquitaine", /bordeaux|limoges|poitiers|la rochelle|bayonne|biarritz|perigueux|agen|angouleme|niort|nouvelle-aquitaine|gironde|\blandes\b|charente|\bvienne\b|deux-sevres|dordogne|haute-vienne|creuse|\bcorreze\b|pyrenees-atlantiques/i],
+          ["Occitanie", /toulouse|toulousain|montpellier|nimes|perpignan|beziers|albi|carcassonne|foix|occitanie|midi-pyrenees|languedoc|haute-garonne|\baude\b|\bgard\b|herault|aveyron|\blot\b|\bgers\b|hautes-pyrenees|\btarn\b|lozere|ariege|montauban|oncle|seix/i],
+          ["Pays de la Loire", /nantes|angers|le mans|saint-nazaire|la roche-sur-yon|cholet|pays de la loire|loire-atlantique|maine-et-loire|mayenne|sarthe|vendee|conlie|\blaval\b|saumur|les sables/i],
+          ["Provence-Alpes-Côte d'Azur", /marseille|nice|toulon|aix-en-provence|cannes|avignon|provence|cote d azur|alpes-maritimes|\bvar\b|bouches-du-rhone|vaucluse|manosque|arles|hyeres|toulon/i],
           ["Guadeloupe", /guadeloupe|pointe-a-pitre|pointe-a-pitre|basse-terre|abymes|sainte-anne|marie-galante|les saintes/i],
           ["Martinique", /martinique|fort-de-france|lamentin|le diamant|schoelcher/i],
-          ["Guyane", /guyane|cayenne|kourou|maroni|kaw/i],
+          ["Guyane", /guyane|cayenne|kourou|maroni|\bkaw\b/i],
           ["La Réunion", /reunionnais|fournaise|clicanoo|imaz press|de la reunion|saint-denis.*reunion|saint-paul.*reunion|le port.*reunion/i],
           ["Mayotte", /mayotte|mamoudzou|dzaoudzi/i]
           ];
@@ -185,7 +185,7 @@ jobs:
           for (const vr of VILLES_REGIONS){ if (vr[1].test(s)) return vr[0]; }
           return '';
           }
-          const RE_DISCIPLINES = /basket|badminton|tennis de table|tennis|ping-pong|pongiste|football|foot-|rugby|handball|cyclisme|velo|natation|athleti|athletisme|voile|escrime|golf|judo|karate|boxe|triathlon|ski|skieur|patinage|hockey|volley|water-polo|escalade|hippisme|hippique|courses hippiques|aviron|canoe|kayak|taekwondo|lutte|tir a l arc|equitation|equestre|marathon|trail|gymnastique|surf|skateboard|breakdance|f1|formule 1|motocyclisme|rallye|automobile|halterophilie|petanque|baseball|basket-ball/i;
+          const RE_DISCIPLINES = /basket|badminton|tennis de table|tennis|ping-pong|pongiste|football|foot-|rugby|handball|cyclisme|velo|natation|athleti|athletisme|voile|escrime|golf|judo|karate|boxe|triathlon|\bski\b|skieur|patinage|hockey|volley|water-polo|escalade|hippisme|hippique|courses hippiques|aviron|canoe|kayak|taekwondo|lutte|tir a l arc|equitation|equestre|marathon|trail\b|gymnastique|surf|skateboard|breakdance|f1\b|formule 1|motocyclisme|rallye|automobile|halterophilie|petanque|baseball|basket-ball/i;
           let GATES_RAPPORT = [];
           function portesNiveau1(liste){
           const gardes = [];
