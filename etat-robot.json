@@ -1,38 +1,18 @@
 {
-  "date": "2026-11-24T06:33:31.405Z",
-  "edition": "7 h",
-  "fluxTotal": 105,
-  "fluxActifs": 105,
-  "fluxMorts": [],
-  "nouveauxArticles": 21,
-  "articlesTotal": 34,
+  "date": "2026-11-24T15:44:45.282Z",
+  "edition": "17 h",
+  "fluxTotal": 114,
+  "fluxActifs": 113,
+  "fluxMorts": [
+    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
+  ],
+  "nouveauxArticles": 10,
+  "articlesTotal": 39,
   "gatesNiveau1": [
     {
-      "titre": "Athlétisme : Marie-Julie Bonnin et Baptiste Thiery de retour à Caen",
+      "titre": "gastronomie : Hugo Riboulet sacré champion du monde de l'œuf mayo, un plat traditionnel fr",
       "raisons": "titre sportif sans discipline nommee"
     }
   ],
-  "rubriquesVides": [],
-  "newsletter": {
-    "envoisOk": 30,
-    "envoisTentes": 30,
-    "erreurs": [],
-    "vignettes": [
-      {
-        "article": "Grand Est : l’Alsace insolite fête son 100e numéro avec une exposition unique",
-        "commons": "File:2 Grand-Rue in Turckheim (2).jpg",
-        "page": "https://commons.wikimedia.org/wiki/File%3A2_Grand-Rue_in_Turckheim_(2).jpg"
-      },
-      {
-        "article": "une nouvelle boulangerie s’installe à Morbecque, l’ancienne fermera en juillet",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "cinéma : l’Équerre d’argent récompense la maîtrise du MADD Bordeaux",
-        "commons": "",
-        "page": ""
-      }
-    ]
-  }
+  "rubriquesVides": []
 }
