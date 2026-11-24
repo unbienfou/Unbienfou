@@ -14,5 +14,27 @@
       "raisons": "titre sportif sans discipline nommee"
     }
   ],
-  "rubriquesVides": []
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 30,
+    "envoisTentes": 30,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "Guyane : la mission Ariane 6 place 36 satellites d'Amazon en orbite avec succès",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "médicament : Sanofi rachète Insmed pour 37,6 milliards d'euros, un record pour l",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "Moins de maïs, mais toujours une qualité énergétique élevée dans les silos",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
