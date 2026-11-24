@@ -1,45 +1,35 @@
 {
-  "date": "2026-11-23T06:56:14.715Z",
+  "date": "2026-11-24T06:33:31.405Z",
   "edition": "7 h",
-  "fluxTotal": 115,
-  "fluxActifs": 110,
-  "fluxMorts": [
-    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://www.directvelo.com/feed",
-    "https://trustmyscience.com/feed/",
-    "https://www.actu-environnement.com/rss/flux.xml",
-    "https://www.notre-planete.info/rss.xml"
-  ],
-  "nouveauxArticles": 14,
-  "articlesTotal": 38,
+  "fluxTotal": 105,
+  "fluxActifs": 105,
+  "fluxMorts": [],
+  "nouveauxArticles": 21,
+  "articlesTotal": 34,
   "gatesNiveau1": [
     {
-      "titre": "régions : championne de WNBA, Janelle Salaün partage son expérience avec les jeunes du CRE",
-      "raisons": "titre sportif sans discipline nommee"
-    },
-    {
-      "titre": "Échecs : un fan des Spurs défie Victor Wembanyama",
+      "titre": "Athlétisme : Marie-Julie Bonnin et Baptiste Thiery de retour à Caen",
       "raisons": "titre sportif sans discipline nommee"
     }
   ],
   "rubriquesVides": [],
   "newsletter": {
-    "envoisOk": 29,
-    "envoisTentes": 29,
+    "envoisOk": 30,
+    "envoisTentes": 30,
     "erreurs": [],
     "vignettes": [
       {
-        "article": "Badminton : un tournoi solidaire dans l'obscurité pour le Téléthon",
-        "commons": "File:Tournoi badminton 280913 13.JPG",
-        "page": "https://commons.wikimedia.org/wiki/File%3ATournoi_badminton_280913_13.JPG"
+        "article": "Grand Est : l’Alsace insolite fête son 100e numéro avec une exposition unique",
+        "commons": "File:2 Grand-Rue in Turckheim (2).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File%3A2_Grand-Rue_in_Turckheim_(2).jpg"
       },
       {
-        "article": "Limoges : le marché de Noël s’installe pour un mois en centre-ville",
-        "commons": "File:Mairie de Limoges Noël.JPG",
-        "page": "https://commons.wikimedia.org/wiki/File%3AMairie_de_Limoges_No%C3%ABl.JPG"
+        "article": "une nouvelle boulangerie s’installe à Morbecque, l’ancienne fermera en juillet",
+        "commons": "",
+        "page": ""
       },
       {
-        "article": "tennis : Théo Arribagé et Albano Olivetti sacrés champions au Masters ATP en dou",
+        "article": "cinéma : l’Équerre d’argent récompense la maîtrise du MADD Bordeaux",
         "commons": "",
         "page": ""
       }
