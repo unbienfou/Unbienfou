@@ -28,7 +28,7 @@ jobs:
       # REPLI : sans staging ou sans verdict redac chef, la gate NIVEAU 1 decide seule — jamais bloquer la publication.
       - name: Niveau 2 - Determiner le mode du run
         run: |
-          if [ "${{ github.event.schedule }}" = "20 6 * * *" ]; then
+          if [ "${{ github.event.schedule }}" = "20 6 * * *" ] && [ "$(TZ=Europe/Paris date +%H)" -ge 6 ] && [ "$(TZ=Europe/Paris date +%H)" -lt 11 ]; then
             echo "MODE_EDITION=publication" >> "$GITHUB_ENV"
             echo "Mode : publication (merge staging + newsletter)"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -112,7 +112,7 @@ jobs:
             const dPrec = etatPrecedent.date ? new Date(etatPrecedent.date) : null;
             const memeJour = dPrec && !isNaN(dPrec.getTime()) && dPrec.toDateString() === new Date().toDateString();
             const heureGF = new Date().getUTCHours() + 2; // heure de Paris (meme convention que le reste du script)
-            if (memeJour && heureGF < 14 && etatPrecedent.edition === '7 h' && etatPrecedent.newsletter && Number(etatPrecedent.newsletter.envoisOk) > 0){
+            if (memeJour && (process.env.MODE_EDITION || 'edition') !== 'edition' && etatPrecedent.edition === '7 h' && etatPrecedent.newsletter && Number(etatPrecedent.newsletter.envoisOk) > 0){ // v12.35 : anti double envoi, tout mode sauf edition (incident 24/11 : cron 7h20 parti a 18h48)
               console.log('GARDE-FOU : edition du matin deja publiee aujourd hui (' + etatPrecedent.newsletter.envoisOk + ' envois newsletter confirmes par Brevo) — arret propre, aucune action.');
               process.exit(0);
             }
