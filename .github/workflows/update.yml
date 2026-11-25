@@ -1182,11 +1182,37 @@ jobs:
           SCRIPT_EOF
           node update.mjs
 
+      - name: SEO - Regenerer sitemap.xml (lastmod du jour)
+        run: |
+          node -e '
+            const fs = require("fs");
+            const today = new Date().toISOString().slice(0, 10);
+            const entries = [
+              { loc: "https://www.unbienfou.fr/", lastmod: today, freq: "daily", prio: "1.0" },
+              { loc: "https://www.unbienfou.fr/mentions-legales.html", lastmod: "2026-10-28", freq: "yearly", prio: "0.3" },
+              { loc: "https://www.unbienfou.fr/notre-methode.html", lastmod: "2026-11-15", freq: "yearly", prio: "0.3" }
+            ];
+            let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            xml += "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+            for (const e of entries) {
+              xml += "  <url>\n";
+              xml += "    <loc>" + e.loc + "</loc>\n";
+              xml += "    <lastmod>" + e.lastmod + "</lastmod>\n";
+              xml += "    <changefreq>" + e.freq + "</changefreq>\n";
+              xml += "    <priority>" + e.prio + "</priority>\n";
+              xml += "  </url>\n";
+            }
+            xml += "</urlset>\n";
+            fs.writeFileSync("sitemap.xml", xml);
+            console.log("sitemap.xml regenere, lastmod home = " + today);
+          '
+
       - name: Publier sur GitHub
         run: |
           git config user.name "robot-unbienfou"
           git config user.email "action@github.com"
           git add index.html
+          git add sitemap.xml 2>/dev/null || true
           git add nl-historique.json 2>/dev/null || true
           git add nl-photos-exclues.json 2>/dev/null || true
           git add etat-robot.json 2>/dev/null || true
