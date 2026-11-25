@@ -1,39 +1,18 @@
 {
-  "date": "2026-11-25T06:35:00.003Z",
-  "edition": "7 h",
-  "fluxTotal": 107,
-  "fluxActifs": 104,
+  "date": "2026-11-25T15:30:22.469Z",
+  "edition": "17 h",
+  "fluxTotal": 114,
+  "fluxActifs": 111,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9",
-    "https://www.notre-planete.info/rss.xml",
+    "https://www.estrepublicain.fr/rss",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 10,
+  "nouveauxArticles": 0,
   "articlesTotal": 37,
-  "gatesNiveau1": [],
   "rubriquesVides": [
     "europe"
   ],
-  "newsletter": {
-    "envoisOk": 30,
-    "envoisTentes": 30,
-    "erreurs": [],
-    "vignettes": [
-      {
-        "article": "Toulon : un garage à bateau historique récompensé pour sa restauration",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "IA : une version faible de l’hypothèse de Riemann démontrée par un mathématicien",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "Landes : le remorquage spectaculaire d’un cargo échoué sans pollution",
-        "commons": "",
-        "page": ""
-      }
-    ]
-  }
+  "gatesNiveau1": [],
+  "raison": "IA sans article exploitable (263 titres collectes)"
 }
