@@ -1207,12 +1207,61 @@ jobs:
             console.log("sitemap.xml regenere, lastmod home = " + today);
           '
 
+      - name: SEO - Regenerer le flux RSS (rss.xml)
+        run: |
+          node -e '
+            const fs = require("fs");
+            const html = fs.readFileSync("index.html", "utf8");
+            const m = html.match(/const ARTICLES = \[([\s\S]*?)\];\s*\n\/\/ AUTO-ARTICLES:END/);
+            if (!m) { console.log("RSS : bloc AUTO-ARTICLES introuvable, flux inchange"); process.exit(0); }
+            const arts = JSON.parse("[" + m[1].replace(/,\s*$/, "") + "]");
+            const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            const cdata = s => "<![CDATA[" + String(s).replace(/]]>/g, "]]&gt;") + "]]>";
+            const parseFr = t => {
+              const s = String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/(\d{1,2})\s?er\b/g, "$1 ").replace(/[^a-z0-9]+/g, " ").trim();
+              const mm = s.match(/(\d{1,2}) ([a-z]+) (\d{4})/);
+              if (!mm) return new Date().toISOString();
+              let mo;
+              if (mm[2].startsWith("juil")) mo = 6; else if (mm[2].startsWith("juin")) mo = 5;
+              else { const PRE = { jan: 0, fev: 1, mar: 2, avr: 3, mai: 4, aou: 7, sep: 8, oct: 9, nov: 10, dec: 11 }; mo = PRE[mm[2].slice(0, 3)]; }
+              if (mo === undefined) return new Date().toISOString();
+              return new Date(Date.UTC(+mm[3], mo, +mm[1], 6, 0, 0)).toISOString();
+            };
+            let rss = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+            rss += "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
+            rss += "  <channel>\n";
+            rss += "    <title>Un bien fou \u2014 Le journal des nouvelles qui font du bien</title>\n";
+            rss += "    <link>https://www.unbienfou.fr/</link>\n";
+            rss += "    <atom:link href=\"https://www.unbienfou.fr/rss.xml\" rel=\"self\" type=\"application/rss+xml\" />\n";
+            rss += "    <description>Trois bonnes nouvelles v\u00e9rifi\u00e9es chaque matin : sant\u00e9, \u00e9cologie, solidarit\u00e9, sport, innovation, culture.</description>\n";
+            rss += "    <language>fr</language>\n";
+            rss += "    <lastBuildDate>" + new Date().toUTCString() + "</lastBuildDate>\n";
+            rss += "    <docs>https://www.rssboard.org/rss-specification</docs>\n";
+            for (const a of arts.slice(0, 30)) {
+              const pre = { sport: "Sport", sante: "Sant\u00e9", ecologie: "\u00c9cologie", solidarite: "Solidarit\u00e9", innovation: "Innovation", culture: "Culture", insolite: "Insolite", france: "France", regions: "R\u00e9gions", europe: "Europe" }[a.cat] || "Actu";
+              rss += "    <item>\n";
+              rss += "      <title>" + esc(a.title.charAt(0).toUpperCase() + a.title.slice(1)) + "</title>\n";
+              rss += "      <description>" + cdata(a.excerpt) + "</description>\n";
+              rss += "      <link>" + esc(a.sourceUrl) + "</link>\n";
+              rss += "      <guid isPermaLink=\"true\">" + esc(a.sourceUrl) + "</guid>\n";
+              rss += "      <pubDate>" + new Date(parseFr(a.date)).toUTCString() + "</pubDate>\n";
+              rss += "      <category>" + esc(pre) + "</category>\n";
+              rss += "      <source url=\"" + esc(a.sourceUrl) + "\">Un bien fou (" + esc(a.source) + ")</source>\n";
+              rss += "    </item>\n";
+            }
+            rss += "  </channel>\n";
+            rss += "</rss>\n";
+            fs.writeFileSync("rss.xml", rss);
+            console.log("rss.xml regenere : " + Math.min(arts.length, 30) + " items sur " + arts.length + " articles");
+          '
+
       - name: Publier sur GitHub
         run: |
           git config user.name "robot-unbienfou"
           git config user.email "action@github.com"
           git add index.html
           git add sitemap.xml 2>/dev/null || true
+          git add rss.xml 2>/dev/null || true
           git add nl-historique.json 2>/dev/null || true
           git add nl-photos-exclues.json 2>/dev/null || true
           git add etat-robot.json 2>/dev/null || true
