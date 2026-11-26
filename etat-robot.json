@@ -1,14 +1,35 @@
 {
-  "date": "2026-11-25T17:20:06.263Z",
-  "edition": "17 h",
-  "fluxTotal": 113,
-  "fluxActifs": 111,
+  "date": "2026-11-26T06:35:06.458Z",
+  "edition": "7 h",
+  "fluxTotal": 107,
+  "fluxActifs": 106,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=bonne+nouvelle+OR+solidarit%C3%A9",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
   "nouveauxArticles": 15,
-  "articlesTotal": 34,
+  "articlesTotal": 40,
   "gatesNiveau1": [],
-  "rubriquesVides": []
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 30,
+    "envoisTentes": 30,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "Loire-Atlantique : le lac de Grand-Lieu dévoile ses légendes locales",
+        "commons": "File:Lac de Grand-Lieu - Passay (2).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File%3ALac_de_Grand-Lieu_-_Passay_(2).jpg"
+      },
+      {
+        "article": "Football : l'équipe de France U17 qualifiée pour les 16es de finale de Coupe du ",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "Le blé européen, une valeur refuge face aux tensions en mer Noire",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
