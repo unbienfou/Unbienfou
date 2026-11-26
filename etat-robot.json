@@ -1,16 +1,11 @@
 {
-  "date": "2026-11-26T15:01:18.666Z",
+  "date": "2026-11-26T16:59:42.873Z",
   "edition": "17 h",
-  "fluxTotal": 115,
-  "fluxActifs": 112,
-  "fluxMorts": [
-    "https://www.directvelo.com/feed",
-    "https://trustmyscience.com/feed/",
-    "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
-  ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 40,
-  "rubriquesVides": [],
+  "fluxTotal": 114,
+  "fluxActifs": 114,
+  "fluxMorts": [],
+  "nouveauxArticles": 15,
+  "articlesTotal": 36,
   "gatesNiveau1": [],
-  "raison": "IA sans article exploitable (260 titres collectes)"
+  "rubriquesVides": []
 }
