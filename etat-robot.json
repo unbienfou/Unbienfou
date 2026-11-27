@@ -1,16 +1,16 @@
 {
-  "date": "2026-11-27T16:46:09.577Z",
+  "date": "2026-11-27T23:23:41.243Z",
   "edition": "17 h",
-  "fluxTotal": 113,
-  "fluxActifs": 110,
+  "fluxTotal": 114,
+  "fluxActifs": 112,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://www.republicain-lorrain.fr/rss",
+    "https://trustmyscience.com/feed/",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 38,
-  "rubriquesVides": [],
+  "nouveauxArticles": 12,
+  "articlesTotal": 34,
   "gatesNiveau1": [],
-  "raison": "IA sans article exploitable (265 titres collectes)"
+  "rubriquesVides": [
+    "insolite"
+  ]
 }
