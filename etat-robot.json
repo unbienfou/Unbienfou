@@ -1,11 +1,36 @@
 {
-  "date": "2026-11-26T16:59:42.873Z",
-  "edition": "17 h",
-  "fluxTotal": 114,
-  "fluxActifs": 114,
-  "fluxMorts": [],
-  "nouveauxArticles": 15,
-  "articlesTotal": 36,
+  "date": "2026-11-27T06:33:15.923Z",
+  "edition": "7 h",
+  "fluxTotal": 109,
+  "fluxActifs": 107,
+  "fluxMorts": [
+    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
+    "https://trustmyscience.com/feed/"
+  ],
+  "nouveauxArticles": 12,
+  "articlesTotal": 38,
   "gatesNiveau1": [],
-  "rubriquesVides": []
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 30,
+    "envoisTentes": 30,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "L’Oréal réduit la consommation d’eau et d’énergie dans ses usines françaises",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "Urgences ophtalmiques : une prise en charge rapide pour les cas critiques et un ",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "Orléans : une piste cyclable de près de 5 km va relier Angers à Verrières-en-Anj",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
