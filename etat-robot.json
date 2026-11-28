@@ -1,36 +1,15 @@
 {
-  "date": "2026-11-28T06:33:21.761Z",
-  "edition": "7 h",
-  "fluxTotal": 115,
-  "fluxActifs": 113,
+  "date": "2026-11-28T14:05:07.699Z",
+  "edition": "17 h",
+  "fluxTotal": 107,
+  "fluxActifs": 104,
   "fluxMorts": [
-    "https://www.directvelo.com/feed",
+    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
+    "https://trustmyscience.com/feed/",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 14,
-  "articlesTotal": 37,
+  "nouveauxArticles": 6,
+  "articlesTotal": 38,
   "gatesNiveau1": [],
-  "rubriquesVides": [],
-  "newsletter": {
-    "envoisOk": 30,
-    "envoisTentes": 30,
-    "erreurs": [],
-    "vignettes": [
-      {
-        "article": "musique : Peter Gabriel sort son album \"O/I\", la dernière touche d'un diptyque f",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "innovation : le James Webb repère la paire de quasars la plus ancienne jamais ob",
-        "commons": "",
-        "page": ""
-      },
-      {
-        "article": "solidarité : la Croix-Rouge lance un appel aux dons de couvertures en Haute-Vien",
-        "commons": "",
-        "page": ""
-      }
-    ]
-  }
+  "rubriquesVides": []
 }
