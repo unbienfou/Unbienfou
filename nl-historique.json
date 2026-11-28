@@ -1,20 +1,5 @@
 [
   {
-    "ts": 1795156438217,
-    "url": "https://rmcsport.bfmtv.com/cyclisme/paul-seixas/cyclisme-paul-seixas-va-rencontrer-le-pape-leon-xiv_AV-202611190841.html",
-    "texte": "Cyclisme : un coureur rencontre le pape Léon XIV Paul Seixas, coureur cycliste, aura l'honneur de rencontrer le pape Léon XIV. Une occasion rare pour le sport."
-  },
-  {
-    "ts": 1795156438217,
-    "url": "https://www.franceinfo.fr/france/auvergne-rhone-alpes/savoie/a-val-thorens-la-neige-est-au-rendez-vous-et-les-saisonniers-s-activent-pour-preparer-l-ouverture-de-la-station-samedi_8290736.html",
-    "texte": "Val Thorens : la neige est au rendez-vous et les saisonniers s'activent pour préparer l'ouverture de la station La station de Val Thorens, plus haute d'Europe, annonce une ouverture prévue samedi après une préparation minutieuse des équipes. Les remontées mécaniques et les hébergements sont prêts à accueillir les vacanciers."
-  },
-  {
-    "ts": 1795156438217,
-    "url": "https://www.nicematin.com/sports/triathlon/l-ironman-et-l-ironman-70-3-sont-confirmes-a-nice-jusqu-en-2029-les-epreuves-auront-lieu-en-septembre-pour-eviter-les-fortes-chaleurs-10764153",
-    "texte": "Nice : l'Ironman et l'Ironman 70.3 sont confirmés jusqu'en 2029, les épreuves auront lieu en septembre pour éviter les fortes chaleurs La ville de Nice a annoncé que les épreuves d'Ironman et d'Ironman 70.3 se dérouleront jusqu'en 2029, avec un calendrier adapté pour échapper aux canicules estivales."
-  },
-  {
     "ts": 1795242863626,
     "url": "https://news.google.com/rss/articles/CBMijAJBVV95cUxOY1NmTkJ1QVY2bHBkMEU4VGtEVFdRc2dfVDFWTmY4QmlEd202M2ZpVUFzWjFsY3oxU2lmaEhZNWNxM01TeS1lUUFIbHVzSG1zdVFNNHlYemM1alYtYngtZXIyV20zTnZlRkpRcF9Bc3F4VXFCUy1pbC1tdHp0QzZqTDI4NHdWYVBaWllZRERQQ2c0V1NrbEpOaGl5d2h5LW5XMUFLb3dTYUFBTHp6T3hsQmd2SUFNajRsNWlqWjFxQTg1ejhyS0NSR0pmVVd0dTRJZkdhak1ZdGRTbG4wblBGUnVlNTczRlQ3LVhHbExuN0kzcVFZZG8tLW4tZjkzR1htVUpvRE5STFY1bHlx?oc=5",
     "texte": "Bretagne : une association locale lance une grande collecte solidaire de jeux et jouets L'association des Côtes-d'Armor organise une opération pour offrir des jouets en bon état aux enfants défavorisés de la région."
@@ -133,5 +118,20 @@
     "ts": 1795761206596,
     "url": "https://www.20minutes.fr/societe/4265983-20261126-maine-loire-piste-cyclable-pres-5-km-va-relier-angers-verrieres-anjou?at_medium=display&at_campaign=149",
     "texte": "Orléans : une piste cyclable de près de 5 km va relier Angers à Verrières-en-Anjou Le département de Maine-et-Loire va inaugurer une piste cyclable de près de 5 km. Un projet qui vise à faciliter les déplacements et à promouvoir les mobilités douces."
+  },
+  {
+    "ts": 1795847627230,
+    "url": "https://www.franceinfo.fr/culture/musique/rock/avec-son-album-o-i-peter-gabriel-met-la-derniere-touche-a-un-diptyque-foisonnant-entame-en-2023_8279285.html",
+    "texte": "musique : Peter Gabriel sort son album \"O/I\", la dernière touche d'un diptyque foisonnant Peter Gabriel a sorti son album \"O/I\", marquant la dernière touche d'un diptyque foisonnant entamé en 2023. Une œuvre qui confirme son statut d'artiste visionnaire."
+  },
+  {
+    "ts": 1795847627230,
+    "url": "https://sciencepost.fr/james-webb-repere-la-paire-de-quasars-la-plus-ancienne-et-la-plus-compacte-jamais-vue/",
+    "texte": "innovation : le James Webb repère la paire de quasars la plus ancienne jamais observée Le télescope spatial James Webb a détecté la paire de quasars la plus ancienne et compacte jamais observée. Une découverte majeure pour l’astronomie."
+  },
+  {
+    "ts": 1795847627230,
+    "url": "https://www.20minutes.fr/societe/4266252-20261127-haute-vienne-approche-hiver-croix-rouge-manque-couvertures-lance-appel-dons?at_medium=display&at_campaign=149",
+    "texte": "solidarité : la Croix-Rouge lance un appel aux dons de couvertures en Haute-Vienne La Croix-Rouge de Haute-Vienne lance un appel aux dons de couvertures pour aider les personnes vulnérables à affronter l’hiver."
   }
 ]

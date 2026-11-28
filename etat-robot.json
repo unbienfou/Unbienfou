@@ -1,16 +1,36 @@
 {
-  "date": "2026-11-27T16:46:09.577Z",
-  "edition": "17 h",
-  "fluxTotal": 113,
-  "fluxActifs": 110,
+  "date": "2026-11-28T06:33:21.761Z",
+  "edition": "7 h",
+  "fluxTotal": 115,
+  "fluxActifs": 113,
   "fluxMorts": [
-    "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://www.republicain-lorrain.fr/rss",
+    "https://www.directvelo.com/feed",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 0,
-  "articlesTotal": 38,
-  "rubriquesVides": [],
+  "nouveauxArticles": 14,
+  "articlesTotal": 37,
   "gatesNiveau1": [],
-  "raison": "IA sans article exploitable (265 titres collectes)"
+  "rubriquesVides": [],
+  "newsletter": {
+    "envoisOk": 30,
+    "envoisTentes": 30,
+    "erreurs": [],
+    "vignettes": [
+      {
+        "article": "musique : Peter Gabriel sort son album \"O/I\", la dernière touche d'un diptyque f",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "innovation : le James Webb repère la paire de quasars la plus ancienne jamais ob",
+        "commons": "",
+        "page": ""
+      },
+      {
+        "article": "solidarité : la Croix-Rouge lance un appel aux dons de couvertures en Haute-Vien",
+        "commons": "",
+        "page": ""
+      }
+    ]
+  }
 }
