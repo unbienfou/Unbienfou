@@ -1,15 +1,14 @@
 {
-  "date": "2026-11-28T14:05:07.699Z",
+  "date": "2026-11-28T15:38:13.613Z",
   "edition": "17 h",
-  "fluxTotal": 107,
-  "fluxActifs": 104,
+  "fluxTotal": 112,
+  "fluxActifs": 110,
   "fluxMorts": [
     "https://news.google.com/rss/search?q=recrutement+France+OR+embauche+re",
-    "https://trustmyscience.com/feed/",
     "https://news.google.com/rss/search?q=festival+record+OR+restauration+p"
   ],
-  "nouveauxArticles": 6,
-  "articlesTotal": 38,
+  "nouveauxArticles": 8,
+  "articlesTotal": 36,
   "gatesNiveau1": [],
   "rubriquesVides": []
 }
